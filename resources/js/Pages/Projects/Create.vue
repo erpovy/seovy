@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { Globe, ArrowLeft, ArrowRight, Settings2, ShieldCheck } from 'lucide-vue-next';
+import { Globe, ArrowLeft, ArrowRight, Settings2, ShieldCheck, Info, Layers } from 'lucide-vue-next';
 
 const form = useForm({
     name: '',
@@ -140,7 +140,7 @@ const submit = () => {
                                 type="number"
                                 min="1"
                                 max="8"
-                                class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white"
+                                class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-indigo-500"
                             />
                         </div>
 
@@ -151,8 +151,33 @@ const submit = () => {
                                 type="number"
                                 min="5"
                                 max="5000"
-                                class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white"
+                                class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-indigo-500"
                             />
+                        </div>
+                    </div>
+
+                    <!-- Crawl Depth Explanatory Guide Card -->
+                    <div class="p-4 rounded-2xl bg-indigo-950/30 border border-indigo-500/20 space-y-3">
+                        <div class="flex items-center space-x-2 text-indigo-400 font-semibold text-xs">
+                            <Layers class="w-4 h-4" />
+                            <span>Tarama Derinliği (Crawl Depth) Nedir ve Nasıl Seçilmelidir?</span>
+                        </div>
+                        <p class="text-[11px] text-slate-300 leading-relaxed">
+                            Arama motoru botlarının (Googlebot veya SeovyBot) ana sayfanızdan başlayarak sitenizdeki bir içeriğe ulaşmak için yapması gereken <strong>tıklama sayısını (Click Depth)</strong> ifade eder.
+                        </p>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px]">
+                            <div class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800/80">
+                                <span class="font-bold text-emerald-400 block mb-0.5">Derinlik 1 - 2</span>
+                                <span class="text-slate-400 text-[10px] block">Ana Menü ve Temel Sayfalar. Hızlı sağlık kontrolü için idealdir.</span>
+                            </div>
+                            <div class="p-2.5 rounded-xl bg-slate-900/80 border border-indigo-500/30">
+                                <span class="font-bold text-indigo-300 block mb-0.5">Derinlik 3 (Önerilen)</span>
+                                <span class="text-slate-400 text-[10px] block">Kurumsal ve blog sitelerinin %95'i için en ideal standarttır (Google 3-tık kuralı).</span>
+                            </div>
+                            <div class="p-2.5 rounded-xl bg-slate-900/80 border border-slate-800/80">
+                                <span class="font-bold text-amber-400 block mb-0.5">Derinlik 4 - 8</span>
+                                <span class="text-slate-400 text-[10px] block">Büyük e-ticaret siteleri, derin ürün filtreleri ve devasa arşivler için gereklidir.</span>
+                            </div>
                         </div>
                     </div>
 
