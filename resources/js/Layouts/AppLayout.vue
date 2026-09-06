@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { Link, usePage, router } from '@inertiajs/vue3';
 import {
     Activity,
@@ -29,8 +29,9 @@ defineProps<{
 }>();
 
 const page = usePage();
-const auth = page.props.auth as any;
-const flash = page.props.flash as any;
+const auth = computed(() => ((page.props as any)?.auth) || {});
+const flash = computed(() => ((page.props as any)?.flash) || {});
+const errors = computed(() => ((page.props as any)?.errors) || {});
 const { t } = useI18n();
 
 const mobileMenuOpen = ref(false);
@@ -316,23 +317,23 @@ const switchWorkspace = (workspaceId: number) => {
             </div>
 
             <!-- Flash Notifications -->
-            <div v-if="flash.success || flash.error || flash.info" class="p-4 pb-0 max-w-7xl mx-auto w-full">
+            <div v-if="flash?.success || flash?.error || flash?.info || errors?.error" class="p-4 pb-0 max-w-7xl mx-auto w-full">
                 <div
-                    v-if="flash.success"
+                    v-if="flash?.success"
                     class="flex items-center space-x-3 p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm"
                 >
                     <CheckCircle2 class="w-4 h-4 shrink-0" />
                     <span>{{ flash.success }}</span>
                 </div>
                 <div
-                    v-if="flash.error"
+                    v-if="flash?.error || errors?.error"
                     class="flex items-center space-x-3 p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm"
                 >
                     <AlertCircle class="w-4 h-4 shrink-0" />
-                    <span>{{ flash.error }}</span>
+                    <span>{{ flash?.error || errors?.error }}</span>
                 </div>
                 <div
-                    v-if="flash.info"
+                    v-if="flash?.info"
                     class="flex items-center space-x-3 p-3.5 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-sm"
                 >
                     <Info class="w-4 h-4 shrink-0" />

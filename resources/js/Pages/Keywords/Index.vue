@@ -114,41 +114,20 @@ const providerDisplayName = computed(() => {
 </script>
 
 <template>
-    <AppLayout :title="`${$t('keywords.title')} - ${project.name}`">
-        <Head :title="`${$t('keywords.title')} - ${project.name}`" />
+    <AppLayout :title="`${$t('keywords.title')} - ${project?.name || ''}`">
+        <Head :title="`${$t('keywords.title')} - ${project?.name || ''}`" />
 
         <div class="space-y-6">
-            <!-- Flash & Error Notification Banners -->
-            <div
-                v-if="($page.props as any).flash?.success"
-                class="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-300 flex items-center justify-between"
-            >
-                <div class="flex items-center space-x-2.5">
-                    <CheckCircle2 class="w-4 h-4 text-emerald-400 shrink-0" />
-                    <span class="font-medium">{{ ($page.props as any).flash.success }}</span>
-                </div>
-            </div>
-
-            <div
-                v-if="($page.props as any).errors?.error || ($page.props as any).flash?.error"
-                class="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-xs text-rose-300 flex items-center justify-between"
-            >
-                <div class="flex items-center space-x-2.5">
-                    <AlertCircle class="w-4 h-4 text-rose-400 shrink-0" />
-                    <span class="font-medium">{{ ($page.props as any).errors?.error || ($page.props as any).flash?.error }}</span>
-                </div>
-            </div>
-
             <!-- Header -->
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div class="flex items-center space-x-3">
-                    <Link :href="`/projects/${project.id}`" class="p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-white transition-colors">
+                    <Link :href="`/projects/${project?.id}`" class="p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-white transition-colors">
                         <ArrowLeft class="w-4 h-4" />
                     </Link>
                     <div>
                         <h1 class="text-xl sm:text-2xl font-bold text-white">{{ $t('keywords.title') }}</h1>
                         <p class="text-xs text-slate-400 mt-0.5">
-                            {{ $t('keywords.subtitle', { total: keywords.total }) }}
+                            {{ $t('keywords.subtitle', { total: keywords?.total ?? 0 }) }}
                         </p>
                     </div>
                 </div>
@@ -202,7 +181,7 @@ const providerDisplayName = computed(() => {
                     </span>
                     <button
                         @click="showSerpModal = true"
-                        class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-200 border border-slate-700 hover:border-slate-600 text-xs font-semibold flex items-center space-x-1.5 transition-all"
+                        class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 hover:border-slate-600 text-xs font-semibold flex items-center space-x-1.5 transition-all"
                     >
                         <Settings class="w-3.5 h-3.5 text-indigo-400" />
                         <span>{{ $t('keywords.serp_settings') || 'SERP Ayarları' }}</span>
@@ -211,7 +190,7 @@ const providerDisplayName = computed(() => {
             </div>
 
             <!-- Keywords Table -->
-            <div v-if="keywords.data.length === 0" class="p-12 rounded-3xl bg-slate-900/40 border border-slate-800 text-center text-xs text-slate-500">
+            <div v-if="!keywords?.data || keywords.data.length === 0" class="p-12 rounded-3xl bg-slate-900/40 border border-slate-800 text-center text-xs text-slate-500">
                 <TrendingUp class="w-12 h-12 text-slate-600 mx-auto mb-3" />
                 <h3 class="text-sm font-semibold text-white">{{ $t('keywords.no_keywords') }}</h3>
                 <p class="text-xs text-slate-400 max-w-sm mx-auto mt-1 mb-4">
@@ -238,7 +217,7 @@ const providerDisplayName = computed(() => {
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-800/60">
-                        <tr v-for="kw in keywords.data" :key="kw.id" class="hover:bg-slate-800/30 transition-colors">
+                        <tr v-for="kw in (keywords?.data || [])" :key="kw.id" class="hover:bg-slate-800/30 transition-colors">
                             <td class="p-4 font-bold text-white">{{ kw.keyword }}</td>
                             <td class="p-4">
                                 <span v-if="kw.current_position" class="font-extrabold text-sm text-indigo-400">
