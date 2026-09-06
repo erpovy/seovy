@@ -113,11 +113,23 @@ const verifyOwnership = () => {
                 </div>
 
                 <div class="flex items-center space-x-3">
-                    <form @submit.prevent="startCrawl">
+                    <form @submit.prevent="startCrawl" class="flex items-center space-x-2">
+                        <select
+                            v-model="crawlForm.max_pages"
+                            class="px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
+                        >
+                            <option :value="100">100 Sayfa</option>
+                            <option :value="250">250 Sayfa</option>
+                            <option :value="500">500 Sayfa</option>
+                            <option :value="1000">1.000 Sayfa</option>
+                            <option :value="2500">2.500 Sayfa</option>
+                            <option :value="5000">5.000 Sayfa</option>
+                        </select>
+
                         <button
                             type="submit"
                             :disabled="crawlForm.processing"
-                            class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-lg shadow-indigo-600/30 flex items-center space-x-2 transition-all disabled:opacity-50"
+                            class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-lg shadow-indigo-600/30 flex items-center space-x-2 transition-all disabled:opacity-50 shrink-0"
                         >
                             <Play class="w-4 h-4 fill-white" />
                             <span>Tarama Başlat</span>
