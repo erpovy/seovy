@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import { Head, Link, useForm, router } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import {
@@ -28,6 +28,44 @@ const props = defineProps<{
     findingsSummary: any;
     canManage: boolean;
 }>();
+
+const liveCrawl = ref(props.latestCrawl);
+let livePollInterval: any = null;
+
+const checkLiveStatus = async () => {
+    if (!liveCrawl.value || (liveCrawl.value.status !== 'running' && liveCrawl.value.status !== 'pending')) {
+        if (livePollInterval) clearInterval(livePollInterval);
+        return;
+    }
+
+    try {
+        const res = await fetch(`/projects/${props.project.id}/crawls/${liveCrawl.value.id}/status`);
+        if (res.ok) {
+            const data = await res.json();
+            liveCrawl.value.status = data.status;
+            liveCrawl.value.pages_crawled = data.pages_crawled;
+            liveCrawl.value.pages_discovered = data.pages_discovered;
+            liveCrawl.value.health_score = data.health_score;
+
+            if (data.status === 'completed' || data.status === 'failed') {
+                clearInterval(livePollInterval);
+                router.reload();
+            }
+        }
+    } catch (e) {
+        // Silently ignore network poll hiccup
+    }
+};
+
+onMounted(() => {
+    if (liveCrawl.value && (liveCrawl.value.status === 'running' || liveCrawl.value.status === 'pending')) {
+        livePollInterval = setInterval(checkLiveStatus, 2500);
+    }
+});
+
+onUnmounted(() => {
+    if (livePollInterval) clearInterval(livePollInterval);
+});
 
 const crawlForm = useForm({
     max_pages: 250,
@@ -231,7 +269,7 @@ const verifyOwnership = () => {
 
             <!-- Live Active Crawl Progress Banner (when crawl is running or pending) -->
             <div
-                v-if="latestCrawl && (latestCrawl.status === 'running' || latestCrawl.status === 'pending')"
+                v-if="liveCrawl && (liveCrawl.status === 'running' || liveCrawl.status === 'pending')"
                 class="p-6 rounded-3xl bg-indigo-950/40 border border-indigo-500/30 shadow-2xl relative overflow-hidden"
             >
                 <div class="absolute inset-0 bg-gradient-to-r from-indigo-500/10 via-violet-500/10 to-transparent pointer-events-none"></div>
@@ -241,10 +279,10 @@ const verifyOwnership = () => {
                         <div class="flex items-center space-x-3">
                             <div class="w-3 h-3 rounded-full bg-indigo-500 animate-ping"></div>
                             <span class="text-xs font-bold uppercase tracking-wider text-indigo-400">
-                                {{ latestCrawl.status === 'running' ? 'Canlı SEO Taraması Sürüyor' : 'Tarama Başlatılıyor...' }}
+                                {{ liveCrawl.status === 'running' ? 'Canlı SEO Taraması Sürüyor' : 'Tarama Başlatılıyor...' }}
                             </span>
                             <span class="px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 text-[11px] font-mono">
-                                Tarama #{{ latestCrawl.id }}
+                                Tarama #{{ liveCrawl.id }}
                             </span>
                         </div>
                         <h3 class="text-lg font-bold text-white">
@@ -258,16 +296,16 @@ const verifyOwnership = () => {
                     <div class="flex items-center space-x-6 bg-slate-900/80 px-5 py-3 rounded-2xl border border-slate-800 shrink-0">
                         <div class="text-center">
                             <span class="text-[10px] text-slate-500 uppercase font-semibold block">Taranan</span>
-                            <span class="text-xl font-black text-white font-mono">{{ latestCrawl.pages_crawled }}</span>
+                            <span class="text-xl font-black text-white font-mono">{{ liveCrawl.pages_crawled }}</span>
                         </div>
                         <div class="w-px h-8 bg-slate-800"></div>
                         <div class="text-center">
                             <span class="text-[10px] text-slate-500 uppercase font-semibold block">Hedef Limit</span>
-                            <span class="text-xl font-black text-slate-400 font-mono">{{ latestCrawl.max_pages }}</span>
+                            <span class="text-xl font-black text-slate-400 font-mono">{{ liveCrawl.max_pages }}</span>
                         </div>
                         <div class="w-px h-8 bg-slate-800"></div>
                         <Link
-                            :href="`/projects/${project.id}/crawls/${latestCrawl.id}`"
+                            :href="`/projects/${project.id}/crawls/${liveCrawl.id}`"
                             class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs transition-all flex items-center space-x-1.5 shadow-lg shadow-indigo-600/30"
                         >
                             <span>Canlı İzle</span>
@@ -280,7 +318,7 @@ const verifyOwnership = () => {
                 <div class="w-full bg-slate-900 rounded-full h-2 mt-5 overflow-hidden border border-slate-800">
                     <div
                         class="bg-gradient-to-r from-indigo-500 to-violet-500 h-2 rounded-full transition-all duration-500"
-                        :style="{ width: `${Math.min(100, Math.max(10, (latestCrawl.pages_crawled / latestCrawl.max_pages) * 100))}%` }"
+                        :style="{ width: `${Math.min(100, Math.max(5, (liveCrawl.pages_crawled / liveCrawl.max_pages) * 100))}%` }"
                     ></div>
                 </div>
             </div>
