@@ -35,8 +35,8 @@ const copyShareLink = (token: string) => {
 </script>
 
 <template>
-    <AppLayout :title="`Raporlar - ${project.name}`">
-        <Head :title="`Raporlar - ${project.name}`" />
+    <AppLayout :title="`${$t('reports.page_title')} - ${project.name}`">
+        <Head :title="`${$t('reports.page_title')} - ${project.name}`" />
 
         <div class="space-y-6">
             <!-- Header -->
@@ -45,24 +45,24 @@ const copyShareLink = (token: string) => {
                     <ArrowLeft class="w-4 h-4" />
                 </Link>
                 <div>
-                    <h1 class="text-xl sm:text-2xl font-bold text-white">Denetim Raporları</h1>
+                    <h1 class="text-xl sm:text-2xl font-bold text-white">{{ $t('reports.title') }}</h1>
                     <p class="text-xs text-slate-400 mt-0.5">
-                        Üretilen PDF audit raporları, CSV dışa aktarımları ve güvenli müşteri paylaşım bağlantıları.
+                        {{ $t('reports.subtitle') }}
                     </p>
                 </div>
             </div>
 
             <div v-if="reports.data.length === 0" class="p-12 rounded-3xl bg-slate-900/40 border border-slate-800 text-center text-xs text-slate-500">
                 <FileText class="w-12 h-12 text-slate-600 mx-auto mb-3" />
-                <h3 class="text-sm font-semibold text-white">Henüz üretilmiş bir rapor yok</h3>
+                <h3 class="text-sm font-semibold text-white">{{ $t('reports.no_reports') }}</h3>
                 <p class="text-xs text-slate-400 max-w-sm mx-auto mt-1 mb-4">
-                    Herhangi bir tarama detay ekranından tek tıkla PDF veya CSV raporu oluşturabilirsiniz.
+                    {{ $t('reports.no_reports_desc') }}
                 </p>
                 <Link
                     :href="`/projects/${project.id}`"
                     class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs inline-block"
                 >
-                    Taramalara Git
+                    {{ $t('reports.go_to_crawls') }}
                 </Link>
             </div>
 
@@ -70,11 +70,11 @@ const copyShareLink = (token: string) => {
                 <table class="w-full text-left text-xs">
                     <thead class="bg-slate-950/60 text-slate-400 border-b border-slate-800">
                         <tr>
-                            <th class="p-4">Rapor Başlığı</th>
-                            <th class="p-4">Format</th>
-                            <th class="p-4">Oluşturulma</th>
-                            <th class="p-4">Paylaşım Bağlantısı</th>
-                            <th class="p-4 text-right">İndir</th>
+                            <th class="p-4">{{ $t('reports.report_title') }}</th>
+                            <th class="p-4">{{ $t('reports.format') }}</th>
+                            <th class="p-4">{{ $t('reports.created_at') }}</th>
+                            <th class="p-4">{{ $t('reports.share_link') }}</th>
+                            <th class="p-4 text-right">{{ $t('reports.download') }}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-800/60">
@@ -88,7 +88,7 @@ const copyShareLink = (token: string) => {
                                     {{ rep.format }}
                                 </span>
                             </td>
-                            <td class="p-4 text-slate-400">{{ new Date(rep.created_at).toLocaleString('tr-TR') }}</td>
+                            <td class="p-4 text-slate-400">{{ new Date(rep.created_at).toLocaleString() }}</td>
                             <td class="p-4">
                                 <button
                                     v-if="rep.public_token"
@@ -97,9 +97,9 @@ const copyShareLink = (token: string) => {
                                 >
                                     <Check v-if="copiedToken === rep.public_token" class="w-3 h-3 text-emerald-400" />
                                     <Copy v-else class="w-3 h-3 text-slate-400" />
-                                    <span>{{ copiedToken === rep.public_token ? 'Kopyalandı!' : 'Linki Kopyala' }}</span>
+                                    <span>{{ copiedToken === rep.public_token ? $t('reports.copied') : $t('reports.copy_link') }}</span>
                                 </button>
-                                <span v-else class="text-slate-500">Paylaşım yok</span>
+                                <span v-else class="text-slate-500">{{ $t('reports.no_share') }}</span>
                             </td>
                             <td class="p-4 text-right">
                                 <a
@@ -107,7 +107,7 @@ const copyShareLink = (token: string) => {
                                     class="p-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white inline-flex items-center space-x-1 transition-all"
                                 >
                                     <Download class="w-3.5 h-3.5" />
-                                    <span>İndir</span>
+                                    <span>{{ $t('reports.download') }}</span>
                                 </a>
                             </td>
                         </tr>

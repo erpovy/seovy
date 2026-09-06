@@ -20,6 +20,9 @@ import {
     Clock,
     RefreshCw
 } from 'lucide-vue-next';
+import { useI18n } from '@/i18n';
+
+const { t } = useI18n();
 
 const props = defineProps<{
     project: any;
@@ -110,8 +113,8 @@ const filterSeverity = (sev?: string) => {
 </script>
 
 <template>
-    <AppLayout :title="`Tarama #${crawl.id} - ${project.name}`">
-        <Head :title="`Tarama #${crawl.id} - ${project.name}`" />
+    <AppLayout :title="`${t('crawls.report_title', { id: crawl.id })} - ${project.name}`">
+        <Head :title="`${t('crawls.report_title', { id: crawl.id })} - ${project.name}`" />
 
         <div class="space-y-6">
             <!-- Back & Header -->
@@ -122,7 +125,7 @@ const filterSeverity = (sev?: string) => {
                     </Link>
                     <div>
                         <div class="flex items-center space-x-2">
-                            <h1 class="text-xl sm:text-2xl font-bold text-white">Tarama #{{ crawl.id }} Raporu</h1>
+                            <h1 class="text-xl sm:text-2xl font-bold text-white">{{ t('crawls.report_title', { id: crawl.id }) }}</h1>
                             <span
                                 class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider"
                                 :class="currentStatus === 'completed' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : (currentStatus === 'running' ? 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 animate-pulse' : 'bg-slate-800 text-slate-400')"
@@ -131,7 +134,7 @@ const filterSeverity = (sev?: string) => {
                             </span>
                         </div>
                         <p class="text-xs text-slate-400 mt-0.5 font-mono">
-                            {{ project.domain }} &bull; Maks {{ crawl.max_pages }} sayfa
+                            {{ project.domain }} &bull; {{ t('projects.target_limit') }}: {{ crawl.max_pages }}
                         </p>
                     </div>
                 </div>
@@ -144,14 +147,14 @@ const filterSeverity = (sev?: string) => {
                             class="px-3.5 py-2 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 text-xs font-semibold border border-amber-500/20 flex items-center space-x-1.5 transition-all"
                         >
                             <Pause class="w-3.5 h-3.5" />
-                            <span>Duraklat</span>
+                            <span>{{ t('crawls.pause') }}</span>
                         </button>
                         <button
                             @click="cancelCrawl"
                             class="px-3.5 py-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 text-xs font-semibold border border-rose-500/20 flex items-center space-x-1.5 transition-all"
                         >
                             <XCircle class="w-3.5 h-3.5" />
-                            <span>İptal Et</span>
+                            <span>{{ t('crawls.cancel') }}</span>
                         </button>
                     </template>
 
@@ -161,7 +164,7 @@ const filterSeverity = (sev?: string) => {
                             class="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white text-xs font-semibold border border-slate-800 flex items-center space-x-1.5 transition-all"
                         >
                             <FileSpreadsheet class="w-3.5 h-3.5 text-emerald-400" />
-                            <span>CSV İndir</span>
+                            <span>{{ t('crawls.export_csv') }}</span>
                         </a>
 
                         <Link
@@ -171,7 +174,7 @@ const filterSeverity = (sev?: string) => {
                             class="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-md shadow-indigo-600/30 flex items-center space-x-1.5 transition-all"
                         >
                             <FileText class="w-3.5 h-3.5" />
-                            <span>PDF Raporu Üret</span>
+                            <span>{{ t('crawls.generate_pdf') }}</span>
                         </Link>
                     </template>
                 </div>
@@ -182,9 +185,9 @@ const filterSeverity = (sev?: string) => {
                 <div class="flex items-center justify-between text-xs font-semibold text-indigo-300">
                     <span class="flex items-center space-x-2">
                         <RefreshCw class="w-3.5 h-3.5 animate-spin text-indigo-400" />
-                        <span>Canlı Tarama İlerliyor...</span>
+                        <span>{{ t('crawls.live_progress') }}</span>
                     </span>
-                    <span>{{ pagesCrawled }} / {{ crawl.max_pages }} Sayfa (%{{ Math.round((pagesCrawled / crawl.max_pages) * 100) }})</span>
+                    <span>{{ pagesCrawled }} / {{ crawl.max_pages }} (%{{ Math.round((pagesCrawled / crawl.max_pages) * 100) }})</span>
                 </div>
                 <div class="w-full bg-slate-950 rounded-full h-2 overflow-hidden">
                     <div
@@ -197,197 +200,166 @@ const filterSeverity = (sev?: string) => {
             <!-- Metrics Highlight Cards -->
             <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
                 <div class="p-5 rounded-2xl bg-slate-900/50 border border-slate-800/80">
-                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block">Sağlık Skoru</span>
-                    <span
-                        class="text-3xl font-extrabold block mt-2"
-                        :class="healthScore >= 80 ? 'text-emerald-400' : (healthScore >= 50 ? 'text-amber-400' : 'text-rose-400')"
-                    >
+                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block">{{ t('projects.health_score') }}</span>
+                    <div class="mt-2 text-2xl font-bold text-white">
                         {{ healthScore !== null ? healthScore + '%' : '—' }}
-                    </span>
-                    <span class="text-[11px] text-slate-500 mt-1 block">Şeffaf ceza puanı formülüyle</span>
+                    </div>
                 </div>
 
-                <div
-                    @click="filterSeverity('critical')"
-                    class="p-5 rounded-2xl bg-slate-900/50 border border-slate-800/80 hover:border-rose-500/40 cursor-pointer transition-all"
-                >
-                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block">Kritik Hatalar</span>
-                    <span class="text-3xl font-extrabold text-rose-400 block mt-2">{{ severityCounts.critical }}</span>
-                    <span class="text-[11px] text-rose-400/80 mt-1 block">Acil müdahale gerekir</span>
+                <div class="p-5 rounded-2xl bg-slate-900/50 border border-slate-800/80">
+                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block">{{ t('projects.pages_crawled') }}</span>
+                    <div class="mt-2 text-2xl font-bold text-white">{{ pagesCrawled }}</div>
                 </div>
 
-                <div
-                    @click="filterSeverity('warning')"
-                    class="p-5 rounded-2xl bg-slate-900/50 border border-slate-800/80 hover:border-amber-500/40 cursor-pointer transition-all"
-                >
-                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block">Uyarılar</span>
-                    <span class="text-3xl font-extrabold text-amber-400 block mt-2">{{ severityCounts.warning }}</span>
-                    <span class="text-[11px] text-amber-400/80 mt-1 block">Performansı etkileyen unsurlar</span>
+                <div class="p-5 rounded-2xl bg-slate-900/50 border border-slate-800/80">
+                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block">{{ t('crawls.avg_response_time') }}</span>
+                    <div class="mt-2 text-2xl font-bold text-white">{{ crawl.avg_response_time_ms ? crawl.avg_response_time_ms + ' ms' : '—' }}</div>
                 </div>
 
-                <div
-                    @click="filterSeverity('notice')"
-                    class="p-5 rounded-2xl bg-slate-900/50 border border-slate-800/80 hover:border-indigo-500/40 cursor-pointer transition-all"
-                >
-                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block">Öneriler</span>
-                    <span class="text-3xl font-extrabold text-indigo-400 block mt-2">{{ severityCounts.notice }}</span>
-                    <span class="text-[11px] text-indigo-400/80 mt-1 block">İnce ayar optimizasyonları</span>
+                <div class="p-5 rounded-2xl bg-slate-900/50 border border-slate-800/80">
+                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block">{{ t('projects.critical_errors') }}</span>
+                    <div class="mt-2 text-2xl font-bold text-rose-400">{{ severityCounts.critical }}</div>
                 </div>
             </div>
 
-            <!-- Tabs: Findings vs Pages -->
-            <div class="border-b border-slate-800 flex space-x-6 text-sm font-semibold">
+            <!-- View Mode Switcher Tabs (Findings vs Pages) -->
+            <div class="flex items-center space-x-3 border-b border-slate-800 pb-3">
                 <button
                     @click="activeTab = 'findings'"
-                    class="pb-3 transition-colors border-b-2"
-                    :class="activeTab === 'findings' ? 'border-indigo-500 text-indigo-400' : 'border-transparent text-slate-400 hover:text-white'"
+                    class="px-4 py-2 rounded-xl text-xs font-semibold transition-all"
+                    :class="activeTab === 'findings' ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30' : 'text-slate-400 hover:text-white bg-slate-900/60'"
                 >
-                    SEO Bulguları ({{ findings.total }})
+                    {{ t('crawls.tab_findings') }} ({{ findings.total }})
                 </button>
                 <button
                     @click="activeTab = 'pages'"
-                    class="pb-3 transition-colors border-b-2"
-                    :class="activeTab === 'pages' ? 'border-indigo-500 text-indigo-400' : 'border-transparent text-slate-400 hover:text-white'"
+                    class="px-4 py-2 rounded-xl text-xs font-semibold transition-all"
+                    :class="activeTab === 'pages' ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30' : 'text-slate-400 hover:text-white bg-slate-900/60'"
                 >
-                    Taranan Sayfalar ({{ pages.total }})
+                    {{ t('crawls.tab_pages') }} ({{ pages.total }})
                 </button>
             </div>
 
-            <!-- Findings Tab Content -->
+            <!-- Findings View Tab -->
             <div v-if="activeTab === 'findings'" class="space-y-4">
-                <!-- Severity Filter Bar -->
-                <div class="flex flex-wrap items-center gap-2">
+                <!-- Severity Filter Pills -->
+                <div class="flex items-center space-x-2 text-xs">
                     <button
                         @click="filterSeverity()"
-                        class="px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors"
-                        :class="!filters.severity ? 'bg-indigo-600 text-white' : 'bg-slate-900 text-slate-400 hover:text-white'"
+                        class="px-3 py-1.5 rounded-lg border transition-all"
+                        :class="!filters.severity ? 'bg-indigo-600 text-white border-indigo-500 font-semibold' : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-white'"
                     >
-                        Tümü ({{ findings.total }})
+                        {{ t('crawls.filter_all') }} ({{ findings.total }})
                     </button>
                     <button
                         @click="filterSeverity('critical')"
-                        class="px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors"
-                        :class="filters.severity === 'critical' ? 'bg-rose-600 text-white' : 'bg-slate-900 text-rose-400 hover:bg-rose-500/10'"
+                        class="px-3 py-1.5 rounded-lg border transition-all"
+                        :class="filters.severity === 'critical' ? 'bg-rose-500/20 text-rose-300 border-rose-500/40 font-semibold' : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-rose-400'"
                     >
-                        Kritik ({{ severityCounts.critical }})
+                        {{ t('common.critical') }} ({{ severityCounts.critical }})
                     </button>
                     <button
                         @click="filterSeverity('warning')"
-                        class="px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors"
-                        :class="filters.severity === 'warning' ? 'bg-amber-600 text-white' : 'bg-slate-900 text-amber-400 hover:bg-amber-500/10'"
+                        class="px-3 py-1.5 rounded-lg border transition-all"
+                        :class="filters.severity === 'warning' ? 'bg-amber-500/20 text-amber-300 border-amber-500/40 font-semibold' : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-amber-400'"
                     >
-                        Uyarı ({{ severityCounts.warning }})
+                        {{ t('common.warning') }} ({{ severityCounts.warning }})
                     </button>
                     <button
                         @click="filterSeverity('notice')"
-                        class="px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors"
-                        :class="filters.severity === 'notice' ? 'bg-indigo-600 text-white' : 'bg-slate-900 text-indigo-400 hover:bg-indigo-500/10'"
+                        class="px-3 py-1.5 rounded-lg border transition-all"
+                        :class="filters.severity === 'notice' ? 'bg-indigo-500/20 text-indigo-300 border-indigo-500/40 font-semibold' : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-indigo-400'"
                     >
-                        Öneri ({{ severityCounts.notice }})
+                        {{ t('common.notice') }} ({{ severityCounts.notice }})
                     </button>
                 </div>
 
-                <!-- Findings Cards -->
-                <div v-if="findings.data.length === 0" class="p-8 rounded-3xl bg-slate-900/40 border border-slate-800 text-center text-xs text-slate-500">
-                    Seçili filtrelere uygun SEO bulgusu bulunamadı.
-                </div>
-
-                <div v-else class="space-y-3">
-                    <div
-                        v-for="finding in findings.data"
-                        :key="finding.id"
-                        class="p-5 rounded-2xl bg-slate-900/50 border border-slate-800/80 hover:border-slate-700/80 transition-all space-y-3"
-                    >
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                            <div class="flex items-center space-x-2.5">
-                                <span
-                                    class="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider"
-                                    :class="finding.severity === 'critical' ? 'bg-rose-500/15 text-rose-400 border border-rose-500/30' : (finding.severity === 'warning' ? 'bg-amber-500/15 text-amber-400 border border-amber-500/30' : 'bg-indigo-500/15 text-indigo-400 border border-indigo-500/30')"
-                                >
-                                    {{ finding.severity }}
-                                </span>
-                                <span class="text-xs font-mono text-slate-500">{{ finding.rule_code }}</span>
-                                <span class="text-xs text-slate-400">&bull;</span>
-                                <span class="text-xs text-slate-400 capitalize">{{ finding.category }}</span>
-                            </div>
-
-                            <div>
-                                <button
-                                    @click="convertToTask(finding.id)"
-                                    class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-medium flex items-center space-x-1.5 transition-colors"
-                                >
-                                    <CheckSquare class="w-3.5 h-3.5 text-indigo-400" />
-                                    <span>Göreve Dönüştür</span>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div>
-                            <h3 class="text-sm font-bold text-white">{{ finding.title }}</h3>
-                            <p class="text-xs text-slate-400 mt-1 leading-relaxed">{{ finding.description }}</p>
-                        </div>
-
-                        <!-- Affected URL -->
-                        <div v-if="finding.page" class="p-2.5 rounded-xl bg-slate-950/60 border border-slate-850 flex items-center justify-between text-xs">
-                            <div class="flex items-center space-x-2 truncate">
-                                <span class="text-slate-500 shrink-0">Etkilenen Sayfa:</span>
-                                <a :href="finding.page.url" target="_blank" class="text-indigo-400 hover:underline truncate">
-                                    {{ finding.page.url }}
-                                </a>
-                            </div>
-                            <a :href="finding.page.url" target="_blank" class="text-slate-500 hover:text-white shrink-0 ml-2">
-                                <ExternalLink class="w-3.5 h-3.5" />
-                            </a>
-                        </div>
-
-                        <!-- Recommendation box -->
-                        <div class="p-3 rounded-xl bg-indigo-500/5 border border-indigo-500/20 text-xs">
-                            <strong class="text-indigo-300 font-semibold block mb-0.5">Çözüm Önerisi:</strong>
-                            <span class="text-slate-300 leading-relaxed">{{ finding.recommendation }}</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Pages Tab Content -->
-            <div v-if="activeTab === 'pages'" class="space-y-4">
+                <!-- Findings Table -->
                 <div class="rounded-3xl bg-slate-900/50 border border-slate-800/80 overflow-hidden">
                     <table class="w-full text-left text-xs">
                         <thead class="bg-slate-950/60 text-slate-400 border-b border-slate-800">
                             <tr>
-                                <th class="p-4">URL</th>
-                                <th class="p-4">Durum</th>
-                                <th class="p-4">Başlık (Title)</th>
-                                <th class="p-4">Kelime</th>
-                                <th class="p-4">İndekslenebilir</th>
+                                <th class="p-4">{{ t('crawls.col_issue') }}</th>
+                                <th class="p-4">{{ t('crawls.col_category') }}</th>
+                                <th class="p-4">{{ t('crawls.col_severity') }}</th>
+                                <th class="p-4 text-right">{{ t('crawls.col_action') }}</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-800/60">
-                            <tr v-for="page in pages.data" :key="page.id" class="hover:bg-slate-800/30 transition-colors">
-                                <td class="p-4 max-w-xs truncate font-mono text-slate-300">
-                                    <a :href="page.url" target="_blank" class="hover:text-indigo-400 flex items-center space-x-1">
-                                        <span class="truncate">{{ page.url }}</span>
-                                        <ExternalLink class="w-3 h-3 shrink-0" />
-                                    </a>
+                            <tr v-if="findings.data.length === 0">
+                                <td colspan="4" class="p-8 text-center text-slate-500">{{ t('crawls.no_issues') }}</td>
+                            </tr>
+                            <tr v-for="finding in findings.data" :key="finding.id" class="hover:bg-slate-800/20">
+                                <td class="p-4">
+                                    <div class="font-semibold text-white">{{ finding.title }}</div>
+                                    <div class="text-[11px] text-slate-500 mt-0.5 truncate max-w-lg font-mono">{{ finding.url }}</div>
                                 </td>
+                                <td class="p-4 capitalize text-slate-400">{{ finding.category }}</td>
                                 <td class="p-4">
                                     <span
-                                        class="px-2 py-0.5 rounded-full text-[10px] font-bold"
-                                        :class="page.status_code === 200 ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'"
+                                        class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase"
+                                        :class="finding.severity === 'critical' ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20' : (finding.severity === 'warning' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20')"
                                     >
-                                        {{ page.status_code }}
+                                        {{ finding.severity }}
                                     </span>
                                 </td>
-                                <td class="p-4 text-white font-medium max-w-xs truncate">{{ page.title || '—' }}</td>
-                                <td class="p-4 text-slate-400">{{ page.word_count }}</td>
-                                <td class="p-4">
-                                    <span v-if="page.is_indexable" class="text-emerald-400 font-semibold">Evet</span>
-                                    <span v-else class="text-rose-400 font-semibold">Noindex</span>
+                                <td class="p-4 text-right">
+                                    <button
+                                        v-if="!finding.converted_to_task_at"
+                                        @click="convertToTask(finding.id)"
+                                        class="px-3 py-1.5 rounded-lg bg-indigo-600/10 hover:bg-indigo-600/20 text-indigo-300 border border-indigo-500/20 font-semibold text-xs transition-colors"
+                                    >
+                                        {{ t('crawls.convert_task') }}
+                                    </button>
+                                    <span v-else class="text-[11px] text-emerald-400 flex items-center justify-end space-x-1">
+                                        <CheckCircle2 class="w-3.5 h-3.5" />
+                                        <span>{{ t('crawls.task_created') }}</span>
+                                    </span>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
+            </div>
+
+            <!-- Pages View Tab -->
+            <div v-else-if="activeTab === 'pages'" class="rounded-3xl bg-slate-900/50 border border-slate-800/80 overflow-hidden">
+                <table class="w-full text-left text-xs">
+                    <thead class="bg-slate-950/60 text-slate-400 border-b border-slate-800">
+                        <tr>
+                            <th class="p-4">{{ t('crawls.col_url') }}</th>
+                            <th class="p-4">{{ t('crawls.col_status') }}</th>
+                            <th class="p-4">{{ t('crawls.col_load_time') }}</th>
+                            <th class="p-4">{{ t('crawls.col_words') }}</th>
+                            <th class="p-4">{{ t('crawls.col_depth') }}</th>
+                            <th class="p-4 text-right">{{ t('crawls.col_indexable') }}</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800/60">
+                        <tr v-for="page in pages.data" :key="page.id" class="hover:bg-slate-800/20">
+                            <td class="p-4">
+                                <div class="font-medium text-white truncate max-w-md">{{ page.title || page.path }}</div>
+                                <div class="text-[11px] text-slate-500 font-mono truncate max-w-md">{{ page.url }}</div>
+                            </td>
+                            <td class="p-4">
+                                <span
+                                    class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold"
+                                    :class="page.status_code === 200 ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'"
+                                >
+                                    {{ page.status_code }}
+                                </span>
+                            </td>
+                            <td class="p-4 text-slate-400 font-mono">{{ page.response_time_ms }} ms</td>
+                            <td class="p-4 text-slate-400">{{ page.word_count }}</td>
+                            <td class="p-4 text-slate-400 font-mono">{{ page.depth }}</td>
+                            <td class="p-4 text-right">
+                                <span :class="page.is_indexable ? 'text-emerald-400' : 'text-slate-500'">
+                                    {{ page.is_indexable ? t('common.yes') : t('common.no') }}
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </AppLayout>

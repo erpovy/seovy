@@ -27,14 +27,14 @@ const selectPlan = (planKey: string) => {
 </script>
 
 <template>
-    <AppLayout title="Planlar & Abonelik">
-        <Head title="Planlar & Abonelik" />
+    <AppLayout :title="$t('billing.page_title')">
+        <Head :title="$t('billing.page_title')" />
 
         <div class="space-y-8 max-w-6xl mx-auto">
             <div class="text-center max-w-2xl mx-auto">
-                <h1 class="text-3xl font-bold tracking-tight text-white">Abonelik & Kota Yönetimi</h1>
+                <h1 class="text-3xl font-bold tracking-tight text-white">{{ $t('billing.title') }}</h1>
                 <p class="text-sm text-slate-400 mt-2">
-                    Çalışma alanınızın proje sayısı, aylık taranan sayfa ve anahtar kelime limitlerini yükseltin.
+                    {{ $t('billing.subtitle') }}
                 </p>
             </div>
 
@@ -53,7 +53,7 @@ const selectPlan = (planKey: string) => {
                                 v-if="currentPlan === key"
                                 class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-indigo-500/20 text-indigo-400 border border-indigo-500/30"
                             >
-                                Mevcut Plan
+                                {{ $t('billing.current_plan_badge') }}
                             </span>
                         </div>
 
@@ -75,7 +75,7 @@ const selectPlan = (planKey: string) => {
                             disabled
                             class="w-full py-3 rounded-xl bg-slate-800 text-slate-400 text-xs font-semibold cursor-default"
                         >
-                            Aktif Planınız
+                            {{ $t('billing.active_plan') }}
                         </button>
                         <button
                             v-else
@@ -83,7 +83,7 @@ const selectPlan = (planKey: string) => {
                             :disabled="form.processing"
                             class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-md shadow-indigo-600/30 transition-all"
                         >
-                            {{ key === 'free' ? 'Ücretsiz Plana Geç' : 'Bu Plana Yükselt' }}
+                            {{ key === 'free' ? $t('billing.downgrade_free') : $t('billing.upgrade_plan') }}
                         </button>
                     </div>
                 </div>

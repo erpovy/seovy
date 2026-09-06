@@ -41,7 +41,7 @@ const submitPassword = () => {
 const twoFactorForm = useForm({});
 const toggle2FA = () => {
     if (props.user.two_factor_enabled) {
-        if (confirm('İki faktörlü doğrulamayı devre dışı bırakmak istediğinize emin misiniz?')) {
+        if (confirm('Are you sure you want to disable two-factor authentication?')) {
             router.delete('/profile/two-factor');
         }
     } else {
@@ -60,14 +60,14 @@ const logoutOtherSessions = () => {
 </script>
 
 <template>
-    <AppLayout title="Profil ve Güvenlik Ayarları">
-        <Head title="Profil ve Güvenlik Ayarları" />
+    <AppLayout :title="$t('profile.page_title')">
+        <Head :title="$t('profile.page_title')" />
 
         <div class="max-w-4xl mx-auto space-y-8">
             <div>
-                <h1 class="text-2xl font-bold tracking-tight text-white">Profil & Güvenlik Ayarları</h1>
+                <h1 class="text-2xl font-bold tracking-tight text-white">{{ $t('profile.title') }}</h1>
                 <p class="text-sm text-slate-400 mt-1">
-                    Hesap bilgilerinizi, parolanızı ve aktif cihaz oturumlarınızı yönetin.
+                    {{ $t('profile.subtitle') }}
                 </p>
             </div>
 
@@ -75,12 +75,12 @@ const logoutOtherSessions = () => {
             <form @submit.prevent="submitProfile" class="p-6 sm:p-8 rounded-3xl bg-slate-900/50 border border-slate-800/80 space-y-4">
                 <h2 class="text-base font-bold text-white flex items-center space-x-2">
                     <User class="w-4 h-4 text-indigo-400" />
-                    <span>Kişisel Bilgiler</span>
+                    <span>{{ $t('profile.personal_info') }}</span>
                 </h2>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                     <div>
-                        <label class="block font-semibold text-slate-300 mb-1">Ad Soyad</label>
+                        <label class="block font-semibold text-slate-300 mb-1">{{ $t('profile.name_label') }}</label>
                         <input
                             v-model="profileForm.name"
                             type="text"
@@ -89,7 +89,7 @@ const logoutOtherSessions = () => {
                         />
                     </div>
                     <div>
-                        <label class="block font-semibold text-slate-300 mb-1">E-Posta</label>
+                        <label class="block font-semibold text-slate-300 mb-1">{{ $t('profile.email_label') }}</label>
                         <input
                             v-model="profileForm.email"
                             type="email"
@@ -105,7 +105,7 @@ const logoutOtherSessions = () => {
                         :disabled="profileForm.processing"
                         class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs transition-all disabled:opacity-50"
                     >
-                        Bilgileri Güncelle
+                        {{ $t('profile.update_info') }}
                     </button>
                 </div>
             </form>
@@ -114,12 +114,12 @@ const logoutOtherSessions = () => {
             <form @submit.prevent="submitPassword" class="p-6 sm:p-8 rounded-3xl bg-slate-900/50 border border-slate-800/80 space-y-4">
                 <h2 class="text-base font-bold text-white flex items-center space-x-2">
                     <Lock class="w-4 h-4 text-violet-400" />
-                    <span>Parola Değiştir</span>
+                    <span>{{ $t('profile.change_password') }}</span>
                 </h2>
 
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
                     <div>
-                        <label class="block font-semibold text-slate-300 mb-1">Mevcut Parola</label>
+                        <label class="block font-semibold text-slate-300 mb-1">{{ $t('profile.current_password') }}</label>
                         <input
                             v-model="passwordForm.current_password"
                             type="password"
@@ -128,7 +128,7 @@ const logoutOtherSessions = () => {
                         />
                     </div>
                     <div>
-                        <label class="block font-semibold text-slate-300 mb-1">Yeni Parola</label>
+                        <label class="block font-semibold text-slate-300 mb-1">{{ $t('profile.new_password') }}</label>
                         <input
                             v-model="passwordForm.password"
                             type="password"
@@ -137,7 +137,7 @@ const logoutOtherSessions = () => {
                         />
                     </div>
                     <div>
-                        <label class="block font-semibold text-slate-300 mb-1">Yeni Parola Tekrarı</label>
+                        <label class="block font-semibold text-slate-300 mb-1">{{ $t('profile.confirm_password') }}</label>
                         <input
                             v-model="passwordForm.password_confirmation"
                             type="password"
@@ -153,7 +153,7 @@ const logoutOtherSessions = () => {
                         :disabled="passwordForm.processing"
                         class="px-4 py-2 rounded-xl bg-violet-600 hover:bg-violet-500 text-white font-semibold text-xs transition-all disabled:opacity-50"
                     >
-                        Parolayı Güncelle
+                        {{ $t('profile.update_password') }}
                     </button>
                 </div>
             </form>
@@ -163,10 +163,10 @@ const logoutOtherSessions = () => {
                 <div>
                     <h2 class="text-base font-bold text-white flex items-center space-x-2">
                         <Shield class="w-4 h-4 text-emerald-400" />
-                        <span>İki Faktörlü Doğrulama (2FA)</span>
+                        <span>{{ $t('profile.two_factor_title') }}</span>
                     </h2>
                     <p class="text-xs text-slate-400 mt-1 max-w-md">
-                        Hesabınıza girişlerde ek bir güvenlik katmanı sağlamak için iki faktörlü kimlik doğrulamayı etkinleştirin.
+                        {{ $t('profile.two_factor_desc') }}
                     </p>
                 </div>
 
@@ -175,7 +175,7 @@ const logoutOtherSessions = () => {
                     class="px-4 py-2 rounded-xl text-xs font-semibold transition-all"
                     :class="user.two_factor_enabled ? 'bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20' : 'bg-emerald-600 hover:bg-emerald-500 text-white'"
                 >
-                    {{ user.two_factor_enabled ? '2FA Devre Dışı Bırak' : '2FA Etkinleştir' }}
+                    {{ user.two_factor_enabled ? $t('profile.disable_2fa') : $t('profile.enable_2fa') }}
                 </button>
             </div>
 
@@ -183,7 +183,7 @@ const logoutOtherSessions = () => {
             <div v-if="sessions && sessions.length > 0" class="p-6 sm:p-8 rounded-3xl bg-slate-900/50 border border-slate-800/80 space-y-4">
                 <h2 class="text-base font-bold text-white flex items-center space-x-2">
                     <Monitor class="w-4 h-4 text-cyan-400" />
-                    <span>Aktif Oturumlar</span>
+                    <span>{{ $t('profile.active_sessions') }}</span>
                 </h2>
 
                 <div class="space-y-3 text-xs">
@@ -198,7 +198,7 @@ const logoutOtherSessions = () => {
                                 <div class="font-bold text-white flex items-center space-x-2">
                                     <span>IP: {{ s.ip_address }}</span>
                                     <span v-if="s.is_current_device" class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400">
-                                        Mevcut Cihaz
+                                        {{ $t('profile.current_device') }}
                                     </span>
                                 </div>
                                 <div class="text-[11px] text-slate-500">{{ s.last_active }}</div>
@@ -213,7 +213,7 @@ const logoutOtherSessions = () => {
                             v-model="logoutOtherForm.password"
                             type="password"
                             required
-                            placeholder="Mevcut parolanız"
+                            :placeholder="$t('profile.password_placeholder')"
                             class="px-3 py-1.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white"
                         />
                         <button
@@ -221,7 +221,7 @@ const logoutOtherSessions = () => {
                             :disabled="logoutOtherForm.processing"
                             class="px-4 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-rose-400 font-semibold text-xs transition-all"
                         >
-                            Diğer Tüm Cihazlardan Çıkış Yap
+                            {{ $t('profile.logout_others_button') }}
                         </button>
                     </form>
                 </div>

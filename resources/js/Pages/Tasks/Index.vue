@@ -54,8 +54,8 @@ const updateStatus = (task: any, newStatus: string) => {
 </script>
 
 <template>
-    <AppLayout :title="`SEO Görevleri - ${project.name}`">
-        <Head :title="`SEO Görevleri - ${project.name}`" />
+    <AppLayout :title="`${$t('tasks.page_title')} - ${project.name}`">
+        <Head :title="`${$t('tasks.page_title')} - ${project.name}`" />
 
         <div class="space-y-6">
             <!-- Header -->
@@ -65,9 +65,9 @@ const updateStatus = (task: any, newStatus: string) => {
                         <ArrowLeft class="w-4 h-4" />
                     </Link>
                     <div>
-                        <h1 class="text-xl sm:text-2xl font-bold text-white">SEO Eylem Planı & Görevler</h1>
+                        <h1 class="text-xl sm:text-2xl font-bold text-white">{{ $t('tasks.title') }}</h1>
                         <p class="text-xs text-slate-400 mt-0.5">
-                            Tarama bulgularından türetilen veya manuel açılan iyileştirme görevleri ({{ tasks.total }} adet).
+                            {{ $t('tasks.subtitle', { total: tasks.total }) }}
                         </p>
                     </div>
                 </div>
@@ -78,7 +78,7 @@ const updateStatus = (task: any, newStatus: string) => {
                         class="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-md shadow-indigo-600/30 flex items-center space-x-1.5 transition-all"
                     >
                         <Plus class="w-4 h-4" />
-                        <span>Yeni Görev Ekle</span>
+                        <span>{{ $t('tasks.add_task') }}</span>
                     </button>
                 </div>
             </div>
@@ -86,15 +86,15 @@ const updateStatus = (task: any, newStatus: string) => {
             <!-- Task List -->
             <div v-if="tasks.data.length === 0" class="p-12 rounded-3xl bg-slate-900/40 border border-slate-800 text-center text-xs text-slate-500">
                 <CheckSquare class="w-12 h-12 text-slate-600 mx-auto mb-3" />
-                <h3 class="text-sm font-semibold text-white">Henüz hiçbir görev açılmamış</h3>
+                <h3 class="text-sm font-semibold text-white">{{ $t('tasks.no_tasks') }}</h3>
                 <p class="text-xs text-slate-400 max-w-sm mx-auto mt-1 mb-4">
-                    Teknik tarama raporundaki bulguları tek tıkla buraya aktarabilir veya manuel görev tanımlayabilirsiniz.
+                    {{ $t('tasks.no_tasks_desc') }}
                 </p>
                 <button
                     @click="showCreateModal = true"
                     class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs"
                 >
-                    + İlk Görevi Oluştur
+                    {{ $t('tasks.create_first_task') }}
                 </button>
             </div>
 
@@ -110,7 +110,7 @@ const updateStatus = (task: any, newStatus: string) => {
                                 class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider"
                                 :class="task.priority === 'critical' ? 'bg-rose-500/15 text-rose-400' : (task.priority === 'high' ? 'bg-amber-500/15 text-amber-400' : 'bg-slate-800 text-slate-400')"
                             >
-                                {{ task.priority }}
+                                {{ task.priority === 'critical' ? $t('tasks.priority_critical') : (task.priority === 'high' ? $t('tasks.priority_high') : (task.priority === 'medium' ? $t('tasks.priority_medium') : $t('tasks.priority_low'))) }}
                             </span>
                             <span class="text-xs text-slate-500 font-mono">#G-{{ task.id }}</span>
                         </div>
@@ -124,10 +124,10 @@ const updateStatus = (task: any, newStatus: string) => {
                             @change="updateStatus(task, ($event.target as any).value)"
                             class="px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-xs font-semibold text-white focus:ring-1 focus:ring-indigo-500"
                         >
-                            <option value="open">Açık</option>
-                            <option value="in_progress">Devam Ediyor</option>
-                            <option value="completed">Tamamlandı</option>
-                            <option value="ignored">Yoksayıldı</option>
+                            <option value="open">{{ $t('tasks.status_open') }}</option>
+                            <option value="in_progress">{{ $t('tasks.status_in_progress') }}</option>
+                            <option value="completed">{{ $t('tasks.status_completed') }}</option>
+                            <option value="ignored">{{ $t('tasks.status_ignored') }}</option>
                         </select>
                     </div>
                 </div>
@@ -136,44 +136,44 @@ const updateStatus = (task: any, newStatus: string) => {
             <!-- Create Modal -->
             <div v-if="showCreateModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
                 <div class="w-full max-w-md bg-slate-900 border border-slate-800 p-6 rounded-3xl space-y-4 shadow-2xl">
-                    <h2 class="text-base font-bold text-white">Yeni SEO Görevi Ekle</h2>
+                    <h2 class="text-base font-bold text-white">{{ $t('tasks.modal_title') }}</h2>
 
                     <form @submit.prevent="submitTask" class="space-y-3 text-xs">
                         <div>
-                            <label class="block font-semibold text-slate-300 mb-1">Görev Başlığı</label>
+                            <label class="block font-semibold text-slate-300 mb-1">{{ $t('tasks.task_title_label') }}</label>
                             <input
                                 v-model="form.title"
                                 type="text"
                                 required
                                 class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white focus:ring-1 focus:ring-indigo-500"
-                                placeholder="Örn: 404 sayfasına 301 yönlendirmesi yap"
+                                :placeholder="$t('tasks.task_title_placeholder')"
                             />
                         </div>
 
                         <div>
-                            <label class="block font-semibold text-slate-300 mb-1">Açıklama</label>
+                            <label class="block font-semibold text-slate-300 mb-1">{{ $t('tasks.description_label') }}</label>
                             <textarea
                                 v-model="form.description"
                                 rows="3"
                                 class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white focus:ring-1 focus:ring-indigo-500"
-                                placeholder="Yapılacak adımları detaylandırın..."
+                                :placeholder="$t('tasks.description_placeholder')"
                             ></textarea>
                         </div>
 
                         <div class="grid grid-cols-2 gap-3">
                             <div>
-                                <label class="block font-semibold text-slate-300 mb-1">Öncelik</label>
+                                <label class="block font-semibold text-slate-300 mb-1">{{ $t('tasks.priority_label') }}</label>
                                 <select v-model="form.priority" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white">
-                                    <option value="low">Düşük</option>
-                                    <option value="medium">Orta</option>
-                                    <option value="high">Yüksek</option>
-                                    <option value="critical">Kritik</option>
+                                    <option value="low">{{ $t('tasks.priority_low') }}</option>
+                                    <option value="medium">{{ $t('tasks.priority_medium') }}</option>
+                                    <option value="high">{{ $t('tasks.priority_high') }}</option>
+                                    <option value="critical">{{ $t('tasks.priority_critical') }}</option>
                                 </select>
                             </div>
                             <div>
-                                <label class="block font-semibold text-slate-300 mb-1">Sorumlu</label>
+                                <label class="block font-semibold text-slate-300 mb-1">{{ $t('tasks.assignee_label') }}</label>
                                 <select v-model="form.assigned_to" class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white">
-                                    <option :value="null">Atanmadı</option>
+                                    <option :value="null">{{ $t('tasks.unassigned') }}</option>
                                     <option v-for="m in members" :key="m.id" :value="m.id">{{ m.name }}</option>
                                 </select>
                             </div>
@@ -185,14 +185,14 @@ const updateStatus = (task: any, newStatus: string) => {
                                 @click="showCreateModal = false"
                                 class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white"
                             >
-                                Vazgeç
+                                {{ $t('common.cancel') }}
                             </button>
                             <button
                                 type="submit"
                                 :disabled="form.processing"
                                 class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold"
                             >
-                                Kaydet
+                                {{ $t('common.save') }}
                             </button>
                         </div>
                     </form>

@@ -36,7 +36,7 @@ const errorMsg = ref('');
 
 // Editable Title and Description for real-time SERP snippet prototyping
 const customTitle = ref(props.page?.title || props.project.name);
-const customDescription = ref(props.page?.meta_description || 'Sayfa meta açıklaması buraya gelecek...');
+const customDescription = ref(props.page?.meta_description || 'Page meta description will appear here...');
 
 const runLiveAnalysis = async () => {
     isAnalyzing.value = true;
@@ -63,10 +63,10 @@ const runLiveAnalysis = async () => {
             customTitle.value = data.page.title || customTitle.value;
             customDescription.value = data.page.meta_description || customDescription.value;
         } else {
-            errorMsg.value = data.message || 'Analiz başarısız oldu.';
+            errorMsg.value = data.message || 'Analysis failed. Please verify the URL.';
         }
     } catch (e: any) {
-        errorMsg.value = e.message || 'Bağlantı hatası.';
+        errorMsg.value = e.message || 'Connection error.';
     } finally {
         isAnalyzing.value = false;
     }
@@ -74,15 +74,15 @@ const runLiveAnalysis = async () => {
 </script>
 
 <template>
-    <AppLayout :title="`Sayfa İçi SEO & SERP Önizleme - ${project.name}`">
-        <Head :title="`Sayfa İçi SEO & SERP Önizleme - ${project.name}`" />
+    <AppLayout :title="`${$t('onpage.title')} - ${project.name}`">
+        <Head :title="`${$t('onpage.title')} - ${project.name}`" />
 
         <div class="space-y-6">
             <!-- Header -->
             <div>
-                <h1 class="text-2xl font-bold tracking-tight text-white">Sayfa İçi SEO & SERP Simülatörü</h1>
+                <h1 class="text-2xl font-bold tracking-tight text-white">{{ $t('onpage.title') }}</h1>
                 <p class="text-sm text-slate-400 mt-1">
-                    Tekil bir URL'yi canlı analiz edin, Google arama sonuçları önizlemesini test edin ve iç bağlantı önerilerini inceleyin.
+                    {{ $t('onpage.subtitle') }}
                 </p>
             </div>
 
@@ -91,7 +91,7 @@ const runLiveAnalysis = async () => {
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div class="md:col-span-2">
                         <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
-                            İncelenecek Sayfa URL'si
+                            {{ $t('onpage.target_url_label') }}
                         </label>
                         <div class="relative">
                             <input
@@ -99,20 +99,20 @@ const runLiveAnalysis = async () => {
                                 type="url"
                                 required
                                 class="w-full px-4 py-2.5 bg-slate-950/80 border border-slate-800 rounded-xl text-sm text-white font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
-                                placeholder="https://example.com/ornek-sayfa"
+                                :placeholder="$t('onpage.target_url_placeholder')"
                             />
                         </div>
                     </div>
 
                     <div>
                         <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
-                            Odak Anahtar Kelime (İsteğe Bağlı)
+                            {{ $t('onpage.focus_keyword_label') }}
                         </label>
                         <input
                             v-model="focusKeyword"
                             type="text"
                             class="w-full px-4 py-2.5 bg-slate-950/80 border border-slate-800 rounded-xl text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
-                            placeholder="Örn: seo uzmanı"
+                            :placeholder="$t('onpage.focus_keyword_placeholder')"
                         />
                     </div>
                 </div>
@@ -122,7 +122,7 @@ const runLiveAnalysis = async () => {
                         <AlertCircle class="w-4 h-4 shrink-0" />
                         <span>{{ errorMsg }}</span>
                     </span>
-                    <span v-else class="text-xs text-slate-500">SSRF korumalı güvenli tekil analiz motoru</span>
+                    <span v-else class="text-xs text-slate-500">{{ $t('onpage.security_notice') }}</span>
 
                     <button
                         @click="runLiveAnalysis"
@@ -131,7 +131,7 @@ const runLiveAnalysis = async () => {
                     >
                         <RefreshCw v-if="isAnalyzing" class="w-3.5 h-3.5 animate-spin" />
                         <Sparkles v-else class="w-3.5 h-3.5" />
-                        <span>Canlı Analiz Başlat</span>
+                        <span>{{ isAnalyzing ? $t('onpage.analyzing') : $t('onpage.start_analysis') }}</span>
                     </button>
                 </div>
             </div>
@@ -140,7 +140,7 @@ const runLiveAnalysis = async () => {
                 <!-- SERP Google Result Preview Card -->
                 <div class="p-6 rounded-3xl bg-slate-900/50 border border-slate-800/80 space-y-5">
                     <div class="flex items-center justify-between">
-                        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Google SERP Önizlemesi</span>
+                        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">{{ $t('onpage.serp_preview') }}</span>
                         <div class="flex items-center bg-slate-950 rounded-lg p-1 border border-slate-800">
                             <button
                                 @click="previewDevice = 'desktop'"
@@ -159,7 +159,7 @@ const runLiveAnalysis = async () => {
                         </div>
                     </div>
 
-                    <!-- Google Snippet Simulation Box (White background like Google) -->
+                    <!-- Google Snippet Simulation Box -->
                     <div
                         class="p-5 rounded-2xl bg-white text-slate-900 shadow-md font-sans transition-all"
                         :class="previewDevice === 'mobile' ? 'max-w-sm mx-auto' : ''"
@@ -190,31 +190,31 @@ const runLiveAnalysis = async () => {
                     <div class="space-y-3 pt-2">
                         <div>
                             <div class="flex items-center justify-between text-xs mb-1">
-                                <span class="text-slate-400">Başlık Karakter Uzunluğu:</span>
+                                <span class="text-slate-400">{{ $t('onpage.char_length_title') }}</span>
                                 <span :class="customTitle.length > 60 ? 'text-amber-400 font-bold' : 'text-emerald-400'">
-                                    {{ customTitle.length }} / 60 önerilen
+                                    {{ customTitle.length }} / 60
                                 </span>
                             </div>
                             <input
                                 v-model="customTitle"
                                 type="text"
                                 class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white"
-                                placeholder="Başlık metnini test edin..."
+                                :placeholder="$t('onpage.test_title_placeholder')"
                             />
                         </div>
 
                         <div>
                             <div class="flex items-center justify-between text-xs mb-1">
-                                <span class="text-slate-400">Açıklama Karakter Uzunluğu:</span>
+                                <span class="text-slate-400">{{ $t('onpage.char_length_desc') }}</span>
                                 <span :class="customDescription.length > 155 ? 'text-amber-400 font-bold' : 'text-emerald-400'">
-                                    {{ customDescription.length }} / 155 önerilen
+                                    {{ customDescription.length }} / 155
                                 </span>
                             </div>
                             <textarea
                                 v-model="customDescription"
                                 rows="2"
                                 class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white"
-                                placeholder="Meta açıklama metnini test edin..."
+                                :placeholder="$t('onpage.test_desc_placeholder')"
                             ></textarea>
                         </div>
                     </div>
@@ -222,51 +222,51 @@ const runLiveAnalysis = async () => {
 
                 <!-- Focus Keyword & Content Analysis -->
                 <div class="p-6 rounded-3xl bg-slate-900/50 border border-slate-800/80 space-y-5">
-                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">İçerik & Anahtar Kelime Denetimi</span>
+                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">{{ $t('onpage.audit_title') }}</span>
 
                     <div v-if="keywordAnalysis" class="p-4 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 space-y-3 text-xs">
                         <div class="flex items-center justify-between">
-                            <span class="text-slate-400">Odak Kelime:</span>
+                            <span class="text-slate-400">{{ $t('onpage.focus_keyword') }}</span>
                             <span class="font-bold text-white">"{{ keywordAnalysis.keyword }}"</span>
                         </div>
                         <div class="flex items-center justify-between">
-                            <span class="text-slate-400">Sayfada Bulunma:</span>
-                            <span class="font-bold text-white">{{ keywordAnalysis.found_count }} kez</span>
+                            <span class="text-slate-400">{{ $t('onpage.occurrence_count') }}</span>
+                            <span class="font-bold text-white">{{ keywordAnalysis.found_count }}</span>
                         </div>
                         <div class="flex items-center justify-between">
-                            <span class="text-slate-400">Kelime Yoğunluğu (Density):</span>
-                            <span class="font-bold text-indigo-400">%{{ keywordAnalysis.density_percent }}</span>
+                            <span class="text-slate-400">{{ $t('onpage.density') }}</span>
+                            <span class="font-bold text-indigo-400">{{ keywordAnalysis.density_percent }}%</span>
                         </div>
                         <div class="flex items-center justify-between">
-                            <span class="text-slate-400">Başlıkta (Title) Geçiyor mu:</span>
+                            <span class="text-slate-400">{{ $t('onpage.in_title') }}</span>
                             <span :class="keywordAnalysis.in_title ? 'text-emerald-400 font-bold' : 'text-rose-400'">
-                                {{ keywordAnalysis.in_title ? 'Evet ✓' : 'Hayır ✗' }}
+                                {{ keywordAnalysis.in_title ? $t('onpage.yes') : $t('onpage.no') }}
                             </span>
                         </div>
                         <div class="flex items-center justify-between">
-                            <span class="text-slate-400">Meta Açıklamada Geçiyor mu:</span>
+                            <span class="text-slate-400">{{ $t('onpage.in_meta_desc') }}</span>
                             <span :class="keywordAnalysis.in_meta_description ? 'text-emerald-400 font-bold' : 'text-rose-400'">
-                                {{ keywordAnalysis.in_meta_description ? 'Evet ✓' : 'Hayır ✗' }}
+                                {{ keywordAnalysis.in_meta_description ? $t('onpage.yes') : $t('onpage.no') }}
                             </span>
                         </div>
                         <div class="pt-2 border-t border-indigo-500/20 text-slate-300">
-                            <strong>Öneri:</strong> {{ keywordAnalysis.recommendation }}
+                            <strong>{{ $t('onpage.recommendation') }}</strong> {{ keywordAnalysis.recommendation }}
                         </div>
                     </div>
 
                     <div v-else class="p-4 rounded-2xl bg-slate-950/60 border border-slate-850 text-xs text-slate-500 text-center">
-                        Odak anahtar kelime denetimi yapmak için yukarıdaki kutuya bir terim yazıp analizi başlatın.
+                        {{ $t('onpage.empty_keyword_prompt') }}
                     </div>
 
                     <!-- Internal Linking Suggestions -->
                     <div class="space-y-3 pt-2">
                         <div class="flex items-center space-x-2 text-xs font-semibold text-slate-300 uppercase tracking-wider">
                             <Link2 class="w-4 h-4 text-cyan-400" />
-                            <span>İç Bağlantı Önerileri</span>
+                            <span>{{ $t('onpage.internal_links_title') }}</span>
                         </div>
 
                         <div v-if="internalLinkSuggestions.length === 0" class="text-xs text-slate-500">
-                            Bu sayfa için henüz taranmış ilişkili iç bağlantı önerisi bulunmuyor.
+                            {{ $t('onpage.no_internal_links') }}
                         </div>
 
                         <div v-else class="space-y-2">
@@ -276,11 +276,11 @@ const runLiveAnalysis = async () => {
                                 class="p-3 rounded-xl bg-slate-950/60 border border-slate-850 text-xs flex items-center justify-between"
                             >
                                 <div class="truncate mr-2">
-                                    <div class="font-semibold text-white truncate">{{ suggestion.title || 'Başlıksız Sayfa' }}</div>
+                                    <div class="font-semibold text-white truncate">{{ suggestion.title || 'Untitled Page' }}</div>
                                     <div class="text-[11px] text-slate-500 truncate">{{ suggestion.url }}</div>
                                 </div>
                                 <span class="text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 shrink-0">
-                                    İç Link Önerisi
+                                    {{ $t('onpage.internal_link_badge') }}
                                 </span>
                             </div>
                         </div>

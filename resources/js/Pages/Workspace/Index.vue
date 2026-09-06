@@ -38,16 +38,16 @@ const switchWs = (id: number) => {
 </script>
 
 <template>
-    <AppLayout title="Çalışma Alanları">
-        <Head title="Çalışma Alanları" />
+    <AppLayout :title="$t('workspaces.page_title')">
+        <Head :title="$t('workspaces.page_title')" />
 
         <div class="space-y-6">
             <!-- Header -->
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
-                    <h1 class="text-2xl font-bold tracking-tight text-white">Çalışma Alanları (Organizasyonlar)</h1>
+                    <h1 class="text-2xl font-bold tracking-tight text-white">{{ $t('workspaces.title') }}</h1>
                     <p class="text-sm text-slate-400 mt-1">
-                        Projelerinizi ve ekiplerinizi birbirinden tamamen izole çalışma alanlarında yönetin.
+                        {{ $t('workspaces.subtitle') }}
                     </p>
                 </div>
 
@@ -56,7 +56,7 @@ const switchWs = (id: number) => {
                     class="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-md shadow-indigo-600/30 flex items-center space-x-1.5 transition-all"
                 >
                     <Plus class="w-4 h-4" />
-                    <span>Yeni Çalışma Alanı</span>
+                    <span>{{ $t('workspaces.create_button') }}</span>
                 </button>
             </div>
 
@@ -77,7 +77,7 @@ const switchWs = (id: number) => {
                                 v-if="ws.id === currentWorkspace?.id"
                                 class="px-2.5 py-0.5 rounded-full bg-indigo-500/15 text-indigo-400 border border-indigo-500/30 text-[10px] font-bold"
                             >
-                                Aktif Alan
+                                {{ $t('workspaces.active_badge') }}
                             </span>
                         </div>
 
@@ -85,8 +85,8 @@ const switchWs = (id: number) => {
                         <p class="text-xs text-slate-500 font-mono mt-0.5 truncate">{{ ws.slug }}</p>
 
                         <div class="mt-4 pt-4 border-t border-slate-800/60 grid grid-cols-2 gap-2 text-xs text-slate-400">
-                            <div>Projeler: <span class="font-bold text-white">{{ ws.projects_count }}</span></div>
-                            <div>Üyeler: <span class="font-bold text-white">{{ ws.users_count }}</span></div>
+                            <div>{{ $t('workspaces.projects_stat') }} <span class="font-bold text-white">{{ ws.projects_count }}</span></div>
+                            <div>{{ $t('workspaces.members_stat') }} <span class="font-bold text-white">{{ ws.users_count }}</span></div>
                         </div>
                     </div>
 
@@ -96,7 +96,7 @@ const switchWs = (id: number) => {
                             class="text-xs text-slate-400 hover:text-white flex items-center space-x-1"
                         >
                             <Download class="w-3.5 h-3.5" />
-                            <span>Veri Dışa Aktar</span>
+                            <span>{{ $t('workspaces.export_data') }}</span>
                         </a>
 
                         <button
@@ -104,7 +104,7 @@ const switchWs = (id: number) => {
                             @click="switchWs(ws.id)"
                             class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-white"
                         >
-                            Bu Alana Geç
+                            {{ $t('workspaces.switch_button') }}
                         </button>
                     </div>
                 </div>
@@ -113,16 +113,16 @@ const switchWs = (id: number) => {
             <!-- Create Modal -->
             <div v-if="showCreateModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
                 <div class="w-full max-w-md bg-slate-900 border border-slate-800 p-6 rounded-3xl space-y-4 shadow-2xl">
-                    <h2 class="text-base font-bold text-white">Yeni Çalışma Alanı Oluştur</h2>
+                    <h2 class="text-base font-bold text-white">{{ $t('workspaces.modal_title') }}</h2>
                     <form @submit.prevent="submitWorkspace" class="space-y-3 text-xs">
                         <div>
-                            <label class="block font-semibold text-slate-300 mb-1">Çalışma Alanı / Ajans Adı</label>
+                            <label class="block font-semibold text-slate-300 mb-1">{{ $t('workspaces.name_label') }}</label>
                             <input
                                 v-model="form.name"
                                 type="text"
                                 required
                                 class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white"
-                                placeholder="Örn: SEO Ajansım veya Müşteri X"
+                                :placeholder="$t('workspaces.name_placeholder')"
                             />
                         </div>
 
@@ -132,14 +132,14 @@ const switchWs = (id: number) => {
                                 @click="showCreateModal = false"
                                 class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white"
                             >
-                                Vazgeç
+                                {{ $t('common.cancel') }}
                             </button>
                             <button
                                 type="submit"
                                 :disabled="form.processing"
                                 class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold"
                             >
-                                Oluştur
+                                {{ $t('workspaces.create_submit') }}
                             </button>
                         </div>
                     </form>

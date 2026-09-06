@@ -9,6 +9,7 @@ import {
     BarChart3, 
     ArrowRight 
 } from 'lucide-vue-next';
+import LanguageSelector from '@/Components/LanguageSelector.vue';
 
 defineProps<{
     canLogin?: boolean;
@@ -19,7 +20,7 @@ defineProps<{
 </script>
 
 <template>
-    <Head title="Modern & Kapsamlı SEO Platformu" />
+    <Head :title="$t('welcome.page_title')" />
 
     <div class="min-h-screen bg-slate-950 text-slate-100 selection:bg-indigo-500 selection:text-white flex flex-col justify-between">
         <!-- Top Navigation -->
@@ -37,27 +38,29 @@ defineProps<{
                     </span>
                 </div>
 
-                <nav class="flex items-center space-x-4">
+                <nav class="flex items-center space-x-3 sm:space-x-4">
+                    <LanguageSelector placement="bottom" />
+
                     <Link
                         v-if="$page.props.auth?.user"
                         href="/dashboard"
                         class="px-4 py-2 text-sm font-medium rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white transition-all shadow-md shadow-indigo-600/30 flex items-center space-x-1.5"
                     >
-                        <span>Kontrol Paneli</span>
+                        <span>{{ $t('welcome.dashboard_button') }}</span>
                         <ArrowRight class="w-4 h-4" />
                     </Link>
                     <template v-else>
                         <Link
                             href="/login"
-                            class="px-4 py-2 text-sm font-medium text-slate-300 hover:text-white transition-colors"
+                            class="px-3 sm:px-4 py-2 text-sm font-medium text-slate-300 hover:text-white transition-colors"
                         >
-                            Giriş Yap
+                            {{ $t('welcome.login') }}
                         </Link>
                         <Link
                             href="/register"
-                            class="px-4 py-2 text-sm font-medium rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white transition-all shadow-md shadow-indigo-600/30"
+                            class="px-3 sm:px-4 py-2 text-sm font-medium rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white transition-all shadow-md shadow-indigo-600/30"
                         >
-                            Kayıt Ol
+                            {{ $t('welcome.register') }}
                         </Link>
                     </template>
                 </nav>
@@ -69,18 +72,18 @@ defineProps<{
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
                 <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-semibold mb-6">
                     <Zap class="w-3.5 h-3.5" />
-                    <span>Gerçek Zamanlı Teknik SEO & Tarayıcı Motoru</span>
+                    <span>{{ $t('welcome.badge') }}</span>
                 </div>
 
                 <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight max-w-4xl mx-auto leading-tight sm:leading-tight">
-                    Web sitenizin teknik sağlığını <br class="hidden sm:inline" />
+                    {{ $t('welcome.headline_1') }} <br class="hidden sm:inline" />
                     <span class="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-violet-400 to-pink-400">
-                        derinlemesine keşfedin ve yönetin
+                        {{ $t('welcome.headline_gradient') }}
                     </span>
                 </h1>
 
                 <p class="mt-6 text-lg sm:text-xl text-slate-400 max-w-2xl mx-auto font-normal">
-                    Kendi sunucunuzda çalışan, çoklu çalışma alanları (multi-tenant), SSRF korumalı crawler ve 25+ teknik SEO analiz kuralı içeren kurumsal platform.
+                    {{ $t('welcome.description') }}
                 </p>
 
                 <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -88,14 +91,14 @@ defineProps<{
                         href="/register"
                         class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold shadow-lg shadow-indigo-600/25 flex items-center justify-center space-x-2 transition-all transform hover:-translate-y-0.5"
                     >
-                        <span>Hemen Başlayın</span>
+                        <span>{{ $t('welcome.cta_start') }}</span>
                         <ArrowRight class="w-5 h-5" />
                     </Link>
                     <a
                         href="#features"
                         class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-slate-900/80 hover:bg-slate-800 text-slate-300 hover:text-white font-medium border border-slate-800 transition-all"
                     >
-                        Özellikleri Keşfet
+                        {{ $t('welcome.cta_features') }}
                     </a>
                 </div>
 
@@ -105,9 +108,9 @@ defineProps<{
                         <div class="w-12 h-12 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center mb-4">
                             <Search class="w-6 h-6" />
                         </div>
-                        <h3 class="text-lg font-bold text-white mb-2">Güvenli ve Asenkron Tarayıcı</h3>
+                        <h3 class="text-lg font-bold text-white mb-2">{{ $t('welcome.feature1_title') }}</h3>
                         <p class="text-sm text-slate-400 leading-relaxed">
-                            SSRF korumalı, robots.txt ve sitemap indekslerini çözümleyen, concurrency ve hız sınırlamalı gerçek HTTP crawler.
+                            {{ $t('welcome.feature1_desc') }}
                         </p>
                     </div>
 
@@ -115,9 +118,9 @@ defineProps<{
                         <div class="w-12 h-12 rounded-xl bg-violet-500/10 text-violet-400 flex items-center justify-center mb-4">
                             <ShieldCheck class="w-6 h-6" />
                         </div>
-                        <h3 class="text-lg font-bold text-white mb-2">25+ Teknik SEO Analiz Kuralı</h3>
+                        <h3 class="text-lg font-bold text-white mb-2">{{ $t('welcome.feature2_title') }}</h3>
                         <p class="text-sm text-slate-400 leading-relaxed">
-                            Title, meta description, canonical, hiyerarşi, yönlendirme döngüleri, JSON-LD doğrulaması ve şeffaf sağlık skoru.
+                            {{ $t('welcome.feature2_desc') }}
                         </p>
                     </div>
 
@@ -125,9 +128,9 @@ defineProps<{
                         <div class="w-12 h-12 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center mb-4">
                             <Layers class="w-6 h-6" />
                         </div>
-                        <h3 class="text-lg font-bold text-white mb-2">İzole Çalışma Alanları & SaaS</h3>
+                        <h3 class="text-lg font-bold text-white mb-2">{{ $t('welcome.feature3_title') }}</h3>
                         <p class="text-sm text-slate-400 leading-relaxed">
-                            Ekip üyeleri için rol yönetimi, veri izolasyonu ve bağımsız sunucu ya da çok müşterili SaaS desteği.
+                            {{ $t('welcome.feature3_desc') }}
                         </p>
                     </div>
                 </div>

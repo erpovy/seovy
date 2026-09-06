@@ -15,6 +15,7 @@ import {
     Globe,
     AlertCircle
 } from 'lucide-vue-next';
+import LanguageSelector from '@/Components/LanguageSelector.vue';
 
 const props = defineProps<{
     requirements: Record<string, any>;
@@ -26,7 +27,7 @@ const form = useForm({
     setup_key: '',
     app_url: window.location.origin,
     install_mode: 'self_hosted',
-    admin_name: 'Sistem Yöneticisi',
+    admin_name: 'Platform Administrator',
     admin_email: 'admin@seovy.local',
     admin_password: '',
     admin_password_confirmation: '',
@@ -40,18 +41,22 @@ const allRequirementsPassed = Object.values(props.requirements).every((req: any)
 </script>
 
 <template>
-    <Head title="Kurulum Sihirbazı" />
+    <Head title="Installation Wizard - Seovy" />
 
-    <div class="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="min-h-screen bg-slate-950 text-slate-100 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 relative">
+        <div class="absolute top-6 right-6">
+            <LanguageSelector placement="bottom" />
+        </div>
+
         <div class="max-w-2xl mx-auto w-full space-y-8">
             <!-- Brand -->
             <div class="text-center">
                 <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-500 shadow-xl shadow-indigo-600/20 mb-4">
                     <Activity class="w-8 h-8 text-white" />
                 </div>
-                <h1 class="text-3xl font-extrabold text-white tracking-tight">Seovy Kurulum Sihirbazı</h1>
+                <h1 class="text-3xl font-extrabold text-white tracking-tight">Seovy Installation Wizard</h1>
                 <p class="text-sm text-slate-400 mt-2">
-                    Laravel SEO platformunuzu yapılandırın ve ilk yönetici hesabınızı oluşturun.
+                    Configure your technical SEO platform and set up your master administrator account.
                 </p>
             </div>
 
@@ -60,7 +65,7 @@ const allRequirementsPassed = Object.values(props.requirements).every((req: any)
                 <div class="space-y-3">
                     <h2 class="text-sm font-bold text-white uppercase tracking-wider flex items-center space-x-2">
                         <Server class="w-4 h-4 text-indigo-400" />
-                        <span>1. Sunucu ve Sistem Gereksinimleri</span>
+                        <span>1. Server & PHP Requirements</span>
                     </h2>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
@@ -90,10 +95,10 @@ const allRequirementsPassed = Object.values(props.requirements).every((req: any)
                     <!-- Setup Security Key -->
                     <div>
                         <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">
-                            Sunucu Kurulum Güvenlik Anahtarı
+                            Server Installation Security Key
                         </label>
                         <p class="text-[11px] text-slate-400 mb-2">
-                            İzinsiz kurulumları engellemek için sunucunuzdaki <code class="text-indigo-400 font-mono bg-slate-950 px-1.5 py-0.5 rounded">storage/install_key.txt</code> dosyasındaki anahtarı girin.
+                            To prevent unauthorized setups, provide the key from <code class="text-indigo-400 font-mono bg-slate-950 px-1.5 py-0.5 rounded">storage/install_key.txt</code> on your server.
                         </p>
                         <div class="relative">
                             <input
@@ -101,7 +106,7 @@ const allRequirementsPassed = Object.values(props.requirements).every((req: any)
                                 type="text"
                                 required
                                 class="w-full px-4 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white font-mono focus:ring-2 focus:ring-indigo-500/40"
-                                placeholder="32 karakterlik güvenlik anahtarı"
+                                placeholder="32-character installation security key"
                             />
                         </div>
                     </div>
@@ -110,7 +115,7 @@ const allRequirementsPassed = Object.values(props.requirements).every((req: any)
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
-                                Uygulama URL'si
+                                Application URL
                             </label>
                             <input
                                 v-model="form.app_url"
@@ -122,14 +127,14 @@ const allRequirementsPassed = Object.values(props.requirements).every((req: any)
 
                         <div>
                             <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
-                                Kurulum Modu
+                                Deployment Mode
                             </label>
                             <select
                                 v-model="form.install_mode"
                                 class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white"
                             >
-                                <option value="self_hosted">Bağımsız / Kendi Sunucum (Sınırsız)</option>
-                                <option value="saas">Çok Müşterili SaaS (Kota ve Plan Kontrollü)</option>
+                                <option value="self_hosted">Self-Hosted / Single Tenant (Unlimited)</option>
+                                <option value="saas">Multi-Tenant SaaS (Subscription & Limits Controlled)</option>
                             </select>
                         </div>
                     </div>
@@ -138,12 +143,12 @@ const allRequirementsPassed = Object.values(props.requirements).every((req: any)
                     <div class="pt-4 border-t border-slate-800 space-y-4">
                         <h2 class="text-sm font-bold text-white uppercase tracking-wider flex items-center space-x-2">
                             <Shield class="w-4 h-4 text-emerald-400" />
-                            <span>2. Platform Yöneticisi Hesabı</span>
+                            <span>2. Master Administrator Account</span>
                         </h2>
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-xs text-slate-400 mb-1">Yönetici Adı</label>
+                                <label class="block text-xs text-slate-400 mb-1">Admin Full Name</label>
                                 <input
                                     v-model="form.admin_name"
                                     type="text"
@@ -153,7 +158,7 @@ const allRequirementsPassed = Object.values(props.requirements).every((req: any)
                             </div>
 
                             <div>
-                                <label class="block text-xs text-slate-400 mb-1">Yönetici E-Posta</label>
+                                <label class="block text-xs text-slate-400 mb-1">Admin Email Address</label>
                                 <input
                                     v-model="form.admin_email"
                                     type="email"
@@ -165,7 +170,7 @@ const allRequirementsPassed = Object.values(props.requirements).every((req: any)
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-xs text-slate-400 mb-1">Yönetici Parolası (En az 8 karakter)</label>
+                                <label class="block text-xs text-slate-400 mb-1">Password (Min 8 characters)</label>
                                 <input
                                     v-model="form.admin_password"
                                     type="password"
@@ -175,7 +180,7 @@ const allRequirementsPassed = Object.values(props.requirements).every((req: any)
                             </div>
 
                             <div>
-                                <label class="block text-xs text-slate-400 mb-1">Parola Tekrarı</label>
+                                <label class="block text-xs text-slate-400 mb-1">Confirm Password</label>
                                 <input
                                     v-model="form.admin_password_confirmation"
                                     type="password"
@@ -193,7 +198,7 @@ const allRequirementsPassed = Object.values(props.requirements).every((req: any)
                             :disabled="form.processing || !allRequirementsPassed"
                             class="w-full py-3.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold text-sm shadow-xl shadow-indigo-600/30 flex items-center justify-center space-x-2 transition-all disabled:opacity-50"
                         >
-                            <span>Kurulumu Tamamla ve Kilitle</span>
+                            <span>Complete Installation & Lock Setup</span>
                             <ArrowRight class="w-4 h-4" />
                         </button>
                     </div>

@@ -4,14 +4,12 @@ import { Head, Link, useForm, router } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import {
     Globe,
-    Play,
-    Activity,
     ShieldCheck,
-    AlertCircle,
+    Play,
     Search,
     FileText,
-    TrendingUp,
     CheckSquare,
+    TrendingUp,
     FileSpreadsheet,
     Zap,
     ExternalLink,
@@ -49,7 +47,6 @@ const checkLiveStatus = async () => {
             const data = await res.json();
             liveCrawl.value.status = data.status;
             liveCrawl.value.pages_crawled = data.pages_crawled;
-            liveCrawl.value.pages_discovered = data.pages_discovered;
             liveCrawl.value.health_score = data.health_score;
 
             if (data.status === 'completed' || data.status === 'failed') {
@@ -103,7 +100,7 @@ const verifyOwnership = () => {
                             <h1 class="text-2xl font-bold text-white">{{ project.name }}</h1>
                             <span v-if="project.ownership_verified_at" class="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-semibold">
                                 <ShieldCheck class="w-3 h-3" />
-                                <span>Doğrulandı</span>
+                                <span>{{ t('common.verified') }}</span>
                             </span>
                         </div>
                         <div class="flex items-center space-x-3 text-xs text-slate-400 mt-1">
@@ -123,12 +120,12 @@ const verifyOwnership = () => {
                             v-model="crawlForm.max_pages"
                             class="px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
                         >
-                            <option :value="100">100 Sayfa</option>
-                            <option :value="250">250 Sayfa</option>
-                            <option :value="500">500 Sayfa</option>
-                            <option :value="1000">1.000 Sayfa</option>
-                            <option :value="2500">2.500 Sayfa</option>
-                            <option :value="5000">5.000 Sayfa</option>
+                            <option :value="100">100 {{ t('common.pages') }}</option>
+                            <option :value="250">250 {{ t('common.pages') }}</option>
+                            <option :value="500">500 {{ t('common.pages') }}</option>
+                            <option :value="1000">1,000 {{ t('common.pages') }}</option>
+                            <option :value="2500">2,500 {{ t('common.pages') }}</option>
+                            <option :value="5000">5,000 {{ t('common.pages') }}</option>
                         </select>
 
                         <button
@@ -147,11 +144,11 @@ const verifyOwnership = () => {
             <div v-if="!project.ownership_verified_at" class="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div class="space-y-1">
                     <div class="flex items-center space-x-2">
-                        <span class="px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 text-[10px] font-semibold border border-slate-700">{{ t('common.active') }}</span>
-                        <strong class="text-slate-200 font-semibold text-xs">Site Verification</strong>
+                        <span class="px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 text-[10px] font-semibold border border-slate-700">{{ t('projects.verification_badge') }}</span>
+                        <strong class="text-slate-200 font-semibold text-xs">{{ t('projects.verification_title') }}</strong>
                     </div>
                     <p class="text-slate-400 text-[11px] leading-relaxed">
-                        Verification is <strong>optional</strong>. SEO crawling and analysis work automatically. You may install the WordPress plugin or add the meta tag below:
+                        {{ t('projects.verification_desc') }}
                     </p>
                     <div class="pt-0.5">
                         <code class="bg-slate-950 px-2 py-0.5 rounded text-amber-300/90 select-all border border-slate-800 inline-block font-mono text-[11px]">&lt;meta name="seovy-verification" content="{{ project.verification_token }}"&gt;</code>
@@ -161,18 +158,18 @@ const verifyOwnership = () => {
                     <a
                         :href="`/projects/${project.id}/wordpress-plugin`"
                         class="px-3 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 font-medium text-xs transition-all flex items-center space-x-1.5 border border-slate-700"
-                        title="WordPress Plugin"
+                        :title="t('projects.wp_plugin')"
                     >
                         <Download class="w-3.5 h-3.5 text-indigo-400" />
-                        <span>WP Plugin</span>
+                        <span>{{ t('projects.wp_plugin') }}</span>
                     </a>
                     <button
                         @click="verifyOwnership"
                         :disabled="verifyForm.processing"
                         class="px-3.5 py-2 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 font-semibold text-xs transition-all flex items-center space-x-2 disabled:opacity-50"
                     >
-                        <span v-if="verifyForm.processing">{{ t('common.loading') }}</span>
-                        <span v-else>{{ t('common.confirm') }}</span>
+                        <span v-if="verifyForm.processing">{{ t('projects.checking') }}</span>
+                        <span v-else>{{ t('projects.verification_title') }}</span>
                     </button>
                 </div>
             </div>
@@ -186,7 +183,7 @@ const verifyOwnership = () => {
                 >
                     <Search class="w-5 h-5 text-violet-400 mx-auto mb-1.5 group-hover:scale-110 transition-transform" />
                     <span class="text-xs font-semibold text-white block">{{ t('projects.technical_tab') }}</span>
-                    <span class="text-[10px] text-slate-500">{{ latestCrawl.pages_crawled }} {{ t('projects.pages_crawled') }}</span>
+                    <span class="text-[10px] text-slate-500">{{ t('projects.pages_unit', { count: latestCrawl.pages_crawled }) }}</span>
                 </Link>
 
                 <Link
@@ -212,8 +209,8 @@ const verifyOwnership = () => {
                     class="p-4 rounded-2xl bg-slate-900/40 border border-slate-800/80 hover:border-slate-700 text-center transition-all group"
                 >
                     <CheckSquare class="w-5 h-5 text-amber-400 mx-auto mb-1.5 group-hover:scale-110 transition-transform" />
-                    <span class="text-xs font-semibold text-white block">SEO Tasks</span>
-                    <span class="text-[10px] text-slate-500">Action Plan</span>
+                    <span class="text-xs font-semibold text-white block">{{ t('tasks.title') }}</span>
+                    <span class="text-[10px] text-slate-500">{{ t('common.active') }}</span>
                 </Link>
 
                 <Link
@@ -222,7 +219,7 @@ const verifyOwnership = () => {
                 >
                     <TrendingUp class="w-5 h-5 text-emerald-400 mx-auto mb-1.5 group-hover:scale-110 transition-transform" />
                     <span class="text-xs font-semibold text-white block">{{ t('nav.rank_keywords') }}</span>
-                    <span class="text-[10px] text-slate-500">Rankings</span>
+                    <span class="text-[10px] text-slate-500">{{ t('keywords.title') }}</span>
                 </Link>
 
                 <Link
@@ -230,7 +227,7 @@ const verifyOwnership = () => {
                     class="p-4 rounded-2xl bg-slate-900/40 border border-slate-800/80 hover:border-slate-700 text-center transition-all group"
                 >
                     <FileSpreadsheet class="w-5 h-5 text-pink-400 mx-auto mb-1.5 group-hover:scale-110 transition-transform" />
-                    <span class="text-xs font-semibold text-white block">{{ t('nav.management_report') }}</span>
+                    <span class="text-xs font-semibold text-white block">{{ t('reports.title') }}</span>
                     <span class="text-[10px] text-slate-500">PDF / CSV</span>
                 </Link>
             </div>
@@ -241,7 +238,7 @@ const verifyOwnership = () => {
                     <!-- Health Score Dial Card -->
                     <div class="p-6 rounded-3xl bg-slate-900/50 border border-slate-800/80 flex flex-col justify-between">
                         <div>
-                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Site Sağlık Skoru</span>
+                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">{{ t('projects.site_health') }}</span>
                             <div class="mt-4 flex items-center space-x-4">
                                 <div
                                     class="w-20 h-20 rounded-2xl flex items-center justify-center font-extrabold text-3xl shadow-xl"
@@ -251,38 +248,38 @@ const verifyOwnership = () => {
                                 </div>
                                 <div>
                                     <div class="text-sm font-bold text-white">
-                                        {{ latestCrawl.health_score >= 80 ? 'Harika Performans' : 'Kritik Düzeltmeler Gerekli' }}
+                                        {{ latestCrawl.health_score >= 80 ? t('common.completed') : t('common.critical') }}
                                     </div>
                                     <div class="text-xs text-slate-400 mt-0.5">
-                                        {{ latestCrawl.pages_crawled }} sayfa analiz edildi.
+                                        {{ t('projects.pages_analyzed', { count: latestCrawl.pages_crawled }) }}
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         <div class="mt-6 pt-4 border-t border-slate-800 text-xs text-slate-500">
-                            Sağlık skoru 25+ teknik SEO kuralı ve ceza puanı formülüyle hesaplanmıştır.
+                            {{ t('projects.health_score_calc') }}
                         </div>
                     </div>
 
                     <!-- Issues Breakdown (Severity) -->
                     <div class="p-6 rounded-3xl bg-slate-900/50 border border-slate-800/80 lg:col-span-2">
-                        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-4 block">Tespit Edilen Sorun Dağılımı</span>
+                        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-4 block">{{ t('projects.issues_distribution') }}</span>
 
                         <div class="grid grid-cols-3 gap-4">
                             <div class="p-4 rounded-2xl bg-rose-500/5 border border-rose-500/20 text-center">
                                 <span class="text-2xl font-extrabold text-rose-400">{{ findingsSummary.critical ?? 0 }}</span>
-                                <span class="block text-xs font-semibold text-rose-300 mt-1">Kritik Hatalar</span>
+                                <span class="block text-xs font-semibold text-rose-300 mt-1">{{ t('projects.critical_errors') }}</span>
                             </div>
 
                             <div class="p-4 rounded-2xl bg-amber-500/5 border border-amber-500/20 text-center">
                                 <span class="text-2xl font-extrabold text-amber-400">{{ findingsSummary.warning ?? 0 }}</span>
-                                <span class="block text-xs font-semibold text-amber-300 mt-1">Uyarılar</span>
+                                <span class="block text-xs font-semibold text-amber-300 mt-1">{{ t('projects.warnings') }}</span>
                             </div>
 
                             <div class="p-4 rounded-2xl bg-indigo-500/5 border border-indigo-500/20 text-center">
                                 <span class="text-2xl font-extrabold text-indigo-400">{{ findingsSummary.notice ?? 0 }}</span>
-                                <span class="block text-xs font-semibold text-indigo-300 mt-1">Öneriler</span>
+                                <span class="block text-xs font-semibold text-indigo-300 mt-1">{{ t('projects.recommendations') }}</span>
                             </div>
                         </div>
 
@@ -297,7 +294,7 @@ const verifyOwnership = () => {
                 </div>
             </div>
 
-            <!-- Live Active Crawl Progress Banner (when crawl is running or pending) -->
+            <!-- Live Active Crawl Progress Banner -->
             <div
                 v-if="liveCrawl && (liveCrawl.status === 'running' || liveCrawl.status === 'pending')"
                 class="p-6 rounded-3xl bg-indigo-950/40 border border-indigo-500/30 shadow-2xl relative overflow-hidden"
@@ -309,28 +306,28 @@ const verifyOwnership = () => {
                         <div class="flex items-center space-x-3">
                             <div class="w-3 h-3 rounded-full bg-indigo-500 animate-ping"></div>
                             <span class="text-xs font-bold uppercase tracking-wider text-indigo-400">
-                                {{ liveCrawl.status === 'running' ? 'Canlı SEO Taraması Sürüyor' : 'Tarama Başlatılıyor...' }}
+                                {{ liveCrawl.status === 'running' ? t('projects.live_crawl_title') : t('projects.live_crawl_starting') }}
                             </span>
                             <span class="px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 text-[11px] font-mono">
-                                Tarama #{{ liveCrawl.id }}
+                                #{{ liveCrawl.id }}
                             </span>
                         </div>
                         <h3 class="text-lg font-bold text-white">
-                            {{ project.domain }} sayfaları derinlemesine analiz ediliyor
+                            {{ project.domain }}
                         </h3>
                         <p class="text-xs text-slate-400">
-                            HTTP yanıt kodları, meta etiketleri, başlık hiyerarşisi, canonical bağlantıları ve 25+ teknik kural gerçek zamanlı denetleniyor.
+                            {{ t('projects.live_crawl_desc', { domain: project.domain }) }}
                         </p>
                     </div>
 
                     <div class="flex items-center space-x-6 bg-slate-900/80 px-5 py-3 rounded-2xl border border-slate-800 shrink-0">
                         <div class="text-center">
-                            <span class="text-[10px] text-slate-500 uppercase font-semibold block">Taranan</span>
+                            <span class="text-[10px] text-slate-500 uppercase font-semibold block">{{ t('projects.pages_crawled') }}</span>
                             <span class="text-xl font-black text-white font-mono">{{ liveCrawl.pages_crawled }}</span>
                         </div>
                         <div class="w-px h-8 bg-slate-800"></div>
                         <div class="text-center">
-                            <span class="text-[10px] text-slate-500 uppercase font-semibold block">Hedef Limit</span>
+                            <span class="text-[10px] text-slate-500 uppercase font-semibold block">{{ t('projects.target_limit') }}</span>
                             <span class="text-xl font-black text-slate-400 font-mono">{{ liveCrawl.max_pages }}</span>
                         </div>
                         <div class="w-px h-8 bg-slate-800"></div>
@@ -338,7 +335,7 @@ const verifyOwnership = () => {
                             :href="`/projects/${project.id}/crawls/${liveCrawl.id}`"
                             class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs transition-all flex items-center space-x-1.5 shadow-lg shadow-indigo-600/30"
                         >
-                            <span>Canlı İzle</span>
+                            <span>{{ t('projects.watch_live') }}</span>
                             <ChevronRight class="w-4 h-4" />
                         </Link>
                     </div>
@@ -358,28 +355,28 @@ const verifyOwnership = () => {
                 <div class="flex items-center justify-between">
                     <h2 class="text-lg font-bold text-white flex items-center space-x-2">
                         <Clock class="w-5 h-5 text-slate-400" />
-                        <span>Geçmiş Taramalar</span>
+                        <span>{{ t('projects.history_title') }}</span>
                     </h2>
                     <span v-if="crawls.length > 0" class="text-xs text-slate-500">
-                        Toplam {{ crawls.length }} denetim kaydı
+                        {{ t('projects.history_total', { count: crawls.length }) }}
                     </span>
                 </div>
 
                 <div v-if="crawls.length === 0" class="p-8 rounded-3xl bg-slate-900/40 border border-slate-800 text-center text-xs text-slate-500">
-                    Henüz hiçbir tarama yapılmadı. Yukarıdaki butondan ilk taramayı başlatabilirsiniz.
+                    {{ t('projects.no_crawls_yet') }}
                 </div>
 
                 <div v-else class="rounded-3xl bg-slate-900/50 border border-slate-800/80 overflow-hidden">
                     <table class="w-full text-left text-xs">
                         <thead class="bg-slate-950/60 text-slate-400 border-b border-slate-800">
                             <tr>
-                                <th class="p-4">Tarama ID</th>
-                                <th class="p-4">Durum</th>
-                                <th class="p-4">Taranan Sayfa</th>
-                                <th class="p-4">Sağlık Skoru</th>
-                                <th class="p-4">Süre</th>
-                                <th class="p-4">Tarih</th>
-                                <th class="p-4 text-right">Eylem</th>
+                                <th class="p-4">{{ t('projects.crawl_id') }}</th>
+                                <th class="p-4">{{ t('common.status') }}</th>
+                                <th class="p-4">{{ t('projects.pages_crawled') }}</th>
+                                <th class="p-4">{{ t('projects.health_score') }}</th>
+                                <th class="p-4">{{ t('common.duration') }}</th>
+                                <th class="p-4">{{ t('common.date') }}</th>
+                                <th class="p-4 text-right">{{ t('common.actions') }}</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-800/60">
@@ -400,14 +397,14 @@ const verifyOwnership = () => {
                                     </span>
                                     <span v-else class="text-slate-500">—</span>
                                 </td>
-                                <td class="p-4 text-slate-400">{{ crawl.duration_seconds }} sn</td>
-                                <td class="p-4 text-slate-400">{{ new Date(crawl.created_at).toLocaleString('tr-TR') }}</td>
+                                <td class="p-4 text-slate-400">{{ crawl.duration_seconds }} {{ t('common.seconds') }}</td>
+                                <td class="p-4 text-slate-400">{{ new Date(crawl.created_at).toLocaleDateString() }}</td>
                                 <td class="p-4 text-right">
                                     <Link
                                         :href="`/projects/${project.id}/crawls/${crawl.id}`"
                                         class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-indigo-400 font-semibold text-xs transition-colors"
                                     >
-                                        Detay
+                                        {{ t('common.details') }}
                                     </Link>
                                 </td>
                             </tr>

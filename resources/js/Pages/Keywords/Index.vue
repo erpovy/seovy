@@ -66,8 +66,8 @@ const checkRankings = () => {
 </script>
 
 <template>
-    <AppLayout :title="`Sıra Takibi - ${project.name}`">
-        <Head :title="`Sıra Takibi - ${project.name}`" />
+    <AppLayout :title="`${$t('keywords.title')} - ${project.name}`">
+        <Head :title="`${$t('keywords.title')} - ${project.name}`" />
 
         <div class="space-y-6">
             <!-- Header -->
@@ -77,9 +77,9 @@ const checkRankings = () => {
                         <ArrowLeft class="w-4 h-4" />
                     </Link>
                     <div>
-                        <h1 class="text-xl sm:text-2xl font-bold text-white">Anahtar Kelime Sıra Takibi</h1>
+                        <h1 class="text-xl sm:text-2xl font-bold text-white">{{ $t('keywords.title') }}</h1>
                         <p class="text-xs text-slate-400 mt-0.5">
-                            Google arama pozisyonları ve geçmiş sıralama değişimleri ({{ keywords.total }} kelime).
+                            {{ $t('keywords.subtitle', { total: keywords.total }) }}
                         </p>
                     </div>
                 </div>
@@ -90,7 +90,7 @@ const checkRankings = () => {
                         class="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white text-xs font-semibold flex items-center space-x-1.5 transition-all"
                     >
                         <Upload class="w-3.5 h-3.5 text-indigo-400" />
-                        <span>CSV İçe Aktar</span>
+                        <span>{{ $t('keywords.import_csv') }}</span>
                     </button>
 
                     <button
@@ -98,7 +98,7 @@ const checkRankings = () => {
                         class="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-md shadow-indigo-600/30 flex items-center space-x-1.5 transition-all"
                     >
                         <Plus class="w-3.5 h-3.5" />
-                        <span>Kelime Ekle</span>
+                        <span>{{ $t('keywords.add_keyword') }}</span>
                     </button>
 
                     <button
@@ -106,7 +106,7 @@ const checkRankings = () => {
                         class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold flex items-center space-x-1.5 transition-all"
                     >
                         <RefreshCw class="w-3.5 h-3.5" />
-                        <span>Sıralamaları Kontrol Et</span>
+                        <span>{{ $t('keywords.refresh_rankings') }}</span>
                     </button>
                 </div>
             </div>
@@ -114,32 +114,32 @@ const checkRankings = () => {
             <!-- Provider Status Banner -->
             <div class="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 flex items-center justify-between text-xs">
                 <div class="flex items-center space-x-2">
-                    <span class="text-slate-400">Aktif SERP Sağlayıcı:</span>
+                    <span class="text-slate-400">{{ $t('keywords.active_provider') }}</span>
                     <span class="font-bold text-white">{{ providerName }}</span>
                     <span
                         class="px-2 py-0.5 rounded-full text-[10px] font-semibold"
                         :class="providerConfigured ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'"
                     >
-                        {{ providerConfigured ? 'Aktif' : 'Harici API Yok (Lokal/CSV Modu)' }}
+                        {{ providerConfigured ? $t('keywords.external_api_active') : $t('keywords.external_api_none') }}
                     </span>
                 </div>
                 <div v-if="!providerConfigured" class="text-slate-500 hidden sm:block">
-                    Gerçek API anahtarı olmadan sahte veri gösterilmez; CSV içe aktarımını kullanabilirsiniz.
+                    {{ $t('keywords.no_api_desc') }}
                 </div>
             </div>
 
             <!-- Keywords Table -->
             <div v-if="keywords.data.length === 0" class="p-12 rounded-3xl bg-slate-900/40 border border-slate-800 text-center text-xs text-slate-500">
                 <TrendingUp class="w-12 h-12 text-slate-600 mx-auto mb-3" />
-                <h3 class="text-sm font-semibold text-white">Henüz izlenen anahtar kelime yok</h3>
+                <h3 class="text-sm font-semibold text-white">{{ $t('keywords.no_keywords') }}</h3>
                 <p class="text-xs text-slate-400 max-w-sm mx-auto mt-1 mb-4">
-                    Sitenizin arama performansını takip etmek için hedef kelimelerinizi ekleyin veya CSV yükleyin.
+                    {{ $t('keywords.no_keywords_desc') }}
                 </p>
                 <button
                     @click="showAddModal = true"
                     class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs"
                 >
-                    + İlk Kelimeyi Ekle
+                    {{ $t('keywords.add_first_keyword') }}
                 </button>
             </div>
 
@@ -147,12 +147,12 @@ const checkRankings = () => {
                 <table class="w-full text-left text-xs">
                     <thead class="bg-slate-950/60 text-slate-400 border-b border-slate-800">
                         <tr>
-                            <th class="p-4">Anahtar Kelime</th>
-                            <th class="p-4">Mevcut Sıra</th>
-                            <th class="p-4">Değişim</th>
-                            <th class="p-4">Arama Hacmi</th>
-                            <th class="p-4">Hedef Sayfa</th>
-                            <th class="p-4 text-right">Eylem</th>
+                            <th class="p-4">{{ $t('keywords.keyword') }}</th>
+                            <th class="p-4">{{ $t('keywords.current_rank') }}</th>
+                            <th class="p-4">{{ $t('keywords.change') }}</th>
+                            <th class="p-4">{{ $t('keywords.search_volume') }}</th>
+                            <th class="p-4">{{ $t('keywords.target_url') }}</th>
+                            <th class="p-4 text-right">{{ $t('keywords.action') }}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-800/60">
@@ -186,7 +186,7 @@ const checkRankings = () => {
                                     as="button"
                                     class="text-rose-400 hover:text-rose-300 font-semibold text-xs"
                                 >
-                                    Sil
+                                    {{ $t('keywords.delete') }}
                                 </Link>
                             </td>
                         </tr>
@@ -197,25 +197,25 @@ const checkRankings = () => {
             <!-- Add Keyword Modal -->
             <div v-if="showAddModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
                 <div class="w-full max-w-md bg-slate-900 border border-slate-800 p-6 rounded-3xl space-y-4 shadow-2xl">
-                    <h2 class="text-base font-bold text-white">Yeni Anahtar Kelime Ekle</h2>
+                    <h2 class="text-base font-bold text-white">{{ $t('keywords.add_modal_title') }}</h2>
                     <form @submit.prevent="submitAdd" class="space-y-3 text-xs">
                         <div>
-                            <label class="block font-semibold text-slate-300 mb-1">Anahtar Kelime</label>
+                            <label class="block font-semibold text-slate-300 mb-1">{{ $t('keywords.keyword_label') }}</label>
                             <input
                                 v-model="addForm.keyword"
                                 type="text"
                                 required
                                 class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white"
-                                placeholder="Örn: istanbul diş kliniği"
+                                :placeholder="$t('keywords.keyword_placeholder')"
                             />
                         </div>
                         <div>
-                            <label class="block font-semibold text-slate-300 mb-1">Hedef Sayfa URL'si (Opsiyonel)</label>
+                            <label class="block font-semibold text-slate-300 mb-1">{{ $t('keywords.target_url_label') }}</label>
                             <input
                                 v-model="addForm.target_url"
                                 type="url"
                                 class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white font-mono"
-                                placeholder="https://example.com/hizmetler"
+                                :placeholder="$t('keywords.target_url_placeholder')"
                             />
                         </div>
                         <div class="pt-3 flex items-center justify-end space-x-2">
@@ -224,14 +224,14 @@ const checkRankings = () => {
                                 @click="showAddModal = false"
                                 class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white"
                             >
-                                Vazgeç
+                                {{ $t('common.cancel') }}
                             </button>
                             <button
                                 type="submit"
                                 :disabled="addForm.processing"
                                 class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold"
                             >
-                                Ekle
+                                {{ $t('common.save') }}
                             </button>
                         </div>
                     </form>
@@ -241,9 +241,9 @@ const checkRankings = () => {
             <!-- Import CSV Modal -->
             <div v-if="showImportModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
                 <div class="w-full max-w-md bg-slate-900 border border-slate-800 p-6 rounded-3xl space-y-4 shadow-2xl">
-                    <h2 class="text-base font-bold text-white">CSV İle Toplu Kelime İçe Aktar</h2>
+                    <h2 class="text-base font-bold text-white">{{ $t('keywords.import_modal_title') }}</h2>
                     <p class="text-xs text-slate-400">
-                        Format: İlk sütun kelime, ikinci sütun pozisyon (opsiyonel), üçüncü sütun arama hacmi (opsiyonel).
+                        {{ $t('keywords.import_modal_desc') }}
                     </p>
                     <form @submit.prevent="submitImport" class="space-y-4 text-xs">
                         <input
@@ -259,14 +259,14 @@ const checkRankings = () => {
                                 @click="showImportModal = false"
                                 class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white"
                             >
-                                Vazgeç
+                                {{ $t('common.cancel') }}
                             </button>
                             <button
                                 type="submit"
                                 :disabled="importForm.processing"
                                 class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold"
                             >
-                                İçe Aktar
+                                {{ $t('keywords.import_button') }}
                             </button>
                         </div>
                     </form>
