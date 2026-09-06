@@ -22,6 +22,9 @@ import {
     Sparkles,
     Bot
 } from 'lucide-vue-next';
+import { useI18n } from '@/i18n';
+
+const { t } = useI18n();
 
 const props = defineProps<{
     project: any;
@@ -134,7 +137,7 @@ const verifyOwnership = () => {
                             class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-lg shadow-indigo-600/30 flex items-center space-x-2 transition-all disabled:opacity-50 shrink-0"
                         >
                             <Play class="w-4 h-4 fill-white" />
-                            <span>Tarama Başlat</span>
+                            <span>{{ t('projects.start_crawl') }}</span>
                         </button>
                     </form>
                 </div>
@@ -144,11 +147,11 @@ const verifyOwnership = () => {
             <div v-if="!project.ownership_verified_at" class="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div class="space-y-1">
                     <div class="flex items-center space-x-2">
-                        <span class="px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 text-[10px] font-semibold border border-slate-700">İsteğe Bağlı</span>
-                        <strong class="text-slate-200 font-semibold text-xs">Site Sahipliği Doğrulaması</strong>
+                        <span class="px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 text-[10px] font-semibold border border-slate-700">{{ t('common.active') }}</span>
+                        <strong class="text-slate-200 font-semibold text-xs">Site Verification</strong>
                     </div>
                     <p class="text-slate-400 text-[11px] leading-relaxed">
-                        SEO taraması ve analizleri çalıştırmak için doğrulama <strong>zorunlu değildir</strong>. İsterseniz resmi mülkiyet rozeti için WordPress eklentimizi kurabilir veya meta etiketini ekleyebilirsiniz:
+                        Verification is <strong>optional</strong>. SEO crawling and analysis work automatically. You may install the WordPress plugin or add the meta tag below:
                     </p>
                     <div class="pt-0.5">
                         <code class="bg-slate-950 px-2 py-0.5 rounded text-amber-300/90 select-all border border-slate-800 inline-block font-mono text-[11px]">&lt;meta name="seovy-verification" content="{{ project.verification_token }}"&gt;</code>
@@ -158,18 +161,18 @@ const verifyOwnership = () => {
                     <a
                         :href="`/projects/${project.id}/wordpress-plugin`"
                         class="px-3 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 font-medium text-xs transition-all flex items-center space-x-1.5 border border-slate-700"
-                        title="İsteğe bağlı WordPress eklentisi"
+                        title="WordPress Plugin"
                     >
                         <Download class="w-3.5 h-3.5 text-indigo-400" />
-                        <span>WP Eklentisi</span>
+                        <span>WP Plugin</span>
                     </a>
                     <button
                         @click="verifyOwnership"
                         :disabled="verifyForm.processing"
                         class="px-3.5 py-2 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 font-semibold text-xs transition-all flex items-center space-x-2 disabled:opacity-50"
                     >
-                        <span v-if="verifyForm.processing">Kontrol Ediliyor...</span>
-                        <span v-else>Doğrula</span>
+                        <span v-if="verifyForm.processing">{{ t('common.loading') }}</span>
+                        <span v-else>{{ t('common.confirm') }}</span>
                     </button>
                 </div>
             </div>
@@ -182,8 +185,8 @@ const verifyOwnership = () => {
                     class="p-4 rounded-2xl bg-slate-900/40 border border-slate-800/80 hover:border-slate-700 text-center transition-all group"
                 >
                     <Search class="w-5 h-5 text-violet-400 mx-auto mb-1.5 group-hover:scale-110 transition-transform" />
-                    <span class="text-xs font-semibold text-white block">Teknik Tarama</span>
-                    <span class="text-[10px] text-slate-500">{{ latestCrawl.pages_crawled }} sayfa</span>
+                    <span class="text-xs font-semibold text-white block">{{ t('projects.technical_tab') }}</span>
+                    <span class="text-[10px] text-slate-500">{{ latestCrawl.pages_crawled }} {{ t('projects.pages_crawled') }}</span>
                 </Link>
 
                 <Link
@@ -191,7 +194,7 @@ const verifyOwnership = () => {
                     class="p-4 rounded-2xl bg-gradient-to-b from-fuchsia-950/30 to-slate-900/40 border border-fuchsia-500/30 hover:border-fuchsia-500/60 text-center transition-all group shadow-lg shadow-fuchsia-500/5"
                 >
                     <Sparkles class="w-5 h-5 text-fuchsia-400 mx-auto mb-1.5 group-hover:scale-110 transition-transform" />
-                    <span class="text-xs font-bold text-white block">AI Bulunurluğu</span>
+                    <span class="text-xs font-bold text-white block">{{ t('projects.ai_readiness_tab') }}</span>
                     <span class="text-[10px] text-fuchsia-400">GEO & LLM</span>
                 </Link>
 
@@ -200,8 +203,8 @@ const verifyOwnership = () => {
                     class="p-4 rounded-2xl bg-slate-900/40 border border-slate-800/80 hover:border-slate-700 text-center transition-all group"
                 >
                     <FileText class="w-5 h-5 text-cyan-400 mx-auto mb-1.5 group-hover:scale-110 transition-transform" />
-                    <span class="text-xs font-semibold text-white block">Sayfa İçi & SERP</span>
-                    <span class="text-[10px] text-slate-500">Önizleme & Kelime</span>
+                    <span class="text-xs font-semibold text-white block">{{ t('nav.onpage_serp') }}</span>
+                    <span class="text-[10px] text-slate-500">SERP</span>
                 </Link>
 
                 <Link
@@ -209,8 +212,8 @@ const verifyOwnership = () => {
                     class="p-4 rounded-2xl bg-slate-900/40 border border-slate-800/80 hover:border-slate-700 text-center transition-all group"
                 >
                     <CheckSquare class="w-5 h-5 text-amber-400 mx-auto mb-1.5 group-hover:scale-110 transition-transform" />
-                    <span class="text-xs font-semibold text-white block">SEO Görevleri</span>
-                    <span class="text-[10px] text-slate-500">Eylem Planı</span>
+                    <span class="text-xs font-semibold text-white block">SEO Tasks</span>
+                    <span class="text-[10px] text-slate-500">Action Plan</span>
                 </Link>
 
                 <Link
@@ -218,8 +221,8 @@ const verifyOwnership = () => {
                     class="p-4 rounded-2xl bg-slate-900/40 border border-slate-800/80 hover:border-slate-700 text-center transition-all group"
                 >
                     <TrendingUp class="w-5 h-5 text-emerald-400 mx-auto mb-1.5 group-hover:scale-110 transition-transform" />
-                    <span class="text-xs font-semibold text-white block">Sıra & Kelimeler</span>
-                    <span class="text-[10px] text-slate-500">Pozisyon Takibi</span>
+                    <span class="text-xs font-semibold text-white block">{{ t('nav.rank_keywords') }}</span>
+                    <span class="text-[10px] text-slate-500">Rankings</span>
                 </Link>
 
                 <Link
@@ -227,7 +230,7 @@ const verifyOwnership = () => {
                     class="p-4 rounded-2xl bg-slate-900/40 border border-slate-800/80 hover:border-slate-700 text-center transition-all group"
                 >
                     <FileSpreadsheet class="w-5 h-5 text-pink-400 mx-auto mb-1.5 group-hover:scale-110 transition-transform" />
-                    <span class="text-xs font-semibold text-white block">Raporlar & Dışa Aktar</span>
+                    <span class="text-xs font-semibold text-white block">{{ t('nav.management_report') }}</span>
                     <span class="text-[10px] text-slate-500">PDF / CSV</span>
                 </Link>
             </div>

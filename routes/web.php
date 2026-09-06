@@ -149,3 +149,6 @@ Route::middleware('auth')->group(function () {
 
 // Stripe Webhook (CSRF exempt handled in bootstrap/app.php)
 Route::post('/webhooks/stripe', [SubscriptionController::class, 'handleWebhook'])->name('webhooks.stripe');
+
+// Multi-Language Locale Switcher
+Route::post('/locale/{locale}', [\App\Http\Controllers\LocaleController::class, 'update'])->name('locale.update');

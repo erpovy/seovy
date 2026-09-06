@@ -7,10 +7,7 @@ import {
     Globe,
     Search,
     FileText,
-    CheckSquare,
     TrendingUp,
-    Zap,
-    Download,
     CreditCard,
     Users,
     Shield,
@@ -22,9 +19,10 @@ import {
     AlertCircle,
     CheckCircle2,
     Info,
-    ExternalLink,
     Sparkles
 } from 'lucide-vue-next';
+import LanguageSelector from '@/Components/LanguageSelector.vue';
+import { useI18n } from '@/i18n';
 
 defineProps<{
     title?: string;
@@ -33,6 +31,7 @@ defineProps<{
 const page = usePage();
 const auth = page.props.auth as any;
 const flash = page.props.flash as any;
+const { t } = useI18n();
 
 const mobileMenuOpen = ref(false);
 const workspaceDropdownOpen = ref(false);
@@ -64,7 +63,7 @@ const switchWorkspace = (workspaceId: number) => {
                         </span>
                     </Link>
                     <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
-                        {{ auth.current_workspace?.role ?? 'Üye' }}
+                        {{ auth.current_workspace?.role ?? t('nav.member') }}
                     </span>
                 </div>
 
@@ -74,7 +73,7 @@ const switchWorkspace = (workspaceId: number) => {
                         @click="workspaceDropdownOpen = !workspaceDropdownOpen"
                         class="w-full flex items-center justify-between px-3 py-2 text-xs font-medium rounded-lg bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 transition-all text-slate-300"
                     >
-                        <span class="truncate">{{ auth.current_workspace?.name ?? 'Çalışma Alanı Seç' }}</span>
+                        <span class="truncate">{{ auth.current_workspace?.name ?? t('nav.select_workspace') }}</span>
                         <ChevronDown class="w-3.5 h-3.5 text-slate-400 ml-1 shrink-0" />
                     </button>
 
@@ -84,7 +83,7 @@ const switchWorkspace = (workspaceId: number) => {
                         class="absolute left-2 right-2 mt-1 py-1 rounded-xl bg-slate-900 border border-slate-800 shadow-2xl z-50 text-xs space-y-0.5"
                     >
                         <div class="px-3 py-1.5 font-semibold text-slate-500 uppercase tracking-wider text-[10px]">
-                            Çalışma Alanlarım
+                            {{ t('nav.my_workspaces') }}
                         </div>
                         <button
                             v-for="ws in auth.workspaces"
@@ -102,7 +101,7 @@ const switchWorkspace = (workspaceId: number) => {
                             class="block px-3 py-1.5 text-indigo-400 hover:text-indigo-300 font-medium"
                             @click="workspaceDropdownOpen = false"
                         >
-                            + Yeni Çalışma Alanı
+                            {{ t('nav.new_workspace') }}
                         </Link>
                     </div>
                 </div>
@@ -115,7 +114,7 @@ const switchWorkspace = (workspaceId: number) => {
                         :class="$page.url.startsWith('/dashboard') ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30' : 'text-slate-400 hover:text-white hover:bg-slate-800/40'"
                     >
                         <LayoutDashboard class="w-4 h-4" />
-                        <span>Kontrol Paneli</span>
+                        <span>{{ t('nav.dashboard') }}</span>
                     </Link>
 
                     <Link
@@ -124,11 +123,11 @@ const switchWorkspace = (workspaceId: number) => {
                         :class="$page.url.startsWith('/projects') && !$page.url.includes('/keywords') && !$page.url.includes('/reports') && !$page.url.includes('/integrations') && !$page.url.includes('/tasks') && !$page.url.includes('/on-page') ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30' : 'text-slate-400 hover:text-white hover:bg-slate-800/40'"
                     >
                         <Globe class="w-4 h-4" />
-                        <span>Web Siteleri</span>
+                        <span>{{ t('nav.websites') }}</span>
                     </Link>
 
                     <div class="pt-2 pb-1 px-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-                        SEO Çalışma Alanı
+                        {{ t('nav.seo_workspace') }}
                     </div>
 
                     <Link
@@ -137,7 +136,7 @@ const switchWorkspace = (workspaceId: number) => {
                         class="flex items-center space-x-3 px-3 py-2 rounded-xl text-xs font-medium transition-all text-slate-400 hover:text-white hover:bg-slate-800/40"
                     >
                         <Search class="w-4 h-4 text-violet-400" />
-                        <span>Teknik Tarayıcı</span>
+                        <span>{{ t('nav.technical_crawler') }}</span>
                     </Link>
 
                     <Link
@@ -145,7 +144,7 @@ const switchWorkspace = (workspaceId: number) => {
                         class="flex items-center space-x-3 px-3 py-2 rounded-xl text-xs font-medium transition-all text-slate-400 hover:text-white hover:bg-slate-800/40"
                     >
                         <FileText class="w-4 h-4 text-cyan-400" />
-                        <span>Sayfa İçi & SERP</span>
+                        <span>{{ t('nav.onpage_serp') }}</span>
                     </Link>
 
                     <Link
@@ -153,11 +152,11 @@ const switchWorkspace = (workspaceId: number) => {
                         class="flex items-center space-x-3 px-3 py-2 rounded-xl text-xs font-medium transition-all text-slate-400 hover:text-white hover:bg-slate-800/40"
                     >
                         <TrendingUp class="w-4 h-4 text-emerald-400" />
-                        <span>Sıra & Anahtar Kelime</span>
+                        <span>{{ t('nav.rank_keywords') }}</span>
                     </Link>
 
                     <div class="pt-2 pb-1 px-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-                        Yönetim & Rapor
+                        {{ t('nav.management_report') }}
                     </div>
 
                     <Link
@@ -167,7 +166,7 @@ const switchWorkspace = (workspaceId: number) => {
                         :class="$page.url.includes('/members') ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white hover:bg-slate-800/40'"
                     >
                         <Users class="w-4 h-4" />
-                        <span>Ekip & Roller</span>
+                        <span>{{ t('nav.team_roles') }}</span>
                     </Link>
 
                     <Link
@@ -176,7 +175,7 @@ const switchWorkspace = (workspaceId: number) => {
                         :class="$page.url.startsWith('/billing') ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white hover:bg-slate-800/40'"
                     >
                         <CreditCard class="w-4 h-4 text-amber-400" />
-                        <span>Plan & Abonelik</span>
+                        <span>{{ t('nav.plan_billing') }}</span>
                     </Link>
 
                     <!-- Platform Admin Link -->
@@ -186,13 +185,19 @@ const switchWorkspace = (workspaceId: number) => {
                         class="flex items-center space-x-3 px-3 py-2 rounded-xl text-xs font-medium transition-all text-pink-400 hover:text-pink-300 hover:bg-pink-500/10 border border-pink-500/20"
                     >
                         <Shield class="w-4 h-4" />
-                        <span>Sistem Yönetimi</span>
+                        <span>{{ t('nav.system_admin') }}</span>
                     </Link>
                 </nav>
             </div>
 
-            <!-- User footer -->
-            <div class="border-t border-slate-800/80 pt-4 px-2 relative">
+            <!-- Footer: Language Selector & User Profile -->
+            <div class="border-t border-slate-800/80 pt-3 px-2 space-y-2 relative">
+                <!-- Language Selector (Dropdown opens upwards) -->
+                <div>
+                    <LanguageSelector placement="top" />
+                </div>
+
+                <!-- User Profile Button -->
                 <button
                     @click="userDropdownOpen = !userDropdownOpen"
                     class="w-full flex items-center justify-between p-2 rounded-xl hover:bg-slate-800/60 transition-colors text-left"
@@ -220,7 +225,7 @@ const switchWorkspace = (workspaceId: number) => {
                         @click="userDropdownOpen = false"
                     >
                         <UserIcon class="w-3.5 h-3.5" />
-                        <span>Profil Ayarları</span>
+                        <span>{{ t('nav.profile_settings') }}</span>
                     </Link>
                     <div class="border-t border-slate-800 my-1"></div>
                     <Link
@@ -230,7 +235,7 @@ const switchWorkspace = (workspaceId: number) => {
                         class="w-full text-left flex items-center space-x-2 px-3 py-2 hover:bg-rose-500/10 text-rose-400 transition-colors"
                     >
                         <LogOut class="w-3.5 h-3.5" />
-                        <span>Çıkış Yap</span>
+                        <span>{{ t('nav.logout') }}</span>
                     </Link>
                 </div>
             </div>
@@ -246,14 +251,69 @@ const switchWorkspace = (workspaceId: number) => {
                     </div>
                     <span class="font-bold text-lg text-white">Seovy</span>
                 </Link>
-                <button
-                    @click="mobileMenuOpen = !mobileMenuOpen"
-                    class="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-white"
-                >
-                    <Menu v-if="!mobileMenuOpen" class="w-5 h-5" />
-                    <X v-else class="w-5 h-5" />
-                </button>
+
+                <div class="flex items-center space-x-2">
+                    <LanguageSelector compact placement="bottom" />
+                    <button
+                        @click="mobileMenuOpen = !mobileMenuOpen"
+                        class="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-white"
+                    >
+                        <Menu v-if="!mobileMenuOpen" class="w-5 h-5" />
+                        <X v-else class="w-5 h-5" />
+                    </button>
+                </div>
             </header>
+
+            <!-- Mobile Menu Drawer -->
+            <div
+                v-if="mobileMenuOpen"
+                class="md:hidden bg-slate-900/95 border-b border-slate-800 p-4 space-y-3 z-30"
+            >
+                <nav class="space-y-1">
+                    <Link
+                        href="/dashboard"
+                        class="flex items-center space-x-3 px-3 py-2 rounded-xl text-sm font-medium text-slate-300 hover:bg-slate-800"
+                        @click="mobileMenuOpen = false"
+                    >
+                        <LayoutDashboard class="w-4 h-4" />
+                        <span>{{ t('nav.dashboard') }}</span>
+                    </Link>
+                    <Link
+                        href="/projects"
+                        class="flex items-center space-x-3 px-3 py-2 rounded-xl text-sm font-medium text-slate-300 hover:bg-slate-800"
+                        @click="mobileMenuOpen = false"
+                    >
+                        <Globe class="w-4 h-4" />
+                        <span>{{ t('nav.websites') }}</span>
+                    </Link>
+                    <Link
+                        href="/billing"
+                        class="flex items-center space-x-3 px-3 py-2 rounded-xl text-sm font-medium text-slate-300 hover:bg-slate-800"
+                        @click="mobileMenuOpen = false"
+                    >
+                        <CreditCard class="w-4 h-4" />
+                        <span>{{ t('nav.plan_billing') }}</span>
+                    </Link>
+                    <Link
+                        href="/profile"
+                        class="flex items-center space-x-3 px-3 py-2 rounded-xl text-sm font-medium text-slate-300 hover:bg-slate-800"
+                        @click="mobileMenuOpen = false"
+                    >
+                        <UserIcon class="w-4 h-4" />
+                        <span>{{ t('nav.profile_settings') }}</span>
+                    </Link>
+                    <Link
+                        href="/logout"
+                        method="post"
+                        as="button"
+                        class="w-full text-left flex items-center space-x-3 px-3 py-2 rounded-xl text-sm font-medium text-rose-400 hover:bg-rose-500/10"
+                        @click="mobileMenuOpen = false"
+                    >
+                        <LogOut class="w-4 h-4" />
+                        <span>{{ t('nav.logout') }}</span>
+                    </Link>
+                </nav>
+            </div>
 
             <!-- Flash Notifications -->
             <div v-if="flash.success || flash.error || flash.info" class="p-4 pb-0 max-w-7xl mx-auto w-full">

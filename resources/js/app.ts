@@ -3,6 +3,7 @@ import '../css/app.css';
 
 import { createApp, h, DefineComponent } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
+import { i18nPlugin } from './i18n';
 
 const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Seovy';
 
@@ -19,6 +20,7 @@ createInertiaApp({
     setup({ el, App, props, plugin }) {
         createApp({ render: () => h(App, props) })
             .use(plugin)
+            .use(i18nPlugin)
             .mount(el);
     },
     progress: {
