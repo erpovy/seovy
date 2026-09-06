@@ -20,7 +20,7 @@ class ProcessCrawlJob implements ShouldQueue
 
     public function __construct(public Crawl $crawl)
     {
-        $this->onQueue('crawls');
+        // Use default queue
     }
 
     public function handle(CrawlService $crawlService): void
