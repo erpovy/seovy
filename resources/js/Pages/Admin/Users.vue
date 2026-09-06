@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import {
@@ -24,7 +24,13 @@ import {
     Check,
     Copy,
     Tag,
-    BarChart3
+    BarChart3,
+    CheckSquare,
+    FileText,
+    CreditCard,
+    Filter,
+    ArrowUpRight,
+    Laptop
 } from 'lucide-vue-next';
 import { useI18n } from '@/i18n';
 
@@ -61,6 +67,8 @@ const activeTab = ref<'users' | 'system' | 'logs'>(props.filters.tab || 'users')
 const searchQuery = ref(props.filters.search || '');
 const currentFilter = ref(props.filters.filter || 'all');
 const selectedUser = ref<any>(null);
+const selectedLog = ref<any>(null);
+const logCategoryFilter = ref<string>('all');
 const copySuccess = ref(false);
 
 let searchTimeout: any = null;
@@ -146,15 +154,123 @@ const getUserProjects = (user: any) => {
     return projects;
 };
 
-const formatUrlDisplay = (url?: string) => {
-    if (!url) return '';
-    try {
-        const u = new URL(url);
-        return u.hostname + (u.pathname === '/' ? '' : u.pathname);
-    } catch (e) {
-        return url;
+// Human-readable mapping for Audit Log Actions
+const getActionMeta = (action: string) => {
+    const fullKey = `admin.action_${action.replace(/\./g, '_')}`;
+    const translated = (t as any)(fullKey);
+    const hasTranslation = translated && !translated.startsWith('admin.');
+
+    if (action.startsWith('auth.') || action.startsWith('profile.')) {
+        const isDestructive = action.includes('deleted') || action.includes('terminated') || action.includes('disabled');
+        return {
+            label: hasTranslation ? translated : action,
+            color: isDestructive ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20' : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20',
+            badgeText: t('admin.filter_auth_logs'),
+            icon: Shield,
+        };
     }
+    if (action.startsWith('project.')) {
+        return {
+            label: hasTranslation ? translated : action,
+            color: action.includes('deleted') ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20' : 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20',
+            badgeText: t('admin.filter_project_logs'),
+            icon: Globe,
+        };
+    }
+    if (action.startsWith('crawl.')) {
+        return {
+            label: hasTranslation ? translated : action,
+            color: action.includes('cancelled') ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20' : 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20',
+            badgeText: t('admin.filter_crawl_logs'),
+            icon: Activity,
+        };
+    }
+    if (action.startsWith('workspace.')) {
+        return {
+            label: hasTranslation ? translated : action,
+            color: action.includes('deleted') || action.includes('removed') ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20' : 'bg-violet-500/10 text-violet-400 border border-violet-500/20',
+            badgeText: t('admin.filter_workspace_logs'),
+            icon: Briefcase,
+        };
+    }
+    if (action.startsWith('task.')) {
+        return {
+            label: hasTranslation ? translated : action,
+            color: action.includes('deleted') ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20' : 'bg-amber-500/10 text-amber-400 border border-amber-500/20',
+            badgeText: 'SEO Görevi',
+            icon: CheckSquare,
+        };
+    }
+    if (action.startsWith('keyword.') || action.startsWith('keywords.')) {
+        return {
+            label: hasTranslation ? translated : action,
+            color: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20',
+            badgeText: 'Sıra Takibi',
+            icon: Tag,
+        };
+    }
+    if (action.startsWith('report.')) {
+        return {
+            label: hasTranslation ? translated : action,
+            color: 'bg-slate-800 text-slate-300 border border-slate-700',
+            badgeText: 'Rapor',
+            icon: FileText,
+        };
+    }
+    if (action.startsWith('billing.')) {
+        return {
+            label: hasTranslation ? translated : action,
+            color: 'bg-amber-500/10 text-amber-400 border border-amber-500/20',
+            badgeText: 'Abonelik',
+            icon: CreditCard,
+        };
+    }
+
+    return {
+        label: hasTranslation ? translated : action,
+        color: 'bg-slate-800 text-slate-300 border border-slate-700',
+        badgeText: 'Sistem',
+        icon: Activity,
+    };
 };
+
+// Formatted details summary
+const formatLogDetails = (log: any) => {
+    const d = log.details || log.meta || {};
+    const items: Array<{ label: string; value: string; isLink?: boolean }> = [];
+
+    if (d.domain) items.push({ label: 'Domain', value: d.domain, isLink: true });
+    if (d.start_url) items.push({ label: 'Başlangıç URL', value: d.start_url, isLink: true });
+    if (d.url && !d.start_url) items.push({ label: 'URL', value: d.url, isLink: true });
+    if (d.name) items.push({ label: 'Ad', value: d.name });
+    if (d.title) items.push({ label: 'Başlık', value: d.title });
+    if (d.keyword) items.push({ label: 'Kelime', value: d.keyword });
+    if (d.email) items.push({ label: 'E-Posta', value: d.email });
+    if (d.new_plan) items.push({ label: 'Plan', value: d.new_plan });
+    if (d.role) items.push({ label: 'Rol', value: d.role });
+    if (d.pages_crawled !== undefined) items.push({ label: 'Sayfa', value: `${d.pages_crawled} sayfa` });
+    if (d.health_score !== undefined && d.health_score !== null) items.push({ label: 'Sağlık', value: `%${d.health_score}` });
+    if (d.count !== undefined) items.push({ label: 'Adet', value: `${d.count}` });
+    if (d.method) items.push({ label: 'Yöntem', value: d.method });
+    if (d.provider) items.push({ label: 'Sağlayıcı', value: d.provider });
+
+    return items;
+};
+
+// Filtered logs by category
+const filteredAuditLogs = computed(() => {
+    if (!props.recentLogs) return [];
+    if (logCategoryFilter.value === 'all') return props.recentLogs;
+
+    return props.recentLogs.filter((log: any) => {
+        if (logCategoryFilter.value === 'auth') return log.action?.startsWith('auth.') || log.action?.startsWith('profile.');
+        if (logCategoryFilter.value === 'project') return log.action?.startsWith('project.');
+        if (logCategoryFilter.value === 'crawl') return log.action?.startsWith('crawl.');
+        if (logCategoryFilter.value === 'workspace') return log.action?.startsWith('workspace.');
+        if (logCategoryFilter.value === 'task') return log.action?.startsWith('task.') || log.action?.startsWith('keyword');
+        return true;
+    });
+});
 </script>
 
 <template>
@@ -235,7 +351,7 @@ const formatUrlDisplay = (url?: string) => {
                     :class="activeTab === 'logs' ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30' : 'text-slate-400 hover:text-white bg-slate-900/60'"
                 >
                     <Clock class="w-3.5 h-3.5" />
-                    <span>{{ $t('admin.tab_audit_logs') }}</span>
+                    <span>{{ $t('admin.tab_audit_logs') }} ({{ recentLogs.length }})</span>
                 </button>
             </div>
 
@@ -553,34 +669,194 @@ const formatUrlDisplay = (url?: string) => {
                 </div>
             </div>
 
-            <!-- Tab 3: Audit Logs -->
+            <!-- Tab 3: Audit Logs (Human Readable with Categories & Details) -->
             <div v-else-if="activeTab === 'logs'" class="space-y-4">
+                <!-- Log Category Filter Pills -->
+                <div class="flex items-center flex-wrap gap-1.5 text-xs bg-slate-900/40 p-3 rounded-2xl border border-slate-800/80">
+                    <button
+                        @click="logCategoryFilter = 'all'"
+                        class="px-3 py-1.5 rounded-lg border transition-all"
+                        :class="logCategoryFilter === 'all' ? 'bg-indigo-600 text-white border-indigo-500 font-semibold shadow-sm' : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-white'"
+                    >
+                        {{ $t('admin.filter_all_logs') }} ({{ recentLogs.length }})
+                    </button>
+                    <button
+                        @click="logCategoryFilter = 'auth'"
+                        class="px-3 py-1.5 rounded-lg border transition-all flex items-center space-x-1.5"
+                        :class="logCategoryFilter === 'auth' ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 font-semibold' : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-emerald-400'"
+                    >
+                        <Shield class="w-3.5 h-3.5" />
+                        <span>{{ $t('admin.filter_auth_logs') }}</span>
+                    </button>
+                    <button
+                        @click="logCategoryFilter = 'project'"
+                        class="px-3 py-1.5 rounded-lg border transition-all flex items-center space-x-1.5"
+                        :class="logCategoryFilter === 'project' ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40 font-semibold' : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-cyan-400'"
+                    >
+                        <Globe class="w-3.5 h-3.5" />
+                        <span>{{ $t('admin.filter_project_logs') }}</span>
+                    </button>
+                    <button
+                        @click="logCategoryFilter = 'crawl'"
+                        class="px-3 py-1.5 rounded-lg border transition-all flex items-center space-x-1.5"
+                        :class="logCategoryFilter === 'crawl' ? 'bg-indigo-500/20 text-indigo-300 border-indigo-500/40 font-semibold' : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-indigo-400'"
+                    >
+                        <Activity class="w-3.5 h-3.5" />
+                        <span>{{ $t('admin.filter_crawl_logs') }}</span>
+                    </button>
+                    <button
+                        @click="logCategoryFilter = 'workspace'"
+                        class="px-3 py-1.5 rounded-lg border transition-all flex items-center space-x-1.5"
+                        :class="logCategoryFilter === 'workspace' ? 'bg-violet-500/20 text-violet-300 border-violet-500/40 font-semibold' : 'bg-slate-900 text-slate-400 border-slate-800 hover:text-violet-400'"
+                    >
+                        <Briefcase class="w-3.5 h-3.5" />
+                        <span>{{ $t('admin.filter_workspace_logs') }}</span>
+                    </button>
+                </div>
+
+                <!-- Logs Table -->
                 <div class="rounded-3xl bg-slate-900/50 border border-slate-800/80 overflow-hidden">
-                    <table class="w-full text-left text-xs">
-                        <thead class="bg-slate-950/60 text-slate-400 border-b border-slate-800">
-                            <tr>
-                                <th class="p-4">{{ $t('common.date') }}</th>
-                                <th class="p-4">{{ $t('members.user_th') }}</th>
-                                <th class="p-4">{{ $t('common.action') }}</th>
-                                <th class="p-4">{{ $t('common.details') }}</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-800/60">
-                            <tr v-if="recentLogs.length === 0">
-                                <td colspan="4" class="p-8 text-center text-slate-500">Kayıtlı log bulunamadı.</td>
-                            </tr>
-                            <tr v-for="log in recentLogs" :key="log.id" class="hover:bg-slate-800/30 transition-colors">
-                                <td class="p-4 text-slate-400 font-mono">{{ new Date(log.created_at).toLocaleString() }}</td>
-                                <td class="p-4 font-bold text-white">{{ log.user?.name || 'System' }}</td>
-                                <td class="p-4">
-                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-slate-800 text-slate-300">
-                                        {{ log.action }}
-                                    </span>
-                                </td>
-                                <td class="p-4 text-slate-400 font-mono text-[11px] truncate max-w-xs">{{ JSON.stringify(log.meta) }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-950/70 text-slate-400 border-b border-slate-800 font-semibold uppercase tracking-wider text-[11px]">
+                                <tr>
+                                    <th class="p-4 w-44">{{ $t('common.date') }}</th>
+                                    <th class="p-4 w-48">{{ $t('members.user_th') }}</th>
+                                    <th class="p-4 w-72">{{ $t('common.action') }}</th>
+                                    <th class="p-4 w-40">{{ $t('admin.col_workspace') }}</th>
+                                    <th class="p-4 min-w-[240px]">{{ $t('common.details') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-800/60">
+                                <tr v-if="filteredAuditLogs.length === 0">
+                                    <td colspan="5" class="p-12 text-center text-slate-500">
+                                        <Clock class="w-8 h-8 mx-auto mb-2 text-slate-600" />
+                                        <div>{{ $t('admin.no_logs_found') }}</div>
+                                    </td>
+                                </tr>
+                                <tr
+                                    v-for="log in filteredAuditLogs"
+                                    :key="log.id"
+                                    class="hover:bg-slate-800/30 transition-colors group"
+                                >
+                                    <!-- Date -->
+                                    <td class="p-4 text-slate-400 font-mono align-top whitespace-nowrap">
+                                        <div class="text-white font-medium">{{ new Date(log.created_at).toLocaleDateString() }}</div>
+                                        <div class="text-[10px] text-slate-500">{{ new Date(log.created_at).toLocaleTimeString() }}</div>
+                                    </td>
+
+                                    <!-- User -->
+                                    <td class="p-4 align-top">
+                                        <div class="font-bold text-white text-xs flex items-center space-x-1.5">
+                                            <div class="w-5 h-5 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-[10px] font-bold text-indigo-400 shrink-0">
+                                                {{ log.user?.name ? log.user.name.charAt(0).toUpperCase() : 'S' }}
+                                            </div>
+                                            <span class="truncate">{{ log.user?.name || 'Sistem / Otomatik' }}</span>
+                                        </div>
+                                        <div v-if="log.user?.email" class="text-[10px] text-slate-500 truncate mt-0.5 ml-6.5">
+                                            {{ log.user.email }}
+                                        </div>
+                                        <div v-if="log.ip_address" class="text-[9px] font-mono text-slate-600 mt-1 ml-6.5">
+                                            IP: {{ log.ip_address }}
+                                        </div>
+                                    </td>
+
+                                    <!-- Action (Human-Readable + Badge + Icon) -->
+                                    <td class="p-4 align-top">
+                                        <div class="space-y-1">
+                                            <div class="flex items-center space-x-2">
+                                                <!-- Category Badge -->
+                                                <span
+                                                    class="inline-flex items-center space-x-1 px-2 py-0.5 rounded-md text-[10px] font-bold"
+                                                    :class="getActionMeta(log.action).color"
+                                                >
+                                                    <component :is="getActionMeta(log.action).icon" class="w-3 h-3 flex-shrink-0" />
+                                                    <span>{{ getActionMeta(log.action).badgeText }}</span>
+                                                </span>
+                                            </div>
+
+                                            <!-- Clear Descriptive Title -->
+                                            <div class="font-semibold text-white text-xs leading-snug">
+                                                {{ getActionMeta(log.action).label }}
+                                            </div>
+
+                                            <!-- Technical Slug -->
+                                            <div class="text-[10px] font-mono text-slate-500 truncate">
+                                                {{ log.action }}
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <!-- Workspace -->
+                                    <td class="p-4 align-top text-xs text-slate-300">
+                                        <div v-if="log.workspace" class="flex items-center space-x-1 font-medium truncate" :title="log.workspace.name">
+                                            <Briefcase class="w-3 h-3 text-emerald-400 flex-shrink-0" />
+                                            <span class="truncate">{{ log.workspace.name }}</span>
+                                        </div>
+                                        <span v-else class="text-slate-500 italic text-[11px]">Genel Sistem</span>
+                                    </td>
+
+                                    <!-- Details (Formatted Badges & Values) -->
+                                    <td class="p-4 align-top">
+                                        <div v-if="formatLogDetails(log).length > 0" class="flex flex-wrap gap-1.5 items-center">
+                                            <div
+                                                v-for="(item, idx) in formatLogDetails(log)"
+                                                :key="idx"
+                                                class="inline-flex items-center space-x-1 px-2 py-1 rounded-lg bg-slate-950 border border-slate-800 text-[11px]"
+                                            >
+                                                <span class="text-slate-500 font-medium">{{ item.label }}:</span>
+                                                <span class="text-slate-200 font-mono font-semibold truncate max-w-[200px]" :title="item.value">
+                                                    {{ item.value }}
+                                                </span>
+                                            </div>
+
+                                            <button
+                                                v-if="log.details || log.meta"
+                                                @click="selectedLog = log"
+                                                class="px-2 py-0.5 rounded text-[10px] text-slate-500 hover:text-white bg-slate-800 hover:bg-slate-700 transition-colors"
+                                                title="Ham Veri"
+                                            >
+                                                JSON
+                                            </button>
+                                        </div>
+
+                                        <div v-else-if="log.resource_type" class="text-[11px] text-slate-400 font-mono">
+                                            {{ log.resource_type }} #{{ log.resource_id }}
+                                        </div>
+
+                                        <span v-else class="text-slate-600 text-xs italic">—</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Raw Log Details Modal -->
+        <div
+            v-if="selectedLog"
+            class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm transition-all"
+            @click.self="selectedLog = null"
+        >
+            <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl">
+                <div class="p-5 border-b border-slate-800 flex items-center justify-between">
+                    <div>
+                        <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Denetim Günlüğü Ham Verisi</div>
+                        <h4 class="font-bold text-white text-sm mt-0.5">{{ getActionMeta(selectedLog.action).label }}</h4>
+                    </div>
+                    <button @click="selectedLog = null" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white">
+                        <X class="w-4 h-4" />
+                    </button>
+                </div>
+                <div class="p-5 space-y-4 max-h-[60vh] overflow-y-auto">
+                    <pre class="text-xs font-mono text-slate-300 bg-slate-950 p-4 rounded-xl border border-slate-800 overflow-x-auto whitespace-pre-wrap">{{ JSON.stringify(selectedLog.details || selectedLog.meta || {}, null, 2) }}</pre>
+                </div>
+                <div class="p-4 border-t border-slate-800 bg-slate-950/40 flex justify-end">
+                    <button @click="selectedLog = null" class="px-4 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold">
+                        {{ $t('common.close') }}
+                    </button>
                 </div>
             </div>
         </div>

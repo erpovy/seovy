@@ -37,7 +37,7 @@ class AdminController extends Controller
         }
 
         $failedJobsCount = DB::table('failed_jobs')->count();
-        $recentAuditLogs = AuditLog::with('user:id,name,email')->latest()->take(25)->get();
+        $recentAuditLogs = AuditLog::with(['user:id,name,email', 'workspace:id,name'])->latest()->take(50)->get();
 
         $stats = [
             'total_users' => User::count(),
