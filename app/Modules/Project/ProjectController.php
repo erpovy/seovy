@@ -208,12 +208,17 @@ class ProjectController extends Controller
         // If not verified by DNS, check HTML Meta tag on homepage
         if (!$verified) {
             try {
-                $response = \Illuminate\Support\Facades\Http::timeout(10)->get($project->start_url);
+                $response = \Illuminate\Support\Facades\Http::timeout(10)
+                    ->withHeaders([
+                        'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) SeovyVerification/1.0',
+                    ])
+                    ->get($project->start_url);
+
                 if ($response->successful() && str_contains($response->body(), $expectedToken)) {
                     $verified = true;
                     $methodUsed = 'HTML Meta Etiketi';
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 // Ignore network errors during verification check
             }
         }
@@ -224,11 +229,9 @@ class ProjectController extends Controller
 
             AuditLog::log('project.ownership_verified', 'Project', $project->id, ['method' => $methodUsed]);
 
-            return back()->with('success', "Site sahipliği {$methodUsed} ile başarıyla doğrulandı!");
+            return back()->with('success', "Tebrikler! Site sahipliği {$methodUsed} ile başarıyla doğrulandı.");
         }
 
-        return back()->withErrors([
-            'verification' => "Doğrulama başarısız. Lütfen DNS TXT kaydınızı veya sitenizin <head> bölümüne <meta name=\"seovy-verification\" content=\"{$expectedToken}\"> etiketini eklediğinizden emin olun.",
-        ]);
+        return back()->with('error', "Doğrulama başarısız! Lütfen sitenizin <head> kısmına <meta name=\"seovy-verification\" content=\"{$expectedToken}\"> etiketini eklediğinizden veya DNS TXT kaydını oluşturduğunuzdan emin olun.");
     }
 }

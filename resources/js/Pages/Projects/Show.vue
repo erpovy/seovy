@@ -98,9 +98,10 @@ const verifyOwnership = () => {
                 <button
                     @click="verifyOwnership"
                     :disabled="verifyForm.processing"
-                    class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shrink-0 transition-all"
+                    class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shrink-0 transition-all flex items-center space-x-2 disabled:opacity-50"
                 >
-                    Şimdi Doğrula
+                    <span v-if="verifyForm.processing">Doğrulanıyor...</span>
+                    <span v-else>Şimdi Doğrula</span>
                 </button>
             </div>
 
