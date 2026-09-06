@@ -80,8 +80,11 @@ class CrawlController extends Controller
 
         $crawl->loadCount(['pages', 'findings']);
 
-        // Findings query with category and severity filters
-        $findingsQuery = $crawl->findings()->with('page:id,url,title');
+        // Findings query with category and severity filters, plus eager-loaded page & tasks
+        $findingsQuery = $crawl->findings()->with([
+            'page:id,url,title,status_code',
+            'tasks:id,seo_finding_id',
+        ]);
 
         if ($request->filled('severity')) {
             $findingsQuery->where('severity', $request->severity);
@@ -95,7 +98,12 @@ class CrawlController extends Controller
             $search = $request->search;
             $findingsQuery->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
-                  ->orWhere('rule_code', 'like', "%{$search}%");
+                  ->orWhere('rule_code', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%")
+                  ->orWhereHas('page', function ($pq) use ($search) {
+                      $pq->where('url', 'like', "%{$search}%")
+                         ->orWhere('title', 'like', "%{$search}%");
+                  });
             });
         }
 
