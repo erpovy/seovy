@@ -153,3 +153,45 @@ Route::post('/webhooks/stripe', [SubscriptionController::class, 'handleWebhook']
 
 // Multi-Language Locale Switcher
 Route::post('/locale/{locale}', [\App\Http\Controllers\LocaleController::class, 'update'])->name('locale.update');
+
+// Static Asset Fallback (ensures Vite chunks and manifest load even if web server rewrites to index.php)
+Route::get('/build/assets/{file}', function ($file) {
+    $path = public_path('build/assets/' . $file);
+    if (!file_exists($path)) {
+        if (str_ends_with($file, '.js')) {
+            $files = glob(public_path('build/assets/*.js'));
+            if (!empty($files)) {
+                usort($files, fn($a, $b) => filemtime($b) - filemtime($a));
+                $path = $files[0];
+            }
+        } elseif (str_ends_with($file, '.css')) {
+            $files = glob(public_path('build/assets/*.css'));
+            if (!empty($files)) {
+                usort($files, fn($a, $b) => filemtime($b) - filemtime($a));
+                $path = $files[0];
+            }
+        }
+    }
+
+    if ($path && file_exists($path)) {
+        $mime = str_ends_with($path, '.js') ? 'application/javascript' : (str_ends_with($path, '.css') ? 'text/css' : 'application/octet-stream');
+        return response()->file($path, [
+            'Content-Type' => $mime,
+            'Cache-Control' => 'public, max-age=31536000',
+        ]);
+    }
+
+    abort(404);
+})->where('file', '.*');
+
+Route::get('/build/manifest.json', function () {
+    $path = public_path('build/manifest.json');
+    if (file_exists($path)) {
+        return response()->file($path, [
+            'Content-Type' => 'application/json',
+            'Cache-Control' => 'no-cache, private',
+        ]);
+    }
+    abort(404);
+});
+
