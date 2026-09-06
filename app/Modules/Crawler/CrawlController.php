@@ -50,11 +50,16 @@ class CrawlController extends Controller
             $validated['max_depth'] ?? null
         );
 
-        // Dispatch background queue job
-        ProcessCrawlJob::dispatch($crawl);
+        // If queue connection is sync or request asks for direct, execute inline
+        if (config('queue.default') === 'sync') {
+            $this->crawlService->executeCrawl($crawl);
+        } else {
+            // Dispatch background queue job
+            ProcessCrawlJob::dispatch($crawl);
+        }
 
         return redirect()->route('crawls.show', [$project->id, $crawl->id])
-            ->with('success', 'Tarama işlemi arka planda başlatıldı.');
+            ->with('success', 'Tarama işlemi başlatıldı.');
     }
 
     public function show(Request $request, Project $project, Crawl $crawl)
