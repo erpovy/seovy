@@ -229,12 +229,73 @@ const verifyOwnership = () => {
                 </div>
             </div>
 
+            <!-- Live Active Crawl Progress Banner (when crawl is running or pending) -->
+            <div
+                v-if="latestCrawl && (latestCrawl.status === 'running' || latestCrawl.status === 'pending')"
+                class="p-6 rounded-3xl bg-indigo-950/40 border border-indigo-500/30 shadow-2xl relative overflow-hidden"
+            >
+                <div class="absolute inset-0 bg-gradient-to-r from-indigo-500/10 via-violet-500/10 to-transparent pointer-events-none"></div>
+
+                <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div class="space-y-2">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-3 h-3 rounded-full bg-indigo-500 animate-ping"></div>
+                            <span class="text-xs font-bold uppercase tracking-wider text-indigo-400">
+                                {{ latestCrawl.status === 'running' ? 'Canlı SEO Taraması Sürüyor' : 'Tarama Başlatılıyor...' }}
+                            </span>
+                            <span class="px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 text-[11px] font-mono">
+                                Tarama #{{ latestCrawl.id }}
+                            </span>
+                        </div>
+                        <h3 class="text-lg font-bold text-white">
+                            {{ project.domain }} sayfaları derinlemesine analiz ediliyor
+                        </h3>
+                        <p class="text-xs text-slate-400">
+                            HTTP yanıt kodları, meta etiketleri, başlık hiyerarşisi, canonical bağlantıları ve 25+ teknik kural gerçek zamanlı denetleniyor.
+                        </p>
+                    </div>
+
+                    <div class="flex items-center space-x-6 bg-slate-900/80 px-5 py-3 rounded-2xl border border-slate-800 shrink-0">
+                        <div class="text-center">
+                            <span class="text-[10px] text-slate-500 uppercase font-semibold block">Taranan</span>
+                            <span class="text-xl font-black text-white font-mono">{{ latestCrawl.pages_crawled }}</span>
+                        </div>
+                        <div class="w-px h-8 bg-slate-800"></div>
+                        <div class="text-center">
+                            <span class="text-[10px] text-slate-500 uppercase font-semibold block">Hedef Limit</span>
+                            <span class="text-xl font-black text-slate-400 font-mono">{{ latestCrawl.max_pages }}</span>
+                        </div>
+                        <div class="w-px h-8 bg-slate-800"></div>
+                        <Link
+                            :href="`/projects/${project.id}/crawls/${latestCrawl.id}`"
+                            class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs transition-all flex items-center space-x-1.5 shadow-lg shadow-indigo-600/30"
+                        >
+                            <span>Canlı İzle</span>
+                            <ChevronRight class="w-4 h-4" />
+                        </Link>
+                    </div>
+                </div>
+
+                <!-- Animated Progress Bar -->
+                <div class="w-full bg-slate-900 rounded-full h-2 mt-5 overflow-hidden border border-slate-800">
+                    <div
+                        class="bg-gradient-to-r from-indigo-500 to-violet-500 h-2 rounded-full transition-all duration-500"
+                        :style="{ width: `${Math.min(100, Math.max(10, (latestCrawl.pages_crawled / latestCrawl.max_pages) * 100))}%` }"
+                    ></div>
+                </div>
+            </div>
+
             <!-- Crawl History Table -->
             <div class="space-y-4">
-                <h2 class="text-lg font-bold text-white flex items-center space-x-2">
-                    <Clock class="w-5 h-5 text-slate-400" />
-                    <span>Geçmiş Taramalar</span>
-                </h2>
+                <div class="flex items-center justify-between">
+                    <h2 class="text-lg font-bold text-white flex items-center space-x-2">
+                        <Clock class="w-5 h-5 text-slate-400" />
+                        <span>Geçmiş Taramalar</span>
+                    </h2>
+                    <span v-if="crawls.length > 0" class="text-xs text-slate-500">
+                        Toplam {{ crawls.length }} denetim kaydı
+                    </span>
+                </div>
 
                 <div v-if="crawls.length === 0" class="p-8 rounded-3xl bg-slate-900/40 border border-slate-800 text-center text-xs text-slate-500">
                     Henüz hiçbir tarama yapılmadı. Yukarıdaki butondan ilk taramayı başlatabilirsiniz.
