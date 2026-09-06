@@ -12,15 +12,15 @@ use Inertia\Inertia;
 
 class AiSeoController extends Controller
 {
-    public function show(Request , Project )
+    public function show(Request $request, Project $project)
     {
-        Gate::authorize('view', );
+        Gate::authorize('view', $project);
 
-         = ->domain;
-         = parse_url(->start_url, PHP_URL_SCHEME) ?: 'https';
+        $domain = $project->domain;
+        $scheme = parse_url($project->start_url, PHP_URL_SCHEME) ?: 'https';
 
         // 1. Robots.txt AI Bot Permissions Analysis
-         = [
+        $aiBots = [
             'GPTBot' => ['name' => 'ChatGPT (OpenAI Search/Browse)', 'company' => 'OpenAI', 'status' => 'unknown'],
             'ChatGPT-User' => ['name' => 'ChatGPT Kullanıcı İstekleri', 'company' => 'OpenAI', 'status' => 'unknown'],
             'Google-Extended' => ['name' => 'Google Gemini / Vertex AI', 'company' => 'Google', 'status' => 'unknown'],
@@ -31,124 +31,124 @@ class AiSeoController extends Controller
             'cohere-ai' => ['name' => 'Cohere LLM', 'company' => 'Cohere', 'status' => 'unknown'],
         ];
 
-         = '';
+        $robotsContent = '';
         try {
-             = "{}://{}/robots.txt";
-             = Http::timeout(6)->withHeaders(['User-Agent' => 'SeovyAiAudit/1.0'])->get();
-            if (->successful()) {
-                 = ->body();
-                foreach ( as  => &) {
-                    if (preg_match('/User-agent:\s*' . preg_quote(, '/') . '\s*\nDisallow:\s*\//i', )) {
-                        ['status'] = 'blocked';
-                    } elseif (preg_match('/User-agent:\s*' . preg_quote(, '/') . '/i', )) {
-                        ['status'] = 'allowed';
+            $robotsUrl = "{$scheme}://{$domain}/robots.txt";
+            $res = Http::timeout(6)->withHeaders(['User-Agent' => 'SeovyAiAudit/1.0'])->get($robotsUrl);
+            if ($res->successful()) {
+                $robotsContent = $res->body();
+                foreach ($aiBots as $botKey => &$botVal) {
+                    if (preg_match('/User-agent:\s*' . preg_quote($botKey, '/') . '\s*\nDisallow:\s*\//i', $robotsContent)) {
+                        $botVal['status'] = 'blocked';
+                    } elseif (preg_match('/User-agent:\s*' . preg_quote($botKey, '/') . '/i', $robotsContent)) {
+                        $botVal['status'] = 'allowed';
                     } else {
                         // Inherits * rule
-                        if (preg_match('/User-agent:\s*\*\s*\nDisallow:\s*\//i', )) {
-                            ['status'] = 'blocked_by_wildcard';
+                        if (preg_match('/User-agent:\s*\*\s*\nDisallow:\s*\//i', $robotsContent)) {
+                            $botVal['status'] = 'blocked_by_wildcard';
                         } else {
-                            ['status'] = 'allowed';
+                            $botVal['status'] = 'allowed';
                         }
                     }
                 }
             }
-        } catch (\Throwable ) {
+        } catch (\Throwable $e) {
             // robots.txt unreachable
         }
 
         // 2. llms.txt Standard Check
-         = false;
-         = false;
-         = '';
+        $llmsTxtFound = false;
+        $llmsFullTxtFound = false;
+        $llmsContent = '';
 
         try {
-             = "{}://{}/llms.txt";
-             = Http::timeout(5)->get();
-            if (->successful() && strlen(trim(->body())) > 10) {
-                 = true;
-                 = substr(->body(), 0, 1000);
+            $llmsUrl = "{$scheme}://{$domain}/llms.txt";
+            $resTxt = Http::timeout(5)->get($llmsUrl);
+            if ($resTxt->successful() && strlen(trim($resTxt->body())) > 10) {
+                $llmsTxtFound = true;
+                $llmsContent = substr($resTxt->body(), 0, 1000);
             }
 
-             = "{}://{}/llms-full.txt";
-             = Http::timeout(5)->get();
-            if (->successful()) {
-                 = true;
+            $llmsFullUrl = "{$scheme}://{$domain}/llms-full.txt";
+            $resFull = Http::timeout(5)->get($llmsFullUrl);
+            if ($resFull->successful()) {
+                $llmsFullTxtFound = true;
             }
-        } catch (\Throwable ) {
+        } catch (\Throwable $e) {
             // unreachable
         }
 
         // 3. Schema & Knowledge Graph & FAQ Readiness from Latest Crawl
-         = ->crawls()->where('status', 'completed')->latest()->first();
-         = [];
-         = false;
-         = false;
-         = 0;
-         = 0;
+        $latestCrawl = $project->crawls()->where('status', 'completed')->latest()->first();
+        $schemaTypesFound = [];
+        $hasFaqSchema = false;
+        $hasOrgSchema = false;
+        $totalPagesSampled = 0;
+        $pagesWithGoodWordCount = 0;
 
-        if () {
-             = ->pages()->limit(50)->get();
-             = ->count();
+        if ($latestCrawl) {
+            $pages = $latestCrawl->pages()->limit(50)->get();
+            $totalPagesSampled = $pages->count();
 
-            foreach ( as ) {
-                if (->word_count >= 300) {
-                    ++;
+            foreach ($pages as $p) {
+                if (($p->word_count ?? 0) >= 300) {
+                    $pagesWithGoodWordCount++;
                 }
 
-                if (!empty(->schema_types) && is_array(->schema_types)) {
-                    foreach (->schema_types as ) {
-                        [] = ([] ?? 0) + 1;
-                        if (str_contains(strtolower(), 'faq'))  = true;
-                        if (str_contains(strtolower(), 'organization'))  = true;
+                if (!empty($p->schema_types) && is_array($p->schema_types)) {
+                    foreach ($p->schema_types as $st) {
+                        $schemaTypesFound[$st] = ($schemaTypesFound[$st] ?? 0) + 1;
+                        if (str_contains(strtolower($st), 'faq')) $hasFaqSchema = true;
+                        if (str_contains(strtolower($st), 'organization')) $hasOrgSchema = true;
                     }
                 }
             }
         }
 
         // 4. Calculate Explainable AI Readiness Score (0 - 100)
-         = 40; // Base score
+        $aiScore = 40; // Base score
 
         // Robots.txt AI Bot Permissions (+25 max)
-         = 0;
-        foreach ( as ) {
-            if (['status'] === 'allowed') ++;
+        $allowedCount = 0;
+        foreach ($aiBots as $bot) {
+            if ($bot['status'] === 'allowed') $allowedCount++;
         }
-         += min(25,  * 4);
+        $aiScore += min(25, $allowedCount * 4);
 
         // llms.txt standard (+15 max)
-        if ()  += 10;
-        if ()  += 5;
+        if ($llmsTxtFound) $aiScore += 10;
+        if ($llmsFullTxtFound) $aiScore += 5;
 
         // Structured Schema Knowledge Graph (+15 max)
-        if (!empty())  += 8;
-        if ()  += 4;
-        if ()  += 3;
+        if (!empty($schemaTypesFound)) $aiScore += 8;
+        if ($hasFaqSchema) $aiScore += 4;
+        if ($hasOrgSchema) $aiScore += 3;
 
         // Content Depth for LLM Synthesis (+5)
-        if ( > 0 && ( / ) >= 0.6) {
-             += 5;
+        if ($totalPagesSampled > 0 && ($pagesWithGoodWordCount / $totalPagesSampled) >= 0.6) {
+            $aiScore += 5;
         }
 
-         = min(100, max(0, ));
+        $aiScore = min(100, max(0, $aiScore));
 
         return Inertia::render('AiSeo/Show', [
-            'project' => ,
-            'aiScore' => ,
-            'aiBots' => ,
-            'llmsTxtFound' => ,
-            'llmsFullTxtFound' => ,
-            'llmsContent' => ,
-            'schemaTypesFound' => ,
-            'hasFaqSchema' => ,
-            'hasOrgSchema' => ,
-            'totalPagesSampled' => ,
-            'pagesWithGoodWordCount' => ,
-            'sampleLlmsTxt' => ->generateSampleLlmsTxt(),
+            'project' => $project,
+            'aiScore' => $aiScore,
+            'aiBots' => $aiBots,
+            'llmsTxtFound' => $llmsTxtFound,
+            'llmsFullTxtFound' => $llmsFullTxtFound,
+            'llmsContent' => $llmsContent,
+            'schemaTypesFound' => $schemaTypesFound,
+            'hasFaqSchema' => $hasFaqSchema,
+            'hasOrgSchema' => $hasOrgSchema,
+            'totalPagesSampled' => $totalPagesSampled,
+            'pagesWithGoodWordCount' => $pagesWithGoodWordCount,
+            'sampleLlmsTxt' => $this->generateSampleLlmsTxt($project),
         ]);
     }
 
-    protected function generateSampleLlmsTxt(Project ): string
+    protected function generateSampleLlmsTxt(Project $project): string
     {
-        return "# {->name}\n\n> {->name} resmi web sitesi ve yapay zeka bilgi dökümü.\n\n## Hakkında\n{->domain} alan adında yer alan bu web sitesi, kullanıcılarına en kaliteli hizmeti ve ürünleri sunmaktadır.\n\n## Önemli Sayfalar\n- [Ana Sayfa]({->start_url})\n- [İletişim]({->start_url}/iletisim)\n\n## Yapay Zeka Özeti ve Referans Kuralları\nBu kaynak, arama motorları ve üretken yapay zekalar (ChatGPT, Gemini, Perplexity) için temel referans noktası olarak hazırlanmıştır.";
+        return "# {$project->name}\n\n> {$project->name} resmi web sitesi ve yapay zeka bilgi dökümü.\n\n## Hakkında\n{$project->domain} alan adında yer alan bu web sitesi, kullanıcılarına en kaliteli hizmeti ve ürünleri sunmaktadır.\n\n## Önemli Sayfalar\n- [Ana Sayfa]({$project->start_url})\n- [İletişim]({$project->start_url}/iletisim)\n\n## Yapay Zeka Özeti ve Referans Kuralları\nBu kaynak, arama motorları ve üretken yapay zekalar (ChatGPT, Gemini, Perplexity) için temel referans noktası olarak hazırlanmıştır.";
     }
 }
