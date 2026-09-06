@@ -138,32 +138,36 @@ const verifyOwnership = () => {
                 </div>
             </div>
 
-            <!-- Ownership Verification Box (if not verified) -->
-            <div v-if="!project.ownership_verified_at" class="p-5 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div class="space-y-2">
-                    <strong class="text-amber-300 font-semibold text-sm block">Site Sahipliği Henüz Doğrulanmadı</strong>
-                    <div class="text-slate-400">
-                        <span>WordPress kullanıyorsanız hazır eklentiyi indirip sitenize yükleyin veya sitenizin &lt;head&gt; bölümüne meta etiketini ekleyin:</span>
-                        <div class="mt-1.5">
-                            <code class="bg-slate-950 px-2 py-1 rounded text-amber-300 select-all border border-slate-800 inline-block">&lt;meta name="seovy-verification" content="{{ project.verification_token }}"&gt;</code>
-                        </div>
+            <!-- Ownership Verification Box (Optional Feature) -->
+            <div v-if="!project.ownership_verified_at" class="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div class="space-y-1">
+                    <div class="flex items-center space-x-2">
+                        <span class="px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 text-[10px] font-semibold border border-slate-700">İsteğe Bağlı</span>
+                        <strong class="text-slate-200 font-semibold text-xs">Site Sahipliği Doğrulaması</strong>
+                    </div>
+                    <p class="text-slate-400 text-[11px] leading-relaxed">
+                        SEO taraması ve analizleri çalıştırmak için doğrulama <strong>zorunlu değildir</strong>. İsterseniz resmi mülkiyet rozeti için WordPress eklentimizi kurabilir veya meta etiketini ekleyebilirsiniz:
+                    </p>
+                    <div class="pt-0.5">
+                        <code class="bg-slate-950 px-2 py-0.5 rounded text-amber-300/90 select-all border border-slate-800 inline-block font-mono text-[11px]">&lt;meta name="seovy-verification" content="{{ project.verification_token }}"&gt;</code>
                     </div>
                 </div>
                 <div class="flex items-center space-x-2 shrink-0">
                     <a
                         :href="`/projects/${project.id}/wordpress-plugin`"
-                        class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs transition-all flex items-center space-x-1.5 border border-slate-700"
+                        class="px-3 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 font-medium text-xs transition-all flex items-center space-x-1.5 border border-slate-700"
+                        title="İsteğe bağlı WordPress eklentisi"
                     >
                         <Download class="w-3.5 h-3.5 text-indigo-400" />
-                        <span>WordPress Eklentisini İndir (.zip)</span>
+                        <span>WP Eklentisi</span>
                     </a>
                     <button
                         @click="verifyOwnership"
                         :disabled="verifyForm.processing"
-                        class="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition-all flex items-center space-x-2 disabled:opacity-50"
+                        class="px-3.5 py-2 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-500/30 font-semibold text-xs transition-all flex items-center space-x-2 disabled:opacity-50"
                     >
-                        <span v-if="verifyForm.processing">Doğrulanıyor...</span>
-                        <span v-else>Şimdi Doğrula</span>
+                        <span v-if="verifyForm.processing">Kontrol Ediliyor...</span>
+                        <span v-else>Doğrula</span>
                     </button>
                 </div>
             </div>
