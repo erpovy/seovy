@@ -20,9 +20,21 @@ class CrawlController extends Controller
         Gate::authorize('crawl', $project);
 
         // Check if there is already an active crawl running for this project
-        $activeCrawl = $project->crawls()->whereIn('status', ['pending', 'running'])->first();
+        $activeCrawl = $project->crawls()->where('status', 'running')->first();
         if ($activeCrawl) {
             return back()->withErrors(['error' => 'Bu proje için zaten devam eden aktif bir tarama bulunmaktadır.']);
+        }
+
+        // If there's an abandoned pending crawl older than 5 minutes, mark it as cancelled
+        $project->crawls()->where('status', 'pending')->where('created_at', '<', now()->subMinutes(5))->update(['status' => 'cancelled']);
+
+        // Check again
+        $stuckPending = $project->crawls()->where('status', 'pending')->first();
+        if ($stuckPending && config('queue.default') === 'sync') {
+            // Immediately execute the pending crawl directly
+            $this->crawlService->executeCrawl($stuckPending);
+            return redirect()->route('crawls.show', [$project->id, $stuckPending->id])
+                ->with('success', 'Bekleyen tarama tamamlandı.');
         }
 
         // SaaS limit check
