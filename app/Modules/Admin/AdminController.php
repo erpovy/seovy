@@ -60,7 +60,7 @@ class AdminController extends Controller
                       'projects' => function ($pq) {
                           $pq->select('projects.id', 'projects.workspace_id', 'projects.name', 'projects.domain', 'projects.start_url', 'projects.target_country', 'projects.target_language', 'projects.created_at')
                              ->withCount(['crawls', 'keywords'])
-                             ->with(['latestCrawl:id,project_id,status,health_score,pages_crawled,created_at']);
+                             ->with(['latestCrawl']);
                       }
                   ]);
             }
