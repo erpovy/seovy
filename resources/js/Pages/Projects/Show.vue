@@ -18,7 +18,9 @@ import {
     Clock,
     ChevronRight,
     Settings,
-    Download
+    Download,
+    Sparkles,
+    Bot
 } from 'lucide-vue-next';
 
 const props = defineProps<{
@@ -173,7 +175,7 @@ const verifyOwnership = () => {
             </div>
 
             <!-- Module Navigation Bar -->
-            <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+            <div class="grid grid-cols-2 sm:grid-cols-6 gap-3">
                 <Link
                     v-if="latestCrawl"
                     :href="`/projects/${project.id}/crawls/${latestCrawl.id}`"
@@ -182,6 +184,15 @@ const verifyOwnership = () => {
                     <Search class="w-5 h-5 text-violet-400 mx-auto mb-1.5 group-hover:scale-110 transition-transform" />
                     <span class="text-xs font-semibold text-white block">Teknik Tarama</span>
                     <span class="text-[10px] text-slate-500">{{ latestCrawl.pages_crawled }} sayfa</span>
+                </Link>
+
+                <Link
+                    :href="`/projects/${project.id}/ai-seo`"
+                    class="p-4 rounded-2xl bg-gradient-to-b from-fuchsia-950/30 to-slate-900/40 border border-fuchsia-500/30 hover:border-fuchsia-500/60 text-center transition-all group shadow-lg shadow-fuchsia-500/5"
+                >
+                    <Sparkles class="w-5 h-5 text-fuchsia-400 mx-auto mb-1.5 group-hover:scale-110 transition-transform" />
+                    <span class="text-xs font-bold text-white block">AI Bulunurluğu</span>
+                    <span class="text-[10px] text-fuchsia-400">GEO & LLM</span>
                 </Link>
 
                 <Link

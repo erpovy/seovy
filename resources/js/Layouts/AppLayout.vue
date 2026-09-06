@@ -22,7 +22,8 @@ import {
     AlertCircle,
     CheckCircle2,
     Info,
-    ExternalLink
+    ExternalLink,
+    Sparkles
 } from 'lucide-vue-next';
 
 defineProps<{

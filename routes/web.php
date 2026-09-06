@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\EnsureNotInstalled;
 use App\Modules\Admin\AdminController;
+use App\Modules\AiSeo\AiSeoController;
 use App\Modules\Auth\AuthController;
 use App\Modules\Auth\ProfileController;
 use App\Modules\Auth\TwoFactorController;
@@ -103,6 +104,9 @@ Route::middleware('auth')->group(function () {
     // On-Page SEO Analysis
     Route::get('/projects/{project}/on-page', [OnPageController::class, 'show'])->name('on-page.show');
     Route::post('/projects/{project}/on-page/live', [OnPageController::class, 'analyzeLive'])->name('on-page.live');
+
+    // AI Search & GEO (Generative Engine Optimization)
+    Route::get('/projects/{project}/ai-seo', [AiSeoController::class, 'show'])->name('ai-seo.show');
 
     // SEO Tasks
     Route::get('/projects/{project}/tasks', [TaskController::class, 'index'])->name('tasks.index');
