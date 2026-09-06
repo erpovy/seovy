@@ -1,14 +1,146 @@
 <?php
 
+use App\Http\Middleware\EnsureNotInstalled;
+use App\Modules\Admin\AdminController;
+use App\Modules\Auth\AuthController;
+use App\Modules\Auth\ProfileController;
+use App\Modules\Auth\TwoFactorController;
+use App\Modules\Billing\SubscriptionController;
+use App\Modules\ContentWorkspace\OnPageController;
+use App\Modules\ContentWorkspace\TaskController;
+use App\Modules\Crawler\CrawlController;
+use App\Modules\Dashboard\DashboardController;
+use App\Modules\Install\InstallController;
+use App\Modules\Integrations\IntegrationController;
+use App\Modules\Integrations\KeywordController;
+use App\Modules\Project\ProjectController;
+use App\Modules\Reports\ReportController;
+use App\Modules\Workspace\WorkspaceController;
+use App\Modules\Workspace\WorkspaceMemberController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
+// 1. Root & Public Routes
 Route::get('/', function () {
+    if (auth()->check()) {
+        return redirect()->route('dashboard');
+    }
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
     ]);
+})->name('home');
+
+// Shared Public Reports
+Route::get('/reports/shared/{token}', [ReportController::class, 'publicView'])->name('reports.shared');
+
+// Workspace Invitations
+Route::get('/invitations/{token}/accept', [WorkspaceMemberController::class, 'acceptInvitation'])->name('invitations.accept');
+
+// 2. Install Wizard Routes (Guarded against re-installation)
+Route::middleware([EnsureNotInstalled::class])->group(function () {
+    Route::get('/install', [InstallController::class, 'index'])->name('install.index');
+    Route::post('/install', [InstallController::class, 'process'])->name('install.process');
 });
+
+// 3. Guest Auth Routes
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [AuthController::class, 'login']);
+
+    Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+    Route::post('/register', [AuthController::class, 'register']);
+});
+
+// 4. Authenticated Application Routes
+Route::middleware('auth')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+    // Dashboard
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // Profile & Sessions
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
+    Route::post('/profile/logout-other-sessions', [ProfileController::class, 'logoutOtherSessions'])->name('profile.logout-other');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // 2FA
+    Route::post('/profile/two-factor', [TwoFactorController::class, 'enable'])->name('two-factor.enable');
+    Route::delete('/profile/two-factor', [TwoFactorController::class, 'disable'])->name('two-factor.disable');
+
+    // Workspaces
+    Route::get('/workspaces', [WorkspaceController::class, 'index'])->name('workspaces.index');
+    Route::post('/workspaces', [WorkspaceController::class, 'store'])->name('workspaces.store');
+    Route::post('/workspaces/{workspace}/switch', [WorkspaceController::class, 'switch'])->name('workspaces.switch');
+    Route::patch('/workspaces/{workspace}', [WorkspaceController::class, 'update'])->name('workspaces.update');
+    Route::delete('/workspaces/{workspace}', [WorkspaceController::class, 'destroy'])->name('workspaces.destroy');
+    Route::get('/workspaces/{workspace}/export', [WorkspaceController::class, 'exportData'])->name('workspaces.export');
+
+    // Workspace Members & Roles
+    Route::get('/workspaces/{workspace}/members', [WorkspaceMemberController::class, 'index'])->name('workspaces.members');
+    Route::post('/workspaces/{workspace}/members/invite', [WorkspaceMemberController::class, 'invite'])->name('workspaces.members.invite');
+    Route::patch('/workspaces/{workspace}/members/{user}', [WorkspaceMemberController::class, 'updateRole'])->name('workspaces.members.role');
+    Route::delete('/workspaces/{workspace}/members/{user}', [WorkspaceMemberController::class, 'removeMember'])->name('workspaces.members.remove');
+
+    // Projects
+    Route::resource('projects', ProjectController::class);
+    Route::post('/projects/{project}/verify', [ProjectController::class, 'verifyOwnership'])->name('projects.verify');
+
+    // Crawls & Crawler
+    Route::post('/projects/{project}/crawls/start', [CrawlController::class, 'start'])->name('crawls.start');
+    Route::get('/projects/{project}/crawls/{crawl}', [CrawlController::class, 'show'])->name('crawls.show');
+    Route::get('/projects/{project}/crawls/{crawl}/status', [CrawlController::class, 'status'])->name('crawls.status');
+    Route::post('/projects/{project}/crawls/{crawl}/pause', [CrawlController::class, 'pause'])->name('crawls.pause');
+    Route::post('/projects/{project}/crawls/{crawl}/cancel', [CrawlController::class, 'cancel'])->name('crawls.cancel');
+    Route::get('/projects/{project}/crawls/{crawl1}/compare/{crawl2}', [CrawlController::class, 'compare'])->name('crawls.compare');
+
+    // On-Page SEO Analysis
+    Route::get('/projects/{project}/on-page', [OnPageController::class, 'show'])->name('on-page.show');
+    Route::post('/projects/{project}/on-page/live', [OnPageController::class, 'analyzeLive'])->name('on-page.live');
+
+    // SEO Tasks
+    Route::get('/projects/{project}/tasks', [TaskController::class, 'index'])->name('tasks.index');
+    Route::post('/projects/{project}/tasks', [TaskController::class, 'store'])->name('tasks.store');
+    Route::patch('/projects/{project}/tasks/{task}', [TaskController::class, 'update'])->name('tasks.update');
+    Route::delete('/projects/{project}/tasks/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
+    Route::post('/projects/{project}/findings/{finding}/convert-task', [TaskController::class, 'convertFromFinding'])->name('tasks.convert');
+
+    // Reports & Exports
+    Route::get('/projects/{project}/reports', [ReportController::class, 'index'])->name('reports.index');
+    Route::get('/projects/{project}/crawls/{crawl}/export-csv', [ReportController::class, 'exportCsv'])->name('reports.export-csv');
+    Route::post('/projects/{project}/crawls/{crawl}/generate-pdf', [ReportController::class, 'generatePdf'])->name('reports.generate-pdf');
+    Route::get('/projects/{project}/reports/{report}/download', [ReportController::class, 'download'])->name('reports.download');
+
+    // Keywords & Rank Tracker
+    Route::get('/projects/{project}/keywords', [KeywordController::class, 'index'])->name('keywords.index');
+    Route::post('/projects/{project}/keywords', [KeywordController::class, 'store'])->name('keywords.store');
+    Route::post('/projects/{project}/keywords/check', [KeywordController::class, 'checkRankings'])->name('keywords.check');
+    Route::post('/projects/{project}/keywords/import-csv', [KeywordController::class, 'importCsv'])->name('keywords.import-csv');
+    Route::delete('/projects/{project}/keywords/{keyword}', [KeywordController::class, 'destroy'])->name('keywords.destroy');
+
+    // Integrations (GSC, GA4, PageSpeed)
+    Route::get('/projects/{project}/integrations', [IntegrationController::class, 'index'])->name('integrations.index');
+    Route::post('/projects/{project}/integrations/save', [IntegrationController::class, 'saveCredentials'])->name('integrations.save');
+    Route::post('/projects/{project}/integrations/pagespeed', [IntegrationController::class, 'runPageSpeed'])->name('integrations.pagespeed');
+    Route::delete('/projects/{project}/integrations/{type}', [IntegrationController::class, 'disconnect'])->name('integrations.disconnect');
+
+    // Billing & Plans (SaaS)
+    Route::get('/billing', [SubscriptionController::class, 'index'])->name('billing.index');
+    Route::post('/billing/plan', [SubscriptionController::class, 'updatePlan'])->name('billing.plan');
+
+    // Platform Admin Panel
+    Route::prefix('admin')->name('admin.')->group(function () {
+        Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
+        Route::get('/users', [AdminController::class, 'users'])->name('users');
+        Route::get('/workspaces', [AdminController::class, 'workspaces'])->name('workspaces');
+        Route::get('/audit-logs', [AdminController::class, 'auditLogs'])->name('audit-logs');
+    });
+});
+
+// Stripe Webhook (CSRF exempt handled in bootstrap/app.php)
+Route::post('/webhooks/stripe', [SubscriptionController::class, 'handleWebhook'])->name('webhooks.stripe');

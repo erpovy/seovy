@@ -1,66 +1,158 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Seovy - Kurumsal ve Kendi Barındırılabilir SEO Denetim ve Analiz Platformu
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Modern, yüksek performanslı, SSRF korumalı ve çok kiracılı (multi-tenant) teknik SEO denetim, anahtar kelime takip ve raporlama platformu.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🚀 Özellikler ve Mimari Özet
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **Monolitik Laravel 12 + Vue 3 (Inertia.js & TypeScript & Tailwind CSS 4)**
+- **Gerçek HTTP Tarayıcı (Crawler)**:
+  - SSRF Koruması: Private IPv4 (10/8, 172.16/12, 192.168/16), loopback (127/8, ::1), cloud metadata (169.254.169.254), izinli portlar (80, 443, 8080, 8443) ve DNS rebinding koruması.
+  - Robots.txt ve sitemap.xml uyumu.
+  - Kuyruk tabanlı asenkron tarama, duraklatma (pause) ve iptal (cancel) desteği.
+- **25+ Teknik SEO Analiz Kuralı**:
+  - Durum kodları (4xx, 5xx), yönlendirme zincirleri (301/302).
+  - Title/meta description eksikliği, piksel ve karakter uzunluk sınırları.
+  - H1 eksikliği ve mükerrer H1 tespiti.
+  - Canonical etiket hataları (eksik veya göreceli linkler).
+  - Robots noindex / nofollow direktifleri.
+  - Eksik görsel alt etiketleri, JSON-LD Schema doğrulaması, boş bağlantılar.
+  - Şeffaf ve açıklanabilir Sağlık Skoru (Health Score) formülü (0-100).
+- **Çok Kiracılı (Multi-Tenant) İzolasyon**:
+  - Global query scope (BelongsToWorkspace) ve Laravel Policy katmanı ile mutlak veri izolasyonu.
+  - Rol bazlı yetkilendirme (RBAC): Owner, Admin, Specialist, Viewer.
+- **Entegrasyonlar**:
+  - Google PageSpeed Insights (Lighthouse Lab verileri + CrUX Real-User Field verileri).
+  - Google Search Console (GSC) ve GA4 adaptör altyapısı.
+- **Raporlama & Görev Yönetimi**:
+  - SEO bulgularını tek tıkla aksiyon alınabilir görevlere (SeoTask) dönüştürme.
+  - DomPDF ile profesyonel PDF denetim raporu çıktısı.
+  - UTF-8 BOM'lu Excel uyumlu CSV dışa aktarımı.
+- **Çift Kurulum Modu**:
+  - Tek kullanıcılı / kurum içi: Self-Hosted Single-Tenant.
+  - Ticari SaaS: Plan ve proje sınırları, Stripe test adaptörü ve webhook işleme.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## 🛠️ Sistem Gereksinimleri
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- **PHP**: 8.2 veya üzeri
+- **PHP Uzantıları**: pdo_pgsql veya pdo_sqlite, curl, mbstring, openssl, xml, zip, gd, cmath
+- **Veritabanı**: PostgreSQL 16 (üretim ortamı için tavsiye edilen) veya SQLite (yerel test için)
+- **Kuyruk & Önbellek**: Redis 7.x
+- **Node.js**: 18+ veya 20+ (ve NPM)
+- **Composer**: 2.6+
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+---
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 📦 Yerel Kurulum (Local Development)
 
-## Laravel Sponsors
+### 1. Depoyu Klonlayın ve Bağımlılıkları Yükleyin
+`ash
+git clone https://github.com/artovy/seovy.git
+cd seovy
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+composer install
+npm install
+`
 
-### Premium Partners
+### 2. Ortam Değişkenlerini Ayarlayın
+`ash
+cp .env.example .env
+php artisan key:generate
+`
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+### 3. Veritabanı ve Kurulum
+Yerel geliştirme için varsayılan olarak SQLite kullanılabilir (database/database.sqlite):
+`ash
+# SQLite dosyasını oluşturun (varsa atlayın)
+touch database/database.sqlite
 
-## Contributing
+# Migration'ları çalıştırın
+php artisan migrate
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+# Demo veri setini yükleyin (Opsiyonel)
+php artisan db:seed --class=DemoSeeder
+`
 
-## Code of Conduct
+### 4. Kurulum Sihirbazı veya CLI Kurulumu
+Kurulum sihirbazını başlatmak veya CLI üzerinden tek komutla kurulum yapmak için:
+`ash
+# CLI ile kurulum (Yönetici hesabı ve ilk çalışma alanı açılır)
+php artisan app:install --cli
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+# veya web arayüzünden kurulum için tarayıcıda /install adresine gidin:
+# (Eğer kilitliyse: php artisan app:unlock)
+`
 
-## Security Vulnerabilities
+### 5. Ön Yüzü Derleyin ve Uygulamayı Başlatın
+`ash
+# Geliştirme modu (Hot reload):
+npm run dev
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+# Başka bir terminalde Laravel sunucusu:
+php artisan serve
+`
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## 🐳 Docker ile Kurulum (Production-ready)
+
+docker-compose.yml dosyası Nginx, PHP 8.2-FPM, PostgreSQL 16, Redis ve otomatik Queue Worker / Scheduler servislerini içerir.
+
+`ash
+# 1. Konfigürasyonu hazırlayın
+cp .env.example .env
+
+# 2. İmajları derleyin ve ayağa kaldırın
+docker compose up -d --build
+
+# 3. Konteyner içinde kurulumu tamamlayın
+docker compose exec app php artisan app:install --cli
+`
+
+Servisler:
+- **Web**: http://localhost:80
+- **PostgreSQL**: localhost:5432
+- **Redis**: localhost:6379
+- **Queue Worker**: Arka planda php artisan queue:work sürekli çalışır.
+- **Scheduler**: Her dakika php artisan schedule:run çalıştırır.
+
+---
+
+## 🧪 Testleri Çalıştırma
+
+Platformdaki tüm güvenlik, SSRF, multi-tenant izolasyonu, SEO kuralları ve uçtan uca akış testleri PHPUnit ile doğrulanır:
+
+`ash
+# Tüm testleri çalıştır:
+php artisan test
+
+# Belirli bir grubu test et:
+php artisan test --filter=SsrfProtectionTest
+php artisan test --filter=WorkspaceIsolationTest
+php artisan test --filter=SeoRulesTest
+php artisan test --filter=UserWorkflowTest
+`
+
+---
+
+## 👥 Rol ve Yetki Matrisi (RBAC)
+
+| Yetenek / Eylem | Workspace Owner | Workspace Admin | Specialist | Viewer |
+|---|:---:|:---:|:---:|:---:|
+| Çalışma Alanını Silme / İsim Değiştirme | ✅ | ❌ | ❌ | ❌ |
+| Üye Davet Etme / Rol Değiştirme | ✅ | ✅ | ❌ | ❌ |
+| Proje Ekleme / Silme | ✅ | ✅ | ❌ | ❌ |
+| Tarama Başlatma / İptal Etme | ✅ | ✅ | ✅ | ❌ |
+| Görev Oluşturma / Durum Güncelleme | ✅ | ✅ | ✅ | ❌ |
+| Rapor İndirme (PDF / CSV) | ✅ | ✅ | ✅ | ✅ |
+| Proje ve Tarama Sonuçlarını İnceleme | ✅ | ✅ | ✅ | ✅ |
+
+---
+
+## 📂 Dokümantasyon Belgeleri
+
+- [Mimari ve Veri Modeli Kılavuzu](docs/architecture.md)
+- [Sunucu Dağıtımı, Yedekleme ve Yükseltme Yönergesi](docs/deployment.md)
