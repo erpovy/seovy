@@ -131,6 +131,47 @@ class AiSeoController extends Controller
 
         $aiScore = min(100, max(0, $aiScore));
 
+        // 5. Build AI-Enhanced robots.txt preserving 100% of original content
+        $robotsFound = !empty(trim($robotsContent));
+        $aiRobotsBlock = "# ==============================================================================\n"
+            . "# SEOVY - YAPAY ZEKA (GEO & LLM) BOT ERİŞİM İZİNLERİ\n"
+            . "# (Orijinal kurallarınız yukarıda aynen korunmuştur; bu blok AI bulunurluğunu artırır)\n"
+            . "# ==============================================================================\n\n"
+            . "# OpenAI ChatGPT & SearchGPT Arama İzinleri\n"
+            . "User-agent: GPTBot\n"
+            . "Allow: /\n\n"
+            . "User-agent: ChatGPT-User\n"
+            . "Allow: /\n\n"
+            . "# Google Gemini & Vertex AI İzinleri\n"
+            . "User-agent: Google-Extended\n"
+            . "Allow: /\n\n"
+            . "# Perplexity AI Arama Motoru\n"
+            . "User-agent: PerplexityBot\n"
+            . "Allow: /\n\n"
+            . "# Anthropic Claude & Claude Search\n"
+            . "User-agent: ClaudeBot\n"
+            . "Allow: /\n\n"
+            . "# Apple Intelligence & Siri Web Taraması\n"
+            . "User-agent: Applebot-Extended\n"
+            . "Allow: /\n\n"
+            . "# TikTok & ByteDance AI Modelleri\n"
+            . "User-agent: Bytespider\n"
+            . "Allow: /\n\n"
+            . "# Cohere AI Arama ve Çıkarım\n"
+            . "User-agent: cohere-ai\n"
+            . "Allow: /\n\n"
+            . "# LLM Standart Dosyası & Doğrudan İzin\n"
+            . "Allow: /llms.txt\n"
+            . "Allow: /llms-full.txt\n";
+
+        if (!str_contains($robotsContent, 'sitemap.xml')) {
+            $aiRobotsBlock .= "Sitemap: {$scheme}://{$domain}/sitemap.xml\n";
+        }
+
+        $mergedRobotsTxt = $robotsFound 
+            ? (trim($robotsContent) . "\n\n" . $aiRobotsBlock)
+            : ("User-agent: *\nAllow: /\n\n" . $aiRobotsBlock);
+
         return Inertia::render('AiSeo/Show', [
             'project' => $project,
             'aiScore' => $aiScore,
@@ -144,6 +185,10 @@ class AiSeoController extends Controller
             'totalPagesSampled' => $totalPagesSampled,
             'pagesWithGoodWordCount' => $pagesWithGoodWordCount,
             'sampleLlmsTxt' => $this->generateSampleLlmsTxt($project),
+            'robotsFound' => $robotsFound,
+            'originalRobotsTxt' => $robotsContent,
+            'aiRobotsBlock' => $aiRobotsBlock,
+            'mergedRobotsTxt' => $mergedRobotsTxt,
         ]);
     }
 
