@@ -45,15 +45,15 @@ const copyToClipboard = () => {
 </script>
 
 <template>
-    <AppLayout :title="Yapay Zeka Bulunurluğu (GEO) - ">
-        <Head :title="Yapay Zeka Bulunurluğu (GEO) - " />
+    <AppLayout :title="`Yapay Zeka Bulunurluğu (GEO) - ${project.name}`">
+        <Head :title="`Yapay Zeka Bulunurluğu (GEO) - ${project.name}`" />
 
         <div class="space-y-8">
             <!-- Header -->
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-3xl bg-slate-900/60 border border-slate-800/80">
                 <div class="flex items-center space-x-4">
                     <Link
-                        :href="/projects/"
+                        :href="`/projects/${project.id}`"
                         class="p-2.5 rounded-2xl bg-slate-800/60 border border-slate-700/60 text-slate-400 hover:text-white transition-colors"
                     >
                         <ArrowLeft class="w-4 h-4" />
