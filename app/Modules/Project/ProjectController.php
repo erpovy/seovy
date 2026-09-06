@@ -234,4 +234,119 @@ class ProjectController extends Controller
 
         return back()->with('error', "Doğrulama başarısız! Lütfen sitenizin <head> kısmına <meta name=\"seovy-verification\" content=\"{$expectedToken}\"> etiketini eklediğinizden veya DNS TXT kaydını oluşturduğunuzdan emin olun.");
     }
+
+    public function downloadWordpressPlugin(Project $project)
+    {
+        Gate::authorize('view', $project);
+
+        $pluginContent = <<<'PHP'
+<?php
+/**
+ * Plugin Name: Seovy SEO Connector
+ * Plugin URI: https://seo.artovy.com
+ * Description: Seovy SEO platformu ile WordPress sitenizi tek tıkla bağlayın ve doğrulayın.
+ * Version: 1.0.0
+ * Author: Seovy Team
+ * Author URI: https://seo.artovy.com
+ * License: GPL-2.0+
+ */
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+class Seovy_Connector {
+    public function __construct() {
+        add_action('admin_menu', [$this, 'add_plugin_page']);
+        add_action('admin_init', [$this, 'page_init']);
+        add_action('wp_head', [$this, 'inject_verification_meta']);
+    }
+
+    public function add_plugin_page() {
+        add_options_page(
+            'Seovy SEO Bağlantısı',
+            'Seovy SEO',
+            'manage_options',
+            'seovy-connector',
+            [$this, 'create_admin_page']
+        );
+    }
+
+    public function create_admin_page() {
+        ?>
+        <div class="wrap">
+            <h1>Seovy SEO Site Doğrulama</h1>
+            <p>Seovy panelinizde projeniz için üretilen doğrulama kodunu (token) aşağıya yapıştırıp kaydedin.</p>
+            <form method="post" action="options.php">
+                <?php
+                settings_fields('seovy_option_group');
+                do_settings_sections('seovy-connector-admin');
+                submit_button('Kaydet ve Doğrulamayı Aktif Et');
+                ?>
+            </form>
+        </div>
+        <?php
+    }
+
+    public function page_init() {
+        register_setting(
+            'seovy_option_group',
+            'seovy_verification_token',
+            [$this, 'sanitize']
+        );
+
+        add_settings_section(
+            'setting_section_id',
+            'Doğrulama Ayarları',
+            null,
+            'seovy-connector-admin'
+        );
+
+        add_settings_field(
+            'seovy_verification_token',
+            'Doğrulama Kodu (Verification Token)',
+            [$this, 'token_callback'],
+            'seovy-connector-admin',
+            'setting_section_id'
+        );
+    }
+
+    public function sanitize($input) {
+        return sanitize_text_field($input);
+    }
+
+    public function token_callback() {
+        $token = get_option('seovy_verification_token', 'TOKEN_PLACEHOLDER');
+        printf(
+            '<input type="text" id="seovy_verification_token" name="seovy_verification_token" value="%s" style="width: 500px;" />',
+            isset($token) ? esc_attr($token) : ''
+        );
+        echo '<p class="description">Bu kod Seovy projeniz için otomatik tanımlanmıştır. Kaydet butonuna basmanız yeterlidir.</p>';
+    }
+
+    public function inject_verification_meta() {
+        $token = get_option('seovy_verification_token', 'TOKEN_PLACEHOLDER');
+        if (!empty($token)) {
+            echo "\n<!-- Seovy SEO Verification -->\n";
+            echo '<meta name="seovy-verification" content="' . esc_attr($token) . '" />' . "\n\n";
+        }
+    }
+}
+
+new Seovy_Connector();
+PHP;
+
+        $pluginContent = str_replace('TOKEN_PLACEHOLDER', $project->verification_token, $pluginContent);
+
+        $zipFileName = "seovy-connector-{$project->domain}.zip";
+        $tempZipPath = tempnam(sys_get_temp_dir(), 'seovy_wp_');
+
+        $zip = new \ZipArchive();
+        if ($zip->open($tempZipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) === true) {
+            $zip->addFromString('seovy-connector/seovy-connector.php', $pluginContent);
+            $zip->close();
+        }
+
+        return response()->download($tempZipPath, $zipFileName)->deleteFileAfterSend(true);
+    }
 }

@@ -90,6 +90,7 @@ Route::middleware('auth')->group(function () {
     // Projects
     Route::resource('projects', ProjectController::class);
     Route::post('/projects/{project}/verify', [ProjectController::class, 'verifyOwnership'])->name('projects.verify');
+    Route::get('/projects/{project}/wordpress-plugin', [ProjectController::class, 'downloadWordpressPlugin'])->name('projects.wp-plugin');
 
     // Crawls & Crawler
     Route::post('/projects/{project}/crawls/start', [CrawlController::class, 'start'])->name('crawls.start');

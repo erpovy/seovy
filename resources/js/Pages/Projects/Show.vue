@@ -17,7 +17,8 @@ import {
     ExternalLink,
     Clock,
     ChevronRight,
-    Settings
+    Settings,
+    Download
 } from 'lucide-vue-next';
 
 const props = defineProps<{
@@ -88,21 +89,33 @@ const verifyOwnership = () => {
             </div>
 
             <!-- Ownership Verification Box (if not verified) -->
-            <div v-if="!project.ownership_verified_at" class="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div>
-                    <strong class="text-amber-300 font-semibold block">Site Sahipliği Henüz Doğrulanmadı</strong>
-                    <span class="text-slate-400">
-                        Sitenizin &lt;head&gt; bölümüne <code class="bg-slate-950 px-1.5 py-0.5 rounded text-amber-300">&lt;meta name="seovy-verification" content="{{ project.verification_token }}"&gt;</code> ekleyin veya DNS TXT kaydı oluşturun.
-                    </span>
+            <div v-if="!project.ownership_verified_at" class="p-5 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div class="space-y-2">
+                    <strong class="text-amber-300 font-semibold text-sm block">Site Sahipliği Henüz Doğrulanmadı</strong>
+                    <div class="text-slate-400">
+                        <span>WordPress kullanıyorsanız hazır eklentiyi indirip sitenize yükleyin veya sitenizin &lt;head&gt; bölümüne meta etiketini ekleyin:</span>
+                        <div class="mt-1.5">
+                            <code class="bg-slate-950 px-2 py-1 rounded text-amber-300 select-all border border-slate-800 inline-block">&lt;meta name="seovy-verification" content="{{ project.verification_token }}"&gt;</code>
+                        </div>
+                    </div>
                 </div>
-                <button
-                    @click="verifyOwnership"
-                    :disabled="verifyForm.processing"
-                    class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shrink-0 transition-all flex items-center space-x-2 disabled:opacity-50"
-                >
-                    <span v-if="verifyForm.processing">Doğrulanıyor...</span>
-                    <span v-else>Şimdi Doğrula</span>
-                </button>
+                <div class="flex items-center space-x-2 shrink-0">
+                    <a
+                        :href="`/projects/${project.id}/wordpress-plugin`"
+                        class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs transition-all flex items-center space-x-1.5 border border-slate-700"
+                    >
+                        <Download class="w-3.5 h-3.5 text-indigo-400" />
+                        <span>WordPress Eklentisini İndir (.zip)</span>
+                    </a>
+                    <button
+                        @click="verifyOwnership"
+                        :disabled="verifyForm.processing"
+                        class="px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition-all flex items-center space-x-2 disabled:opacity-50"
+                    >
+                        <span v-if="verifyForm.processing">Doğrulanıyor...</span>
+                        <span v-else>Şimdi Doğrula</span>
+                    </button>
+                </div>
             </div>
 
             <!-- Module Navigation Bar -->
