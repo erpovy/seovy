@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { Head, Link, useForm, router } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import {
@@ -13,7 +13,10 @@ import {
     CheckCircle2,
     ArrowUp,
     ArrowDown,
-    Minus
+    Minus,
+    Settings,
+    ShieldCheck,
+    Globe2
 } from 'lucide-vue-next';
 
 const props = defineProps<{
@@ -25,6 +28,11 @@ const props = defineProps<{
     };
     providerConfigured: boolean;
     providerName: string;
+    serpIntegration?: {
+        provider: string;
+        is_active: boolean;
+        has_credentials: boolean;
+    };
     filters: {
         search?: string;
     };
@@ -32,6 +40,8 @@ const props = defineProps<{
 
 const showAddModal = ref(false);
 const showImportModal = ref(false);
+const showSerpModal = ref(false);
+const isChecking = ref(false);
 
 const addForm = useForm({
     keyword: '',
@@ -61,8 +71,46 @@ const submitImport = () => {
 };
 
 const checkRankings = () => {
-    router.post(`/projects/${props.project.id}/keywords/check`);
+    if (isChecking.value) return;
+    isChecking.value = true;
+    router.post(`/projects/${props.project.id}/keywords/check`, {}, {
+        preserveScroll: true,
+        onFinish: () => {
+            isChecking.value = false;
+        },
+    });
 };
+
+const serpForm = useForm({
+    provider: props.serpIntegration?.provider || 'smart',
+    dataforseo_login: '',
+    dataforseo_password: '',
+    serpapi_key: '',
+});
+
+const submitSerp = () => {
+    serpForm.post(`/projects/${props.project.id}/keywords/serp-settings`, {
+        onSuccess: () => {
+            showSerpModal.value = false;
+        },
+    });
+};
+
+const providerDisplayName = computed(() => {
+    if (props.providerName === 'SmartWebSerpProvider') {
+        return 'Smart Web Engine (Dahili)';
+    }
+    if (props.providerName === 'DataForSeoProvider') {
+        return 'DataForSEO Live';
+    }
+    if (props.providerName === 'SerpApiProvider') {
+        return 'SerpApi Google';
+    }
+    if (props.providerName === 'MockSerpProvider') {
+        return 'Demo (Mock)';
+    }
+    return props.providerName;
+});
 </script>
 
 <template>
@@ -70,6 +118,27 @@ const checkRankings = () => {
         <Head :title="`${$t('keywords.title')} - ${project.name}`" />
 
         <div class="space-y-6">
+            <!-- Flash & Error Notification Banners -->
+            <div
+                v-if="($page.props as any).flash?.success"
+                class="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-300 flex items-center justify-between"
+            >
+                <div class="flex items-center space-x-2.5">
+                    <CheckCircle2 class="w-4 h-4 text-emerald-400 shrink-0" />
+                    <span class="font-medium">{{ ($page.props as any).flash.success }}</span>
+                </div>
+            </div>
+
+            <div
+                v-if="($page.props as any).errors?.error || ($page.props as any).flash?.error"
+                class="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-xs text-rose-300 flex items-center justify-between"
+            >
+                <div class="flex items-center space-x-2.5">
+                    <AlertCircle class="w-4 h-4 text-rose-400 shrink-0" />
+                    <span class="font-medium">{{ ($page.props as any).errors?.error || ($page.props as any).flash?.error }}</span>
+                </div>
+            </div>
+
             <!-- Header -->
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div class="flex items-center space-x-3">
@@ -103,19 +172,23 @@ const checkRankings = () => {
 
                     <button
                         @click="checkRankings"
-                        class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold flex items-center space-x-1.5 transition-all"
+                        :disabled="isChecking"
+                        class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold flex items-center space-x-1.5 transition-all disabled:opacity-60"
                     >
-                        <RefreshCw class="w-3.5 h-3.5" />
-                        <span>{{ $t('keywords.refresh_rankings') }}</span>
+                        <RefreshCw class="w-3.5 h-3.5" :class="{ 'animate-spin': isChecking }" />
+                        <span>{{ isChecking ? ($t('keywords.checking_rankings') || 'Kontrol Ediliyor...') : $t('keywords.refresh_rankings') }}</span>
                     </button>
                 </div>
             </div>
 
             <!-- Provider Status Banner -->
-            <div class="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 flex items-center justify-between text-xs">
-                <div class="flex items-center space-x-2">
+            <div class="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+                <div class="flex items-center space-x-2.5">
                     <span class="text-slate-400">{{ $t('keywords.active_provider') }}</span>
-                    <span class="font-bold text-white">{{ providerName }}</span>
+                    <span class="font-bold text-white flex items-center space-x-1.5">
+                        <Globe2 class="w-3.5 h-3.5 text-indigo-400" />
+                        <span>{{ providerDisplayName }}</span>
+                    </span>
                     <span
                         class="px-2 py-0.5 rounded-full text-[10px] font-semibold"
                         :class="providerConfigured ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'"
@@ -123,8 +196,17 @@ const checkRankings = () => {
                         {{ providerConfigured ? $t('keywords.external_api_active') : $t('keywords.external_api_none') }}
                     </span>
                 </div>
-                <div v-if="!providerConfigured" class="text-slate-500 hidden sm:block">
-                    {{ $t('keywords.no_api_desc') }}
+                <div class="flex items-center space-x-3">
+                    <span v-if="!providerConfigured" class="text-slate-500 hidden sm:inline">
+                        {{ $t('keywords.no_api_desc') }}
+                    </span>
+                    <button
+                        @click="showSerpModal = true"
+                        class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-200 border border-slate-700 hover:border-slate-600 text-xs font-semibold flex items-center space-x-1.5 transition-all"
+                    >
+                        <Settings class="w-3.5 h-3.5 text-indigo-400" />
+                        <span>{{ $t('keywords.serp_settings') || 'SERP Ayarları' }}</span>
+                    </button>
                 </div>
             </div>
 
@@ -267,6 +349,126 @@ const checkRankings = () => {
                                 class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold"
                             >
                                 {{ $t('keywords.import_button') }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- SERP Configuration Modal -->
+            <div v-if="showSerpModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+                <div class="w-full max-w-lg bg-slate-900 border border-slate-800 p-6 rounded-3xl space-y-4 shadow-2xl">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-base font-bold text-white flex items-center space-x-2">
+                            <Settings class="w-4 h-4 text-indigo-400" />
+                            <span>{{ $t('keywords.serp_modal_title') || 'SERP Sağlayıcı ve Sıralama Ayarları' }}</span>
+                        </h2>
+                        <button @click="showSerpModal = false" class="text-slate-400 hover:text-white text-xs">✕</button>
+                    </div>
+                    <p class="text-xs text-slate-400">
+                        {{ $t('keywords.serp_modal_desc') || 'Anahtar kelime sıralamalarınızın canlı olarak nasıl kontrol edileceğini yapılandırın.' }}
+                    </p>
+
+                    <form @submit.prevent="submitSerp" class="space-y-4 text-xs">
+                        <div>
+                            <label class="block font-semibold text-slate-300 mb-1.5">{{ $t('keywords.provider_choice') || 'Arama Motoru Sağlayıcısı' }}</label>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                <button
+                                    type="button"
+                                    @click="serpForm.provider = 'smart'"
+                                    class="p-3 rounded-xl border text-left transition-all flex flex-col justify-between"
+                                    :class="serpForm.provider === 'smart' ? 'bg-indigo-600/10 border-indigo-500 text-white' : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:text-slate-200'"
+                                >
+                                    <span class="font-bold text-xs text-indigo-400">⚡ {{ $t('keywords.provider_smart') || 'Dahili Akıllı Motor' }}</span>
+                                    <span class="text-[10px] text-slate-400 mt-1">{{ $t('keywords.provider_smart_desc') || 'Ücretsiz, API gerektirmez. Canlı web araması ve site alaka düzeyini kullanır.' }}</span>
+                                </button>
+
+                                <button
+                                    type="button"
+                                    @click="serpForm.provider = 'serpapi'"
+                                    class="p-3 rounded-xl border text-left transition-all flex flex-col justify-between"
+                                    :class="serpForm.provider === 'serpapi' ? 'bg-indigo-600/10 border-indigo-500 text-white' : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:text-slate-200'"
+                                >
+                                    <span class="font-bold text-xs text-cyan-400">SerpApi (Google)</span>
+                                    <span class="text-[10px] text-slate-400 mt-1">{{ $t('keywords.provider_serpapi_desc') || 'Google SERP API üzerinden anlık resmi Google arama sonuçları.' }}</span>
+                                </button>
+
+                                <button
+                                    type="button"
+                                    @click="serpForm.provider = 'dataforseo'"
+                                    class="p-3 rounded-xl border text-left transition-all flex flex-col justify-between"
+                                    :class="serpForm.provider === 'dataforseo' ? 'bg-indigo-600/10 border-indigo-500 text-white' : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:text-slate-200'"
+                                >
+                                    <span class="font-bold text-xs text-amber-400">DataForSEO API</span>
+                                    <span class="text-[10px] text-slate-400 mt-1">{{ $t('keywords.provider_dataforseo_desc') || 'Kurumsal DataForSEO hesabınız ile canlı sıralamalar.' }}</span>
+                                </button>
+
+                                <button
+                                    type="button"
+                                    @click="serpForm.provider = 'mock'"
+                                    class="p-3 rounded-xl border text-left transition-all flex flex-col justify-between"
+                                    :class="serpForm.provider === 'mock' ? 'bg-indigo-600/10 border-indigo-500 text-white' : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:text-slate-200'"
+                                >
+                                    <span class="font-bold text-xs text-slate-300">Demo Modu</span>
+                                    <span class="text-[10px] text-slate-400 mt-1">{{ $t('keywords.provider_mock_desc') || 'Geliştirme ve test amaçlı simüle veriler üretir.' }}</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- DataForSEO Inputs -->
+                        <div v-if="serpForm.provider === 'dataforseo'" class="space-y-3 p-3.5 rounded-xl bg-slate-950 border border-slate-800">
+                            <div>
+                                <label class="block font-semibold text-slate-300 mb-1">DataForSEO Login</label>
+                                <input
+                                    v-model="serpForm.dataforseo_login"
+                                    type="text"
+                                    class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white font-mono"
+                                    placeholder="login@email.com"
+                                />
+                            </div>
+                            <div>
+                                <label class="block font-semibold text-slate-300 mb-1">DataForSEO Password / API Key</label>
+                                <input
+                                    v-model="serpForm.dataforseo_password"
+                                    type="password"
+                                    class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white font-mono"
+                                    placeholder="••••••••••••"
+                                />
+                            </div>
+                        </div>
+
+                        <!-- SerpApi Input -->
+                        <div v-if="serpForm.provider === 'serpapi'" class="space-y-3 p-3.5 rounded-xl bg-slate-950 border border-slate-800">
+                            <div>
+                                <label class="block font-semibold text-slate-300 mb-1">SerpApi Private API Key</label>
+                                <input
+                                    v-model="serpForm.serpapi_key"
+                                    type="password"
+                                    class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white font-mono"
+                                    placeholder="••••••••••••••••••••••••"
+                                />
+                            </div>
+                        </div>
+
+                        <div class="p-3 rounded-xl bg-indigo-500/5 border border-indigo-500/20 text-[11px] text-slate-400 flex items-center space-x-2">
+                            <ShieldCheck class="w-4 h-4 text-indigo-400 shrink-0" />
+                            <span>{{ $t('integrations.aes_notice') }}</span>
+                        </div>
+
+                        <div class="pt-2 flex items-center justify-end space-x-2">
+                            <button
+                                type="button"
+                                @click="showSerpModal = false"
+                                class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white"
+                            >
+                                {{ $t('common.cancel') }}
+                            </button>
+                            <button
+                                type="submit"
+                                :disabled="serpForm.processing"
+                                class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold disabled:opacity-50"
+                            >
+                                {{ $t('common.save') }}
                             </button>
                         </div>
                     </form>

@@ -125,6 +125,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/projects/{project}/keywords', [KeywordController::class, 'index'])->name('keywords.index');
     Route::post('/projects/{project}/keywords', [KeywordController::class, 'store'])->name('keywords.store');
     Route::post('/projects/{project}/keywords/check', [KeywordController::class, 'checkRankings'])->name('keywords.check');
+    Route::post('/projects/{project}/keywords/serp-settings', [KeywordController::class, 'saveSerpSettings'])->name('keywords.serp-settings');
     Route::post('/projects/{project}/keywords/import-csv', [KeywordController::class, 'importCsv'])->name('keywords.import-csv');
     Route::delete('/projects/{project}/keywords/{keyword}', [KeywordController::class, 'destroy'])->name('keywords.destroy');
 

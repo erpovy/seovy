@@ -8,7 +8,7 @@ class MockSerpProvider implements SerpProviderInterface
 {
     public function isConfigured(): bool
     {
-        return app()->environment('local', 'testing');
+        return true;
     }
 
     public function checkRankings(string $domain, array $keywords, string $country = 'TR', string $language = 'tr'): array

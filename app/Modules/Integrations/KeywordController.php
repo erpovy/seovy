@@ -4,13 +4,17 @@ namespace App\Modules\Integrations;
 
 use App\Http\Controllers\Controller;
 use App\Models\AuditLog;
+use App\Models\Integration;
 use App\Models\Keyword;
 use App\Models\Project;
 use App\Modules\Integrations\Contracts\SerpProviderInterface;
 use App\Modules\Integrations\Providers\DataForSeoProvider;
 use App\Modules\Integrations\Providers\MockSerpProvider;
+use App\Modules\Integrations\Providers\SerpApiProvider;
+use App\Modules\Integrations\Providers\SmartWebSerpProvider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class KeywordController extends Controller
@@ -28,13 +32,19 @@ class KeywordController extends Controller
 
         $keywords = $query->latest()->paginate(25)->withQueryString();
 
-        $provider = $this->resolveProvider();
+        $provider = $this->resolveProvider($project);
+        $serpIntegration = $project->integrations()->where('type', 'serp_provider')->first();
 
         return Inertia::render('Keywords/Index', [
             'project' => $project,
             'keywords' => $keywords,
             'providerConfigured' => $provider->isConfigured(),
             'providerName' => class_basename($provider),
+            'serpIntegration' => [
+                'provider' => $serpIntegration?->settings['provider'] ?? 'smart',
+                'is_active' => $serpIntegration?->is_active ?? true,
+                'has_credentials' => !empty($serpIntegration?->credentials),
+            ],
             'filters' => $request->only('search'),
         ]);
     }
@@ -66,45 +76,102 @@ class KeywordController extends Controller
     {
         Gate::authorize('update', $project);
 
-        $provider = $this->resolveProvider();
+        $keywords = $project->keywords()->get();
+        if ($keywords->isEmpty()) {
+            return back()->withErrors(['error' => 'Takip edilen hiçbir anahtar kelime bulunmuyor. Önce anahtar kelime ekleyin.']);
+        }
+
+        $provider = $this->resolveProvider($project);
         if (!$provider->isConfigured()) {
             return back()->withErrors([
-                'error' => 'Canlı SERP sağlayıcı yapılandırılmamış. Sıralamaları CSV ile içe aktarabilir veya DataForSEO API bilgilerinizi tanımlayabilirsiniz.',
+                'error' => 'Seçilen SERP sağlayıcı yapılandırılmamış. Lütfen SERP Ayarları üzerinden bilgilerinizi güncelleyin.',
             ]);
         }
 
-        $keywords = $project->keywords()->get();
-        if ($keywords->isEmpty()) {
-            return back()->withErrors(['error' => 'Takip edilen hiçbir anahtar kelime yok.']);
-        }
+        try {
+            $kwList = $keywords->pluck('keyword')->toArray();
+            $country = $project->target_country ?: 'TR';
+            $language = $project->target_language ?: 'tr';
 
-        $kwList = $keywords->pluck('keyword')->toArray();
-        $rankings = $provider->checkRankings($project->domain, $kwList, $project->target_country, $project->target_language);
+            $rankings = $provider->checkRankings($project->domain, $kwList, $country, $language);
 
-        foreach ($keywords as $keywordModel) {
-            $kwText = $keywordModel->keyword;
-            if (isset($rankings[$kwText])) {
-                $pos = $rankings[$kwText]['position'];
-                $vol = $rankings[$kwText]['search_volume'];
+            $updatedCount = 0;
+            foreach ($keywords as $keywordModel) {
+                $kwText = $keywordModel->keyword;
+                if (isset($rankings[$kwText])) {
+                    $pos = $rankings[$kwText]['position'] ?? null;
+                    $vol = $rankings[$kwText]['search_volume'] ?? null;
+                    $targetUrl = $rankings[$kwText]['url'] ?? null;
 
-                $history = $keywordModel->history ?? [];
-                $history[] = [
-                    'date' => date('Y-m-d'),
-                    'position' => $pos,
-                ];
+                    $history = $keywordModel->history ?? [];
+                    $history[] = [
+                        'date' => date('Y-m-d H:i'),
+                        'position' => $pos,
+                    ];
 
-                $keywordModel->update([
-                    'previous_position' => $keywordModel->current_position,
-                    'current_position' => $pos,
-                    'search_volume' => $vol ?? $keywordModel->search_volume,
-                    'history' => array_slice($history, -30), // keep last 30 checks
-                ]);
+                    $keywordModel->update([
+                        'previous_position' => $keywordModel->current_position,
+                        'current_position' => $pos,
+                        'search_volume' => $vol ?? $keywordModel->search_volume,
+                        'target_url' => $targetUrl ?: $keywordModel->target_url,
+                        'history' => array_slice($history, -30), // keep last 30 checks
+                    ]);
+                    $updatedCount++;
+                }
             }
+
+            AuditLog::log('keywords.rankings_checked', 'Project', $project->id, [
+                'count' => count($keywords),
+                'updated' => $updatedCount,
+                'provider' => class_basename($provider),
+            ]);
+
+            return back()->with('success', "{$updatedCount} anahtar kelimenin sıralaması başarıyla güncellendi.");
+        } catch (\Throwable $e) {
+            Log::error("SERP Check Error: " . $e->getMessage());
+            return back()->withErrors(['error' => 'Sıralama kontrolü sırasında bir hata oluştu: ' . $e->getMessage()]);
+        }
+    }
+
+    public function saveSerpSettings(Request $request, Project $project)
+    {
+        Gate::authorize('update', $project);
+
+        $validated = $request->validate([
+            'provider' => ['required', 'string', 'in:smart,dataforseo,serpapi,mock'],
+            'dataforseo_login' => ['nullable', 'string'],
+            'dataforseo_password' => ['nullable', 'string'],
+            'serpapi_key' => ['nullable', 'string'],
+        ]);
+
+        $credentials = [];
+        if ($validated['provider'] === 'dataforseo') {
+            $credentials = [
+                'login' => $validated['dataforseo_login'] ?? '',
+                'password' => $validated['dataforseo_password'] ?? '',
+            ];
+        } elseif ($validated['provider'] === 'serpapi') {
+            $credentials = [
+                'api_key' => $validated['serpapi_key'] ?? '',
+            ];
         }
 
-        AuditLog::log('keywords.rankings_checked', 'Project', $project->id, ['count' => count($keywords)]);
+        Integration::updateOrCreate(
+            ['project_id' => $project->id, 'type' => 'serp_provider'],
+            [
+                'workspace_id' => $project->workspace_id,
+                'credentials' => !empty($credentials) ? $credentials : null,
+                'settings' => [
+                    'provider' => $validated['provider'],
+                ],
+                'is_active' => true,
+                'last_synced_at' => now(),
+            ]
+        );
 
-        return back()->with('success', 'Anahtar kelime sıralamaları güncellendi.');
+        AuditLog::log('keywords.serp_settings_saved', 'Project', $project->id, ['provider' => $validated['provider']]);
+
+        return back()->with('success', 'SERP sağlayıcı ayarları başarıyla kaydedildi.');
     }
 
     public function importCsv(Request $request, Project $project)
@@ -155,14 +222,43 @@ class KeywordController extends Controller
         return back()->with('success', 'Anahtar kelime silindi.');
     }
 
-    protected function resolveProvider(): SerpProviderInterface
+    protected function resolveProvider(?Project $project = null): SerpProviderInterface
     {
-        $providerType = config('services.serp.provider', env('SERP_PROVIDER', 'mock'));
+        // 1. Check Project-level integration
+        if ($project) {
+            $integration = $project->integrations()->where('type', 'serp_provider')->first();
+            if ($integration && $integration->is_active) {
+                $providerType = $integration->settings['provider'] ?? 'smart';
+                $creds = $integration->credentials ?? [];
 
-        if ($providerType === 'dataforseo') {
-            return new DataForSeoProvider();
+                if ($providerType === 'dataforseo') {
+                    return new DataForSeoProvider($creds['login'] ?? null, $creds['password'] ?? null);
+                }
+                if ($providerType === 'serpapi') {
+                    return new SerpApiProvider($creds['api_key'] ?? null);
+                }
+                if ($providerType === 'mock') {
+                    return new MockSerpProvider();
+                }
+                if ($providerType === 'smart') {
+                    return new SmartWebSerpProvider($project);
+                }
+            }
         }
 
-        return new MockSerpProvider();
+        // 2. Check Global / Environment Configuration
+        $globalType = config('services.serp.provider', env('SERP_PROVIDER'));
+        if ($globalType === 'dataforseo' || (!empty(env('DATAFORSEO_LOGIN')) && !empty(env('DATAFORSEO_PASSWORD')))) {
+            return new DataForSeoProvider();
+        }
+        if ($globalType === 'serpapi' || !empty(env('SERPAPI_KEY'))) {
+            return new SerpApiProvider();
+        }
+        if ($globalType === 'mock') {
+            return new MockSerpProvider();
+        }
+
+        // 3. Default: Smart Web SERP Provider (Always working & zero config needed)
+        return new SmartWebSerpProvider($project);
     }
 }
