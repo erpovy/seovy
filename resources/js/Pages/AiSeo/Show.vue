@@ -73,7 +73,7 @@ const copyToClipboard = () => {
 
                 <div class="flex items-center space-x-3">
                     <a
-                        :href="${project.start_url}/robots.txt"
+                        :href="project.start_url + '/robots.txt'"
                         target="_blank"
                         class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold flex items-center space-x-1.5 transition-all"
                     >
