@@ -38,6 +38,18 @@ class PaymentGateway extends Model
     }
 
     /**
+     * Ensure default gateways are populated in the database.
+     */
+    public static function ensureDefaultGateways(): void
+    {
+        if (static::count() === 0) {
+            foreach (static::getDefaultGateways() as $gateway) {
+                static::create($gateway);
+            }
+        }
+    }
+
+    /**
      * Get default seeded gateways for all supported language countries.
      */
     public static function getDefaultGateways(): array

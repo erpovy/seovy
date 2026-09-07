@@ -138,6 +138,7 @@ Route::middleware('auth')->group(function () {
     // Billing & Plans (SaaS)
     Route::get('/billing', [SubscriptionController::class, 'index'])->name('billing.index');
     Route::post('/billing/plan', [SubscriptionController::class, 'updatePlan'])->name('billing.plan');
+    Route::post('/billing/checkout', [SubscriptionController::class, 'checkout'])->name('billing.checkout');
 
     // Platform Admin Panel
     Route::prefix('admin')->name('admin.')->group(function () {
@@ -150,6 +151,15 @@ Route::middleware('auth')->group(function () {
         Route::post('/payments/settings', [AdminController::class, 'updatePaymentSettings'])->name('payments.settings');
         Route::post('/payments/simulate', [AdminController::class, 'simulatePayment'])->name('payments.simulate');
         Route::post('/payments/transactions/{transaction}/refund', [AdminController::class, 'simulateRefund'])->name('payments.refund');
+
+        // Subscription Plans & Quota Management
+        Route::get('/plans', [AdminController::class, 'plans'])->name('plans');
+        Route::post('/plans', [AdminController::class, 'storePlan'])->name('plans.store');
+        Route::patch('/plans/{plan}', [AdminController::class, 'updatePlan'])->name('plans.update');
+        Route::delete('/plans/{plan}', [AdminController::class, 'destroyPlan'])->name('plans.destroy');
+
+        // Sales & Purchase Logs
+        Route::get('/sales', [AdminController::class, 'sales'])->name('sales');
     });
 });
 

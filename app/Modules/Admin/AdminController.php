@@ -9,6 +9,7 @@ use App\Models\PaymentGateway;
 use App\Models\PaymentSetting;
 use App\Models\PaymentTransaction;
 use App\Models\Project;
+use App\Models\SubscriptionPlan;
 use App\Models\User;
 use App\Models\Workspace;
 use App\Modules\Billing\Services\PaymentSimulationService;
@@ -27,8 +28,9 @@ class AdminController extends Controller
     {
         $this->authorizeAdmin($request);
 
-        // Ensure default gateways & settings exist
+        // Ensure default gateways, settings, and plans exist
         $this->simulationService->ensureInitialized();
+        SubscriptionPlan::ensureDefaultPlans();
 
         // System Infrastructure Health Check
         $dbOk = true;
@@ -64,6 +66,7 @@ class AdminController extends Controller
             'total_payment_transactions' => PaymentTransaction::count(),
             'simulated_transactions' => PaymentTransaction::where('is_simulation', true)->count(),
             'active_gateways_count' => PaymentGateway::where('is_active', true)->count(),
+            'total_plans_count' => SubscriptionPlan::count(),
         ];
 
         // Query all registered users with their active workspace, all workspaces, and tracked websites
@@ -111,16 +114,46 @@ class AdminController extends Controller
 
         $users = $usersQuery->paginate(20)->withQueryString();
 
-        // Payment Gateways & Transactions
+        // Payment Gateways & Settings
         $gateways = PaymentGateway::orderBy('sort_order')->get();
         $paymentSettings = [
             'test_mode' => (bool) PaymentSetting::get('test_mode', true),
             'default_gateway' => (string) PaymentSetting::get('default_gateway', 'iyzico'),
         ];
-        $recentTransactions = PaymentTransaction::with(['workspace:id,name', 'user:id,name,email'])
-            ->latest()
-            ->take(50)
-            ->get();
+
+        // Subscription Plans
+        $plansList = SubscriptionPlan::orderBy('sort_order')->get();
+
+        // Transactions & Sales Logs (with search and filters)
+        $salesQuery = PaymentTransaction::with(['workspace:id,name,slug', 'user:id,name,email'])
+            ->latest();
+
+        if ($request->filled('sales_search')) {
+            $s = trim($request->sales_search);
+            $salesQuery->where(function ($q) use ($s) {
+                $q->where('transaction_id', 'like', "%{$s}%")
+                  ->orWhere('customer_name', 'like', "%{$s}%")
+                  ->orWhere('customer_email', 'like', "%{$s}%")
+                  ->orWhereHas('workspace', function ($wq) use ($s) {
+                      $wq->where('name', 'like', "%{$s}%");
+                  });
+            });
+        }
+
+        if ($request->filled('sales_plan') && $request->sales_plan !== 'all') {
+            $salesQuery->where('plan_name', $request->sales_plan);
+        }
+
+        if ($request->filled('sales_mode') && $request->sales_mode !== 'all') {
+            $salesQuery->where('is_simulation', $request->sales_mode === 'simulation');
+        }
+
+        if ($request->filled('sales_status') && $request->sales_status !== 'all') {
+            $salesQuery->where('status', $request->sales_status);
+        }
+
+        $recentTransactions = $salesQuery->take(100)->get();
+
         $workspacesList = Workspace::select('id', 'name', 'owner_id')
             ->with('owner:id,name,email')
             ->orderBy('name')
@@ -132,12 +165,17 @@ class AdminController extends Controller
             'users' => $users,
             'gateways' => $gateways,
             'paymentSettings' => $paymentSettings,
+            'plansList' => $plansList,
             'recentTransactions' => $recentTransactions,
             'workspacesList' => $workspacesList,
             'filters' => [
                 'search' => $request->search ?? '',
                 'filter' => $request->filter ?? 'all',
                 'tab' => $request->tab ?? 'users',
+                'sales_search' => $request->sales_search ?? '',
+                'sales_plan' => $request->sales_plan ?? 'all',
+                'sales_mode' => $request->sales_mode ?? 'all',
+                'sales_status' => $request->sales_status ?? 'all',
             ],
         ]);
     }
@@ -160,6 +198,106 @@ class AdminController extends Controller
     public function payments(Request $request)
     {
         return redirect()->route('admin.dashboard', array_merge(['tab' => 'payments'], $request->query()));
+    }
+
+    public function plans(Request $request)
+    {
+        return redirect()->route('admin.dashboard', array_merge(['tab' => 'plans'], $request->query()));
+    }
+
+    public function sales(Request $request)
+    {
+        return redirect()->route('admin.dashboard', array_merge(['tab' => 'sales'], $request->query()));
+    }
+
+    /**
+     * Create a new subscription plan.
+     */
+    public function storePlan(Request $request)
+    {
+        $this->authorizeAdmin($request);
+
+        $validated = $request->validate([
+            'code' => ['required', 'string', 'max:50', 'alpha_dash', 'unique:subscription_plans,code'],
+            'name' => ['required', 'string', 'max:100'],
+            'price' => ['required', 'numeric', 'min:0'],
+            'currency' => ['required', 'string', 'max:10'],
+            'features' => ['nullable', 'array'],
+            'limits' => ['nullable', 'array'],
+            'limits.max_projects' => ['nullable', 'integer', 'min:1'],
+            'limits.max_pages_monthly' => ['nullable', 'integer', 'min:10'],
+            'limits.max_keywords' => ['nullable', 'integer', 'min:0'],
+            'limits.team_members' => ['nullable', 'integer', 'min:1'],
+            'is_active' => ['nullable', 'boolean'],
+            'is_popular' => ['nullable', 'boolean'],
+        ]);
+
+        $sortOrder = SubscriptionPlan::max('sort_order') + 1;
+        $validated['sort_order'] = $sortOrder;
+        $validated['is_active'] = $validated['is_active'] ?? true;
+        $validated['is_popular'] = $validated['is_popular'] ?? false;
+
+        $plan = SubscriptionPlan::create($validated);
+
+        AuditLog::log('plan.created', 'SubscriptionPlan', $plan->id, [
+            'name' => $plan->name,
+            'price' => "{$plan->price} {$plan->currency}",
+            'limits' => $plan->limits,
+        ]);
+
+        return back()->with('success', "{$plan->name} başarıyla oluşturuldu.");
+    }
+
+    /**
+     * Update an existing subscription plan's pricing, features, and quotas.
+     */
+    public function updatePlan(Request $request, SubscriptionPlan $plan)
+    {
+        $this->authorizeAdmin($request);
+
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:100'],
+            'price' => ['required', 'numeric', 'min:0'],
+            'currency' => ['required', 'string', 'max:10'],
+            'features' => ['nullable', 'array'],
+            'limits' => ['nullable', 'array'],
+            'limits.max_projects' => ['nullable', 'integer', 'min:1'],
+            'limits.max_pages_monthly' => ['nullable', 'integer', 'min:10'],
+            'limits.max_keywords' => ['nullable', 'integer', 'min:0'],
+            'limits.team_members' => ['nullable', 'integer', 'min:1'],
+            'is_active' => ['nullable', 'boolean'],
+            'is_popular' => ['nullable', 'boolean'],
+            'sort_order' => ['nullable', 'integer'],
+        ]);
+
+        $plan->update($validated);
+
+        AuditLog::log('plan.updated', 'SubscriptionPlan', $plan->id, [
+            'name' => $plan->name,
+            'price' => "{$plan->price} {$plan->currency}",
+            'limits' => $plan->limits,
+        ]);
+
+        return back()->with('success', "{$plan->name} fiyat ve kota ayarları güncellendi.");
+    }
+
+    /**
+     * Delete a custom plan (default plans cannot be deleted).
+     */
+    public function destroyPlan(Request $request, SubscriptionPlan $plan)
+    {
+        $this->authorizeAdmin($request);
+
+        if (in_array($plan->code, ['free', 'pro', 'agency'])) {
+            return back()->withErrors(['error' => 'Varsayılan sistem planları silinemez, dilerseniz pasif duruma getirebilirsiniz.']);
+        }
+
+        $name = $plan->name;
+        $plan->delete();
+
+        AuditLog::log('plan.deleted', 'SubscriptionPlan', $plan->id, ['name' => $name]);
+
+        return back()->with('success', "{$name} planı silindi.");
     }
 
     /**
@@ -227,7 +365,7 @@ class AdminController extends Controller
         $validated = $request->validate([
             'workspace_id' => ['nullable', 'exists:workspaces,id'],
             'gateway_code' => ['required', 'string'],
-            'plan_name' => ['required', 'string', 'in:free,pro,agency,custom'],
+            'plan_name' => ['required', 'string'],
             'amount' => ['nullable', 'numeric', 'min:0'],
             'scenario' => ['required', 'string', 'in:success,3ds_success,insufficient_funds,bank_declined'],
             'customer_name' => ['nullable', 'string', 'max:150'],

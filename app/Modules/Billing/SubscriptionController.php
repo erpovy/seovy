@@ -4,8 +4,12 @@ namespace App\Modules\Billing;
 
 use App\Http\Controllers\Controller;
 use App\Models\AuditLog;
+use App\Models\PaymentGateway;
+use App\Models\PaymentSetting;
 use App\Models\Subscription;
+use App\Models\SubscriptionPlan;
 use App\Models\Workspace;
+use App\Modules\Billing\Services\PaymentSimulationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
@@ -13,6 +17,10 @@ use Inertia\Inertia;
 
 class SubscriptionController extends Controller
 {
+    public function __construct(
+        protected PaymentSimulationService $simulationService
+    ) {}
+
     public function index(Request $request)
     {
         $user = $request->user();
@@ -24,31 +32,31 @@ class SubscriptionController extends Controller
 
         Gate::authorize('update', $workspace);
 
+        SubscriptionPlan::ensureDefaultPlans();
+        $this->simulationService->ensureInitialized();
+
         $subscription = $workspace->subscription;
 
-        $plans = [
-            'free' => [
-                'name' => 'Ücretsiz Plan',
-                'price' => '0₺ / ay',
-                'features' => ['1 Proje', 'Aylık 500 Taranan Sayfa', '10 Anahtar Kelime', '1 Kullanıcı', 'Temel Raporlar'],
-                'limits' => ['max_projects' => 1, 'max_pages_monthly' => 500, 'max_keywords' => 10, 'team_members' => 1],
-            ],
-            'pro' => [
-                'name' => 'Pro Plan',
-                'price' => '499₺ / ay',
-                'features' => ['5 Proje', 'Aylık 20.000 Taranan Sayfa', '100 Anahtar Kelime', '5 Ekip Üyesi', 'GSC & PageSpeed', 'PDF Raporlama'],
-                'limits' => ['max_projects' => 5, 'max_pages_monthly' => 20000, 'max_keywords' => 100, 'team_members' => 5],
-            ],
-            'agency' => [
-                'name' => 'Ajans Planı',
-                'price' => '1.499₺ / ay',
-                'features' => ['50 Proje', 'Aylık 200.000 Taranan Sayfa', '2.000 Anahtar Kelime', '25 Ekip Üyesi', 'Beyaz Etiket PDF', 'Öncelikli Kuyruk'],
-                'limits' => ['max_projects' => 50, 'max_pages_monthly' => 200000, 'max_keywords' => 2000, 'team_members' => 25],
-            ],
-        ];
+        $dbPlans = SubscriptionPlan::where('is_active', true)
+            ->orderBy('sort_order')
+            ->get();
 
-        $testMode = (bool) \App\Models\PaymentSetting::get('test_mode', true);
-        $activeGateways = \App\Models\PaymentGateway::where('is_active', true)->get();
+        $plans = $dbPlans->keyBy('code')->map(function ($p) {
+            return [
+                'id' => $p->id,
+                'code' => $p->code,
+                'name' => $p->name,
+                'price_raw' => (float) $p->price,
+                'price' => $p->price == 0 ? '0 ₺ / ay' : number_format($p->price, 0, ',', '.') . ' ' . ($p->currency === 'TRY' ? '₺' : $p->currency) . ' / ay',
+                'currency' => $p->currency,
+                'features' => $p->features ?? [],
+                'limits' => $p->limits ?? [],
+                'is_popular' => (bool) $p->is_popular,
+            ];
+        });
+
+        $testMode = (bool) PaymentSetting::get('test_mode', true);
+        $activeGateways = PaymentGateway::where('is_active', true)->get();
 
         return Inertia::render('Billing/Index', [
             'subscription' => $subscription,
@@ -61,32 +69,84 @@ class SubscriptionController extends Controller
     }
 
     /**
-     * Change subscription plan (Stripe test mode adapter).
+     * Process checkout & plan purchase (Supports both active gateways and simulation).
      */
-    public function updatePlan(Request $request)
+    public function checkout(Request $request)
     {
         $user = $request->user();
         $workspace = $user->currentWorkspace;
         Gate::authorize('update', $workspace);
 
         $validated = $request->validate([
-            'plan' => ['required', 'in:free,pro,agency'],
+            'plan' => ['required', 'string', 'exists:subscription_plans,code'],
+            'gateway_code' => ['nullable', 'string'],
+            'scenario' => ['nullable', 'string', 'in:success,3ds_success,insufficient_funds,bank_declined'],
+            'card_brand' => ['nullable', 'string', 'max:50'],
+            'card_last_four' => ['nullable', 'string', 'max:10'],
         ]);
 
-        $newPlan = $validated['plan'];
+        $planCode = $validated['plan'];
+        $plan = SubscriptionPlan::where('code', $planCode)->firstOrFail();
 
-        $subscription = $workspace->subscription;
-        if ($subscription) {
-            $subscription->update([
-                'plan_name' => $newPlan,
-                'status' => 'active',
-                'current_period_end' => now()->addMonth(),
-            ]);
+        // 1. If Free plan, downgrade immediately without payment
+        if ($plan->price == 0) {
+            $subscription = $workspace->subscription;
+            if ($subscription) {
+                $subscription->update([
+                    'plan_name' => 'free',
+                    'status' => 'active',
+                    'current_period_end' => null,
+                ]);
+            } else {
+                Subscription::create([
+                    'workspace_id' => $workspace->id,
+                    'plan_name' => 'free',
+                    'status' => 'active',
+                ]);
+            }
+
+            AuditLog::log('billing.plan_changed', 'Workspace', $workspace->id, ['new_plan' => 'free'], $workspace->id);
+
+            return back()->with('success', 'Aboneliğiniz Ücretsiz Plan olarak güncellendi.');
         }
 
-        AuditLog::log('billing.plan_changed', 'Workspace', $workspace->id, ['new_plan' => $newPlan]);
+        // 2. Paid Plan: Process via simulation service / active gateway
+        $gatewayCode = $validated['gateway_code'] ?? 'iyzico';
+        $scenario = $validated['scenario'] ?? 'success';
 
-        return back()->with('success', "Abonelik paketiniz {$newPlan} olarak güncellendi.");
+        $cardBrands = ['Visa', 'Mastercard', 'Troy'];
+        $cardBrand = $validated['card_brand'] ?? $cardBrands[array_rand($cardBrands)];
+        $cardLastFour = $validated['card_last_four'] ?? str_pad((string) rand(1000, 9999), 4, '0', STR_PAD_LEFT);
+
+        $transaction = $this->simulationService->simulatePayment([
+            'workspace_id' => $workspace->id,
+            'user_id' => $user->id,
+            'gateway_code' => $gatewayCode,
+            'plan_name' => $plan->code,
+            'amount' => (float) $plan->price,
+            'currency' => $plan->currency,
+            'scenario' => $scenario,
+            'customer_name' => $user->name,
+            'customer_email' => $user->email,
+            'card_brand' => $cardBrand,
+            'card_last_four' => $cardLastFour,
+        ], $user);
+
+        if ($transaction->status === 'success') {
+            return back()->with('success', "Tebrikler! {$plan->name} aboneliğiniz ({$transaction->transaction_id}) başarıyla aktif edildi.");
+        }
+
+        return back()->withErrors([
+            'payment' => $transaction->error_message ?? 'Ödeme işlemi banka tarafından onaylanamadı.',
+        ]);
+    }
+
+    /**
+     * Legacy adapter for backward compatibility.
+     */
+    public function updatePlan(Request $request)
+    {
+        return $this->checkout($request);
     }
 
     /**
@@ -104,36 +164,7 @@ class SubscriptionController extends Controller
             return response()->json(['error' => 'Geçersiz webhook verisi'], 400);
         }
 
-        $eventType = $event['type'];
-        Log::info("Stripe webhook alındı: {$eventType}");
-
-        // Handle relevant subscription events
-        switch ($eventType) {
-            case 'customer.subscription.updated':
-            case 'customer.subscription.created':
-                $stripeSub = $event['data']['object'] ?? [];
-                $stripeId = $stripeSub['id'] ?? null;
-                $status = $stripeSub['status'] ?? 'active';
-
-                if ($stripeId) {
-                    Subscription::where('stripe_id', $stripeId)->update([
-                        'status' => $status,
-                        'current_period_end' => isset($stripeSub['current_period_end']) ? date('Y-m-d H:i:s', $stripeSub['current_period_end']) : null,
-                    ]);
-                }
-                break;
-
-            case 'customer.subscription.deleted':
-                $stripeSub = $event['data']['object'] ?? [];
-                $stripeId = $stripeSub['id'] ?? null;
-                if ($stripeId) {
-                    Subscription::where('stripe_id', $stripeId)->update([
-                        'plan_name' => 'free',
-                        'status' => 'canceled',
-                    ]);
-                }
-                break;
-        }
+        Log::info('Stripe webhook received: ' . $event['type']);
 
         return response()->json(['received' => true]);
     }

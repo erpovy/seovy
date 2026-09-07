@@ -34,6 +34,8 @@ import {
 } from 'lucide-vue-next';
 import { useI18n } from '@/i18n';
 import PaymentsTab from '@/Pages/Admin/Partials/PaymentsTab.vue';
+import PlansTab from '@/Pages/Admin/Partials/PlansTab.vue';
+import SalesTab from '@/Pages/Admin/Partials/SalesTab.vue';
 
 const { t } = useI18n();
 
@@ -52,6 +54,7 @@ const props = defineProps<{
         total_payment_transactions?: number;
         simulated_transactions?: number;
         active_gateways_count?: number;
+        total_plans_count?: number;
     };
     recentLogs: Array<any>;
     users: {
@@ -66,16 +69,21 @@ const props = defineProps<{
         test_mode: boolean;
         default_gateway: string;
     };
+    plansList?: Array<any>;
     recentTransactions?: Array<any>;
     workspacesList?: Array<any>;
     filters: {
         search?: string;
         filter?: string;
-        tab?: 'users' | 'system' | 'logs' | 'payments';
+        tab?: 'users' | 'system' | 'logs' | 'payments' | 'plans' | 'sales';
+        sales_search?: string;
+        sales_plan?: string;
+        sales_mode?: string;
+        sales_status?: string;
     };
 }>();
 
-const activeTab = ref<'users' | 'system' | 'logs' | 'payments'>(props.filters.tab || 'users');
+const activeTab = ref<'users' | 'system' | 'logs' | 'payments' | 'plans' | 'sales'>(props.filters.tab || 'users');
 const searchQuery = ref(props.filters.search || '');
 const currentFilter = ref(props.filters.filter || 'all');
 const selectedUser = ref<any>(null);
@@ -118,7 +126,7 @@ const setFilter = (filterName: string) => {
     applyFilters(filterName);
 };
 
-const switchTab = (tabName: 'users' | 'system' | 'logs' | 'payments') => {
+const switchTab = (tabName: 'users' | 'system' | 'logs' | 'payments' | 'plans' | 'sales') => {
     activeTab.value = tabName;
     router.get(
         '/admin',
@@ -372,6 +380,22 @@ const filteredAuditLogs = computed(() => {
                 >
                     <CreditCard class="w-3.5 h-3.5 text-emerald-400" />
                     <span>{{ $t('admin.tab_payments') }} ({{ gateways?.length || 10 }})</span>
+                </button>
+                <button
+                    @click="switchTab('plans')"
+                    class="px-4 py-2 rounded-xl text-xs font-semibold transition-all flex items-center space-x-2"
+                    :class="activeTab === 'plans' ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30' : 'text-slate-400 hover:text-white bg-slate-900/60'"
+                >
+                    <Tag class="w-3.5 h-3.5 text-cyan-400" />
+                    <span>{{ $t('admin.tab_plans') }} ({{ plansList?.length || 3 }})</span>
+                </button>
+                <button
+                    @click="switchTab('sales')"
+                    class="px-4 py-2 rounded-xl text-xs font-semibold transition-all flex items-center space-x-2"
+                    :class="activeTab === 'sales' ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30' : 'text-slate-400 hover:text-white bg-slate-900/60'"
+                >
+                    <DollarSign class="w-3.5 h-3.5 text-amber-400" />
+                    <span>{{ $t('admin.tab_sales') }} ({{ recentTransactions?.length || 0 }})</span>
                 </button>
             </div>
 
@@ -861,6 +885,28 @@ const filteredAuditLogs = computed(() => {
                     :recent-transactions="recentTransactions || []"
                     :workspaces-list="workspacesList || []"
                     :stats="stats"
+                />
+            </div>
+
+            <!-- Tab 5: Subscription Plans & Quota Management -->
+            <div v-else-if="activeTab === 'plans'" class="space-y-6">
+                <PlansTab
+                    :plans-list="plansList || []"
+                    :stats="stats"
+                />
+            </div>
+
+            <!-- Tab 6: Sales & Purchase Logs -->
+            <div v-else-if="activeTab === 'sales'" class="space-y-6">
+                <SalesTab
+                    :recent-transactions="recentTransactions || []"
+                    :stats="stats"
+                    :filters="{
+                        sales_search: filters.sales_search,
+                        sales_plan: filters.sales_plan,
+                        sales_mode: filters.sales_mode,
+                        sales_status: filters.sales_status,
+                    }"
                 />
             </div>
         </div>
