@@ -179,15 +179,25 @@ const switchWorkspace = (workspaceId: number) => {
                         <span>{{ t('nav.plan_billing') }}</span>
                     </Link>
 
-                    <!-- Platform Admin Link -->
-                    <Link
-                        v-if="auth.user?.is_platform_admin"
-                        href="/admin"
-                        class="flex items-center space-x-3 px-3 py-2 rounded-xl text-xs font-medium transition-all text-pink-400 hover:text-pink-300 hover:bg-pink-500/10 border border-pink-500/20"
-                    >
-                        <Shield class="w-4 h-4" />
-                        <span>{{ t('nav.system_admin') }}</span>
-                    </Link>
+                    <!-- Platform Admin Links -->
+                    <div v-if="auth.user?.is_platform_admin" class="space-y-1 pt-1">
+                        <Link
+                            href="/admin"
+                            class="flex items-center space-x-3 px-3 py-2 rounded-xl text-xs font-medium transition-all"
+                            :class="$page.url === '/admin' || ($page.url.startsWith('/admin') && !$page.url.includes('payments')) ? 'bg-pink-600/20 text-pink-300 border border-pink-500/40' : 'text-pink-400 hover:text-pink-300 hover:bg-pink-500/10 border border-pink-500/20'"
+                        >
+                            <Shield class="w-4 h-4" />
+                            <span>{{ t('nav.system_admin') }}</span>
+                        </Link>
+                        <Link
+                            href="/admin?tab=payments"
+                            class="flex items-center space-x-3 px-3 py-2 rounded-xl text-xs font-medium transition-all"
+                            :class="$page.url.includes('tab=payments') || $page.url.includes('/admin/payments') ? 'bg-emerald-600/20 text-emerald-300 border border-emerald-500/40' : 'text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10 border border-emerald-500/20'"
+                        >
+                            <CreditCard class="w-4 h-4" />
+                            <span>{{ t('admin.virtual_pos_gateways') }}</span>
+                        </Link>
+                    </div>
                 </nav>
             </div>
 

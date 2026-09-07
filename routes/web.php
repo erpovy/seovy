@@ -145,6 +145,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/users', [AdminController::class, 'users'])->name('users');
         Route::get('/workspaces', [AdminController::class, 'workspaces'])->name('workspaces');
         Route::get('/audit-logs', [AdminController::class, 'auditLogs'])->name('audit-logs');
+        Route::get('/payments', [AdminController::class, 'payments'])->name('payments');
+        Route::patch('/payments/gateways/{gateway}', [AdminController::class, 'updateGateway'])->name('payments.gateways.update');
+        Route::post('/payments/settings', [AdminController::class, 'updatePaymentSettings'])->name('payments.settings');
+        Route::post('/payments/simulate', [AdminController::class, 'simulatePayment'])->name('payments.simulate');
+        Route::post('/payments/transactions/{transaction}/refund', [AdminController::class, 'simulateRefund'])->name('payments.refund');
     });
 });
 

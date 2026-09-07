@@ -47,11 +47,16 @@ class SubscriptionController extends Controller
             ],
         ];
 
+        $testMode = (bool) \App\Models\PaymentSetting::get('test_mode', true);
+        $activeGateways = \App\Models\PaymentGateway::where('is_active', true)->get();
+
         return Inertia::render('Billing/Index', [
             'subscription' => $subscription,
             'currentPlan' => $subscription?->plan_name ?? 'free',
             'plans' => $plans,
             'stripeKey' => config('services.stripe.key'),
+            'testMode' => $testMode,
+            'activeGateways' => $activeGateways,
         ]);
     }
 

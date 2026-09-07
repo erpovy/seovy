@@ -33,6 +33,7 @@ import {
     Laptop
 } from 'lucide-vue-next';
 import { useI18n } from '@/i18n';
+import PaymentsTab from '@/Pages/Admin/Partials/PaymentsTab.vue';
 
 const { t } = useI18n();
 
@@ -47,6 +48,10 @@ const props = defineProps<{
         redis_status: boolean;
         php_version: string;
         laravel_version: string;
+        total_payment_volume?: number;
+        total_payment_transactions?: number;
+        simulated_transactions?: number;
+        active_gateways_count?: number;
     };
     recentLogs: Array<any>;
     users: {
@@ -56,14 +61,21 @@ const props = defineProps<{
         current_page?: number;
         last_page?: number;
     };
+    gateways?: Array<any>;
+    paymentSettings?: {
+        test_mode: boolean;
+        default_gateway: string;
+    };
+    recentTransactions?: Array<any>;
+    workspacesList?: Array<any>;
     filters: {
         search?: string;
         filter?: string;
-        tab?: 'users' | 'system' | 'logs';
+        tab?: 'users' | 'system' | 'logs' | 'payments';
     };
 }>();
 
-const activeTab = ref<'users' | 'system' | 'logs'>(props.filters.tab || 'users');
+const activeTab = ref<'users' | 'system' | 'logs' | 'payments'>(props.filters.tab || 'users');
 const searchQuery = ref(props.filters.search || '');
 const currentFilter = ref(props.filters.filter || 'all');
 const selectedUser = ref<any>(null);
@@ -106,7 +118,7 @@ const setFilter = (filterName: string) => {
     applyFilters(filterName);
 };
 
-const switchTab = (tabName: 'users' | 'system' | 'logs') => {
+const switchTab = (tabName: 'users' | 'system' | 'logs' | 'payments') => {
     activeTab.value = tabName;
     router.get(
         '/admin',
@@ -352,6 +364,14 @@ const filteredAuditLogs = computed(() => {
                 >
                     <Clock class="w-3.5 h-3.5" />
                     <span>{{ $t('admin.tab_audit_logs') }} ({{ recentLogs.length }})</span>
+                </button>
+                <button
+                    @click="switchTab('payments')"
+                    class="px-4 py-2 rounded-xl text-xs font-semibold transition-all flex items-center space-x-2"
+                    :class="activeTab === 'payments' ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30' : 'text-slate-400 hover:text-white bg-slate-900/60'"
+                >
+                    <CreditCard class="w-3.5 h-3.5 text-emerald-400" />
+                    <span>{{ $t('admin.tab_payments') }} ({{ gateways?.length || 10 }})</span>
                 </button>
             </div>
 
@@ -831,6 +851,17 @@ const filteredAuditLogs = computed(() => {
                         </table>
                     </div>
                 </div>
+            </div>
+
+            <!-- Tab 4: Virtual POS & Purchase Simulation Mode -->
+            <div v-else-if="activeTab === 'payments'" class="space-y-6">
+                <PaymentsTab
+                    :gateways="gateways || []"
+                    :payment-settings="paymentSettings || { test_mode: true, default_gateway: 'iyzico' }"
+                    :recent-transactions="recentTransactions || []"
+                    :workspaces-list="workspacesList || []"
+                    :stats="stats"
+                />
             </div>
         </div>
 
