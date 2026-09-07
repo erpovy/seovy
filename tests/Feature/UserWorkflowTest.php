@@ -140,4 +140,57 @@ class UserWorkflowTest extends TestCase
         $response = $this->actingAs($otherUser)->get("/projects/{$project->id}/reports/{$report->id}/download");
         $this->assertTrue(in_array($response->status(), [403, 404]));
     }
+
+    public function test_user_can_edit_and_delete_project(): void
+    {
+        $user = User::create([
+            'name' => 'Project Manager',
+            'email' => 'pm@seovy.test',
+            'password' => bcrypt('password123'),
+        ]);
+        $workspace = Workspace::create(['name' => 'PM WS', 'slug' => 'pm-ws', 'owner_id' => $user->id]);
+        $workspace->users()->attach($user->id, ['role' => 'owner']);
+        $user->current_workspace_id = $workspace->id;
+        $user->save();
+
+        $project = Project::create([
+            'workspace_id' => $workspace->id,
+            'name' => 'Original Site',
+            'domain' => 'original.com',
+            'start_url' => 'https://original.com',
+            'target_country' => 'US',
+            'target_language' => 'en',
+            'timezone' => 'UTC',
+        ]);
+
+        // 1. Edit project
+        $editResponse = $this->actingAs($user)->patch("/projects/{$project->id}", [
+            'name' => 'Updated Site Name',
+            'start_url' => 'https://newdomain.com/blog',
+            'target_country' => 'TR',
+            'target_language' => 'tr',
+            'timezone' => 'Europe/Istanbul',
+            'crawl_settings' => [
+                'max_depth' => 4,
+                'max_pages' => 300,
+                'respect_robots' => true,
+                'follow_subdomains' => true,
+            ],
+        ]);
+
+        $editResponse->assertRedirect(route('projects.show', $project->id));
+        $project->refresh();
+        $this->assertEquals('Updated Site Name', $project->name);
+        $this->assertEquals('newdomain.com', $project->domain);
+        $this->assertEquals('TR', $project->target_country);
+        $this->assertEquals('Europe/Istanbul', $project->timezone);
+        $this->assertEquals(4, $project->crawl_settings['max_depth']);
+        $this->assertEquals(300, $project->crawl_settings['max_pages']);
+
+        // 2. Delete project
+        $deleteResponse = $this->actingAs($user)->delete("/projects/{$project->id}");
+        $deleteResponse->assertRedirect(route('projects.index'));
+        $this->assertNull(Project::find($project->id));
+    }
 }
+

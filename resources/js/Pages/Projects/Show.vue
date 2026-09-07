@@ -137,6 +137,16 @@ const verifyOwnership = () => {
                             <span>{{ t('projects.start_crawl') }}</span>
                         </button>
                     </form>
+
+                    <Link
+                        v-if="canManage"
+                        :href="`/projects/${project.id}/edit`"
+                        class="px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-400 hover:text-white hover:border-slate-700 transition-colors shrink-0 flex items-center space-x-1.5"
+                        :title="t('projects.edit_website')"
+                    >
+                        <Settings class="w-4 h-4" />
+                        <span class="text-xs font-semibold hidden sm:inline">{{ t('projects.settings') }}</span>
+                    </Link>
                 </div>
             </div>
 

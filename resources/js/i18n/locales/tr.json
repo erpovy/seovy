@@ -135,7 +135,7 @@
         "created_at": "Oluşturulma",
         "actions": "İşlemler",
         "project_settings": "Proje Ayarları",
-        "delete_project": "Projeyi Sil",
+        "delete_project": "Web Sitesini Sil",
         "danger_zone": "Tehlikeli Bölge",
         "danger_zone_desc": "Bu projeyi ve tüm ilişkili tarama bulgularını kalıcı olarak silin.",
         "export_data": "Proje Verisini Dışa Aktar",
@@ -189,7 +189,16 @@
         "target_language": "Hedef Dil",
         "timezone": "Saat Dilimi",
         "respect_robots": "robots.txt Kurallarına Uyun",
-        "follow_subdomains": "Alt alan adlarını (subdomain) da tara"
+        "follow_subdomains": "Alt alan adlarını (subdomain) da tara",
+        "edit_website": "Web Sitesini Düzenle",
+        "edit_website_subtitle": "Domain, başlangıç URL'si ve tarama parametrelerini güncelleyin.",
+        "delete_confirm_title": "Web Sitesini Kalıcı Olarak Sil",
+        "delete_confirm_desc": "Bu işlem geri alınamaz. Bu web sitesine ait tüm tarama geçmişi, SEO bulguları ve sıralama takipleri kalıcı olarak silinir.",
+        "save_changes": "Değişiklikleri Kaydet",
+        "edit": "Düzenle",
+        "delete": "Sil",
+        "type_to_confirm": "Onaylamak için site adını yazın:",
+        "cancel": "İptal"
     },
     "ai_seo": {
         "badge": "Yapay Zeka & Üretken Arama Optimizasyonu",

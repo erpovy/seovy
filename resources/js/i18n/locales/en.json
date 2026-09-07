@@ -135,7 +135,7 @@
         "created_at": "Created At",
         "actions": "Actions",
         "project_settings": "Project Settings",
-        "delete_project": "Delete Project",
+        "delete_project": "Delete Website",
         "danger_zone": "Danger Zone",
         "danger_zone_desc": "Permanently delete this project and all associated crawl findings.",
         "export_data": "Export Project Data",
@@ -189,7 +189,16 @@
         "target_language": "Target Language",
         "timezone": "Timezone",
         "respect_robots": "Respect robots.txt",
-        "follow_subdomains": "Crawl subdomains"
+        "follow_subdomains": "Crawl subdomains",
+        "edit_website": "Edit Website",
+        "edit_website_subtitle": "Update website domain, start URL and crawler configuration.",
+        "delete_confirm_title": "Delete Website Permanently",
+        "delete_confirm_desc": "This action cannot be undone. All crawl history, SEO findings, and ranking data for this website will be permanently deleted.",
+        "save_changes": "Save Changes",
+        "edit": "Edit",
+        "delete": "Delete",
+        "type_to_confirm": "Type website name to confirm:",
+        "cancel": "Cancel"
     },
     "ai_seo": {
         "badge": "AI & Generative Search Optimization",

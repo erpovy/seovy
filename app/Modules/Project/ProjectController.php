@@ -157,19 +157,32 @@ class ProjectController extends Controller
 
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'start_url' => ['required', 'url'],
             'target_country' => ['required', 'string', 'size:2'],
             'target_language' => ['required', 'string', 'max:5'],
             'timezone' => ['required', 'string', 'timezone'],
             'crawl_settings' => ['nullable', 'array'],
+            'crawl_settings.max_depth' => ['nullable', 'integer', 'min:1', 'max:10'],
+            'crawl_settings.max_pages' => ['nullable', 'integer', 'min:5', 'max:10000'],
+            'crawl_settings.respect_robots' => ['nullable', 'boolean'],
+            'crawl_settings.follow_subdomains' => ['nullable', 'boolean'],
             'competitor_domains' => ['nullable', 'array'],
             'is_archived' => ['nullable', 'boolean'],
         ]);
+
+        if (!empty($validated['start_url'])) {
+            $domain = parse_url($validated['start_url'], PHP_URL_HOST);
+            $validated['domain'] = strtolower($domain);
+        }
+
+        $validated['target_country'] = strtoupper($validated['target_country']);
+        $validated['target_language'] = strtolower($validated['target_language']);
 
         $project->update($validated);
 
         AuditLog::log('project.updated', 'Project', $project->id, $validated);
 
-        return back()->with('success', 'Proje ayarları güncellendi.');
+        return redirect()->route('projects.show', $project->id)->with('success', 'Web sitesi ayarları başarıyla güncellendi.');
     }
 
     public function destroy(Project $project)

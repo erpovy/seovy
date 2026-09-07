@@ -9,7 +9,10 @@ import {
     ChevronRight,
     Activity,
     Clock,
-    Archive
+    Archive,
+    Settings,
+    Trash2,
+    AlertTriangle
 } from 'lucide-vue-next';
 import { useI18n } from '@/i18n';
 
@@ -33,6 +36,28 @@ const search = ref(props.filters.search || '');
 
 const handleSearch = () => {
     router.get('/projects', { search: search.value }, { preserveState: true, replace: true });
+};
+
+const projectToDelete = ref<any>(null);
+const isDeleting = ref(false);
+
+const openDeleteModal = (project: any) => {
+    projectToDelete.value = project;
+};
+
+const closeDeleteModal = () => {
+    projectToDelete.value = null;
+};
+
+const confirmDelete = () => {
+    if (!projectToDelete.value) return;
+    isDeleting.value = true;
+    router.delete(`/projects/${projectToDelete.value.id}`, {
+        onFinish: () => {
+            isDeleting.value = false;
+            projectToDelete.value = null;
+        }
+    });
 };
 </script>
 
@@ -101,14 +126,16 @@ const handleSearch = () => {
                             <div class="w-10 h-10 rounded-2xl bg-indigo-600/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-sm group-hover:scale-105 transition-transform">
                                 {{ project.name.substring(0, 2).toUpperCase() }}
                             </div>
-                            <span
-                                v-if="project.latest_crawl?.health_score !== undefined"
-                                class="text-xs px-2.5 py-1 rounded-full font-bold"
-                                :class="project.latest_crawl.health_score >= 80 ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : (project.latest_crawl.health_score >= 50 ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20')"
-                            >
-                                {{ project.latest_crawl.health_score }}%
-                            </span>
-                            <span v-else class="text-[11px] text-slate-500">{{ t('common.pending') }}</span>
+                            <div class="flex items-center space-x-2">
+                                <span
+                                    v-if="project.latest_crawl?.health_score !== undefined"
+                                    class="text-xs px-2.5 py-1 rounded-full font-bold"
+                                    :class="project.latest_crawl.health_score >= 80 ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : (project.latest_crawl.health_score >= 50 ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20')"
+                                >
+                                    {{ project.latest_crawl.health_score }}%
+                                </span>
+                                <span v-else class="text-[11px] text-slate-500">{{ t('common.pending') }}</span>
+                            </div>
                         </div>
 
                         <Link :href="`/projects/${project.id}`" class="block font-bold text-base text-white hover:text-indigo-400 transition-colors truncate">
@@ -118,12 +145,72 @@ const handleSearch = () => {
                     </div>
 
                     <div class="mt-6 pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs">
-                        <span class="text-slate-500">{{ project.target_country }} &bull; {{ project.target_language }}</span>
+                        <div class="flex items-center space-x-3">
+                            <span class="text-slate-500">{{ project.target_country }} &bull; {{ project.target_language }}</span>
+                            <div class="flex items-center space-x-0.5 border-l border-slate-800 pl-2">
+                                <Link
+                                    :href="`/projects/${project.id}/edit`"
+                                    class="p-1.5 rounded-lg text-slate-500 hover:text-indigo-400 hover:bg-slate-800 transition-colors"
+                                    :title="t('projects.edit')"
+                                >
+                                    <Settings class="w-3.5 h-3.5" />
+                                </Link>
+                                <button
+                                    type="button"
+                                    @click="openDeleteModal(project)"
+                                    class="p-1.5 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
+                                    :title="t('projects.delete')"
+                                >
+                                    <Trash2 class="w-3.5 h-3.5" />
+                                </button>
+                            </div>
+                        </div>
                         <Link :href="`/projects/${project.id}`" class="text-indigo-400 font-semibold flex items-center space-x-1 group-hover:translate-x-1 transition-transform">
                             <span>{{ t('common.view') }}</span>
                             <ChevronRight class="w-3.5 h-3.5" />
                         </Link>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Delete Modal -->
+        <div
+            v-if="projectToDelete"
+            class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm"
+        >
+            <div class="w-full max-w-md rounded-3xl bg-slate-900 border border-slate-800 p-6 shadow-2xl space-y-5 animate-in fade-in zoom-in-95 duration-150">
+                <div class="flex items-center space-x-3 text-rose-400">
+                    <div class="w-10 h-10 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center">
+                        <AlertTriangle class="w-5 h-5 text-rose-500" />
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold text-white">{{ t('projects.delete_confirm_title') }}</h3>
+                        <p class="text-xs text-slate-400">{{ projectToDelete.name }} ({{ projectToDelete.domain }})</p>
+                    </div>
+                </div>
+
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    {{ t('projects.delete_confirm_desc') }}
+                </p>
+
+                <div class="flex items-center justify-end space-x-3 pt-2">
+                    <button
+                        type="button"
+                        @click="closeDeleteModal"
+                        class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition-colors"
+                    >
+                        {{ t('projects.cancel') }}
+                    </button>
+                    <button
+                        type="button"
+                        @click="confirmDelete"
+                        :disabled="isDeleting"
+                        class="px-5 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 disabled:opacity-50 text-white text-xs font-semibold shadow-lg shadow-rose-600/30 flex items-center space-x-1.5 transition-all"
+                    >
+                        <Trash2 class="w-3.5 h-3.5" />
+                        <span>{{ t('projects.delete') }}</span>
+                    </button>
                 </div>
             </div>
         </div>
