@@ -15,6 +15,7 @@ import {
     Laptop
 } from 'lucide-vue-next';
 import { useTheme } from '@/composables/useTheme';
+import SkyToggle from '@/Components/SkyToggle.vue';
 
 const { currentTheme, isDark, setTheme } = useTheme();
 
@@ -187,15 +188,21 @@ const logoutOtherSessions = () => {
 
             <!-- Interface & Theme Preference Card -->
             <div class="p-6 sm:p-8 rounded-3xl bg-slate-900/50 border border-slate-800/80 space-y-4">
-                <div>
-                    <h2 class="text-base font-bold text-white flex items-center space-x-2">
-                        <Sun v-if="!isDark" class="w-4 h-4 text-amber-400" />
-                        <Moon v-else class="w-4 h-4 text-indigo-400" />
-                        <span>{{ $t('profile.theme_title') }}</span>
-                    </h2>
-                    <p class="text-xs text-slate-400 mt-1 max-w-md">
-                        {{ $t('profile.theme_desc') }}
-                    </p>
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                        <h2 class="text-base font-bold text-white flex items-center space-x-2">
+                            <Sun v-if="!isDark" class="w-4 h-4 text-amber-400" />
+                            <Moon v-else class="w-4 h-4 text-indigo-400" />
+                            <span>{{ $t('profile.theme_title') }}</span>
+                        </h2>
+                        <p class="text-xs text-slate-400 mt-1 max-w-md">
+                            {{ $t('profile.theme_desc') }}
+                        </p>
+                    </div>
+                    <div class="flex items-center space-x-3 self-start sm:self-auto bg-slate-950/80 px-4 py-2.5 rounded-2xl border border-slate-800/80">
+                        <span class="text-xs text-slate-400 font-medium">{{ isDark ? $t('profile.theme_dark') : $t('profile.theme_light') }}</span>
+                        <SkyToggle size="11px" />
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
