@@ -76,7 +76,13 @@ const form = useForm({
 });
 
 const isResetting = ref(false);
+const isSaving = ref(false);
 const saveSuccessMessage = ref<string | null>(null);
+const globalErrorMessage = ref<string | null>(null);
+
+const isDraggingDark = ref(false);
+const isDraggingLight = ref(false);
+const isDraggingFavicon = ref(false);
 
 // Watch external changes (from Inertia response or props) and sync form
 watch(
@@ -104,6 +110,15 @@ const onDarkFileChange = (e: Event) => {
     }
 };
 
+const handleDarkDrop = (e: DragEvent) => {
+    isDraggingDark.value = false;
+    if (e.dataTransfer?.files && e.dataTransfer.files[0]) {
+        const file = e.dataTransfer.files[0];
+        form.logo_dark_file = file;
+        darkPreviewUrl.value = URL.createObjectURL(file);
+    }
+};
+
 const onLightFileChange = (e: Event) => {
     const target = e.target as HTMLInputElement;
     if (target.files && target.files[0]) {
@@ -113,10 +128,28 @@ const onLightFileChange = (e: Event) => {
     }
 };
 
+const handleLightDrop = (e: DragEvent) => {
+    isDraggingLight.value = false;
+    if (e.dataTransfer?.files && e.dataTransfer.files[0]) {
+        const file = e.dataTransfer.files[0];
+        form.logo_light_file = file;
+        lightPreviewUrl.value = URL.createObjectURL(file);
+    }
+};
+
 const onFaviconChange = (e: Event) => {
     const target = e.target as HTMLInputElement;
     if (target.files && target.files[0]) {
         const file = target.files[0];
+        form.favicon_file = file;
+        faviconPreviewUrl.value = URL.createObjectURL(file);
+    }
+};
+
+const handleFaviconDrop = (e: DragEvent) => {
+    isDraggingFavicon.value = false;
+    if (e.dataTransfer?.files && e.dataTransfer.files[0]) {
+        const file = e.dataTransfer.files[0];
         form.favicon_file = file;
         faviconPreviewUrl.value = URL.createObjectURL(file);
     }
@@ -160,10 +193,46 @@ const clearSelectedFavicon = () => {
 
 const submitForm = () => {
     saveSuccessMessage.value = null;
+    globalErrorMessage.value = null;
+    isSaving.value = true;
+
+    form.transform((data) => {
+        const payload: Record<string, any> = {
+            brand_name: data.brand_name?.trim() || 'Seovy',
+        };
+
+        if (darkUploadMode.value === 'file') {
+            if (data.logo_dark_file instanceof File) {
+                payload.logo_dark_file = data.logo_dark_file;
+            }
+        } else if (data.logo_dark_url && data.logo_dark_url.trim()) {
+            payload.logo_dark_url = data.logo_dark_url.trim();
+        }
+
+        if (lightUploadMode.value === 'file') {
+            if (data.logo_light_file instanceof File) {
+                payload.logo_light_file = data.logo_light_file;
+            }
+        } else if (data.logo_light_url && data.logo_light_url.trim()) {
+            payload.logo_light_url = data.logo_light_url.trim();
+        }
+
+        if (faviconUploadMode.value === 'file') {
+            if (data.favicon_file instanceof File) {
+                payload.favicon_file = data.favicon_file;
+            }
+        } else if (data.favicon_url && data.favicon_url.trim()) {
+            payload.favicon_url = data.favicon_url.trim();
+        }
+
+        return payload;
+    });
+
     form.post('/admin/settings/logo', {
         forceFormData: true,
         preserveScroll: true,
         onSuccess: () => {
+            isSaving.value = false;
             clearSelectedDarkFile();
             clearSelectedLightFile();
             clearSelectedFavicon();
@@ -171,6 +240,15 @@ const submitForm = () => {
             setTimeout(() => {
                 saveSuccessMessage.value = null;
             }, 6000);
+        },
+        onError: (errors) => {
+            isSaving.value = false;
+            const values = Object.values(errors);
+            globalErrorMessage.value = values.length > 0 ? String(values[0]) : t('admin.logo_save_error', 'Ayarlar kaydedilirken bir hata oluştu.');
+            console.error('Logo settings save failed:', errors);
+        },
+        onFinish: () => {
+            isSaving.value = false;
         },
     });
 };
@@ -284,6 +362,21 @@ watch(activeFaviconPreview, () => {
             </button>
         </div>
 
+        <!-- Global Error Notification Banner -->
+        <div v-if="globalErrorMessage" class="p-3.5 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs flex items-center justify-between shadow-lg shadow-rose-500/5">
+            <div class="flex items-center space-x-2.5">
+                <AlertCircle class="w-4 h-4 shrink-0 text-rose-400" />
+                <span class="font-medium">{{ globalErrorMessage }}</span>
+            </div>
+            <button
+                type="button"
+                @click="globalErrorMessage = null"
+                class="text-rose-400/70 hover:text-rose-300 ml-3 text-sm font-bold"
+            >
+                &times;
+            </button>
+        </div>
+
         <form @submit.prevent="submitForm" class="space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 <!-- Left: Inputs (7 cols) -->
@@ -369,7 +462,11 @@ watch(activeFaviconPreview, () => {
 
                                 <div
                                     @click="triggerDarkFileInput"
-                                    class="border-2 border-dashed border-slate-700/80 hover:border-indigo-500/80 rounded-2xl p-5 flex flex-col items-center justify-center text-center cursor-pointer transition-all bg-slate-900/50 hover:bg-slate-900/80 group"
+                                    @dragover.prevent="isDraggingDark = true"
+                                    @dragleave.prevent="isDraggingDark = false"
+                                    @drop.prevent="handleDarkDrop"
+                                    class="border-2 border-dashed rounded-2xl p-5 flex flex-col items-center justify-center text-center cursor-pointer transition-all group"
+                                    :class="isDraggingDark ? 'border-indigo-400 bg-indigo-950/40 ring-2 ring-indigo-500/30' : 'border-slate-700/80 hover:border-indigo-500/80 bg-slate-900/50 hover:bg-slate-900/80'"
                                 >
                                     <div class="w-10 h-10 rounded-2xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 flex items-center justify-center group-hover:scale-110 transition-transform mb-2">
                                         <Moon class="w-5 h-5" />
@@ -378,7 +475,7 @@ watch(activeFaviconPreview, () => {
                                         {{ form.logo_dark_file ? form.logo_dark_file.name : t('admin.logo_dark_drag_or_browse', 'Karanlık tema logosu seçmek için tıklayın veya dosyayı sürükleyin') }}
                                     </span>
                                     <span class="text-[11px] text-slate-500 mt-1">
-                                        {{ t('admin.logo_supported_formats', 'PNG, SVG, JPG veya WebP (Önerilen: Şeffaf arka plan, Maksimum 2 MB)') }}
+                                        {{ t('admin.logo_supported_formats', 'PNG, SVG, JPG veya WebP (Önerilen: Şeffaf arka plan, Maksimum 5 MB)') }}
                                     </span>
                                 </div>
 
@@ -450,7 +547,11 @@ watch(activeFaviconPreview, () => {
 
                                 <div
                                     @click="triggerLightFileInput"
-                                    class="border-2 border-dashed border-slate-700/80 hover:border-amber-500/80 rounded-2xl p-5 flex flex-col items-center justify-center text-center cursor-pointer transition-all bg-slate-900/50 hover:bg-slate-900/80 group"
+                                    @dragover.prevent="isDraggingLight = true"
+                                    @dragleave.prevent="isDraggingLight = false"
+                                    @drop.prevent="handleLightDrop"
+                                    class="border-2 border-dashed rounded-2xl p-5 flex flex-col items-center justify-center text-center cursor-pointer transition-all group"
+                                    :class="isDraggingLight ? 'border-amber-400 bg-amber-950/40 ring-2 ring-amber-500/30' : 'border-slate-700/80 hover:border-amber-500/80 bg-slate-900/50 hover:bg-slate-900/80'"
                                 >
                                     <div class="w-10 h-10 rounded-2xl bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center group-hover:scale-110 transition-transform mb-2">
                                         <Sun class="w-5 h-5" />
@@ -459,7 +560,7 @@ watch(activeFaviconPreview, () => {
                                         {{ form.logo_light_file ? form.logo_light_file.name : t('admin.logo_light_drag_or_browse', 'Aydınlık tema logosu seçmek için tıklayın veya dosyayı sürükleyin') }}
                                     </span>
                                     <span class="text-[11px] text-slate-500 mt-1">
-                                        {{ t('admin.logo_supported_formats', 'PNG, SVG, JPG veya WebP (Önerilen: Şeffaf arka plan, koyu veya renkli logo)') }}
+                                        {{ t('admin.logo_supported_formats', 'PNG, SVG, JPG veya WebP (Önerilen: Şeffaf arka plan, koyu veya renkli logo, Maksimum 5 MB)') }}
                                     </span>
                                 </div>
 
@@ -547,7 +648,11 @@ watch(activeFaviconPreview, () => {
 
                             <div
                                 @click="triggerFaviconInput"
-                                class="border-2 border-dashed border-slate-700/80 hover:border-amber-500/80 rounded-2xl p-5 flex flex-col items-center justify-center text-center cursor-pointer transition-all bg-slate-900/50 hover:bg-slate-900/80 group"
+                                @dragover.prevent="isDraggingFavicon = true"
+                                @dragleave.prevent="isDraggingFavicon = false"
+                                @drop.prevent="handleFaviconDrop"
+                                class="border-2 border-dashed rounded-2xl p-5 flex flex-col items-center justify-center text-center cursor-pointer transition-all group"
+                                :class="isDraggingFavicon ? 'border-amber-400 bg-amber-950/40 ring-2 ring-amber-500/30' : 'border-slate-700/80 hover:border-amber-500/80 bg-slate-900/50 hover:bg-slate-900/80'"
                             >
                                 <div class="w-10 h-10 rounded-2xl bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center group-hover:scale-110 transition-transform mb-2">
                                     <Sparkles class="w-5 h-5" />
@@ -556,7 +661,7 @@ watch(activeFaviconPreview, () => {
                                     {{ form.favicon_file ? form.favicon_file.name : t('admin.logo_favicon_drag_or_browse', 'Favicon seçmek için tıklayın veya dosyayı sürükleyin') }}
                                 </span>
                                 <span class="text-[11px] text-slate-500 mt-1">
-                                    {{ t('admin.logo_favicon_supported_formats', 'ICO, SVG, PNG, WebP (Önerilen: 32x32 piksel, Maks 1 MB)') }}
+                                    {{ t('admin.logo_favicon_supported_formats', 'ICO, SVG, PNG, WebP (Önerilen: 32x32 piksel, Maks 2 MB)') }}
                                 </span>
                             </div>
 
@@ -605,11 +710,11 @@ watch(activeFaviconPreview, () => {
                     <div class="pt-2">
                         <button
                             type="submit"
-                            :disabled="form.processing"
-                            class="px-5 py-2.5 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/30 transition-all flex items-center space-x-2 disabled:opacity-50"
+                            :disabled="form.processing || isSaving"
+                            class="px-5 py-2.5 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/30 transition-all flex items-center space-x-2 disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
                         >
-                            <Check class="w-4 h-4" />
-                            <span>{{ form.processing ? t('admin.logo_saving', 'Kaydediliyor...') : t('admin.logo_save_btn', 'Logoları & Markayı Kaydet') }}</span>
+                            <Check class="w-4 h-4" :class="{ 'animate-spin': form.processing || isSaving }" />
+                            <span>{{ (form.processing || isSaving) ? t('admin.logo_saving', 'Kaydediliyor...') : t('admin.logo_save_btn', 'Logoları & Markayı Kaydet') }}</span>
                         </button>
                     </div>
                 </div>

@@ -51,6 +51,19 @@ watch(activeLogo, () => {
     logoFailed.value = false;
 });
 
+watch(
+    () => systemSettings.value.favicon,
+    (newFavicon) => {
+        if (newFavicon && typeof document !== 'undefined') {
+            const link = document.getElementById('app-favicon') as HTMLLinkElement | null;
+            if (link) {
+                link.href = newFavicon;
+            }
+        }
+    },
+    { immediate: true }
+);
+
 const currentPlanName = computed(() => {
     if (auth.value.current_workspace?.plan_name) {
         return auth.value.current_workspace.plan_name;

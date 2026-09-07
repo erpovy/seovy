@@ -424,15 +424,22 @@ class AdminController extends Controller
             return back()->with('success', 'Sistem logoları, favicon ve marka adı varsayılana sıfırlandı.');
         }
 
+        // Filter out non-file strings ('null', '', etc.) for file inputs to prevent validation issues
+        foreach (['logo_dark_file', 'logo_light_file', 'logo_file', 'favicon_file'] as $fileKey) {
+            if (!$request->hasFile($fileKey)) {
+                $request->request->remove($fileKey);
+            }
+        }
+
         $validated = $request->validate([
-            'logo_dark_file' => ['nullable', 'file', 'mimes:png,jpg,jpeg,svg,webp', 'max:2048'],
+            'logo_dark_file' => ['nullable', 'file', 'max:5120'],
             'logo_dark_url' => ['nullable', 'string', 'max:500'],
-            'logo_light_file' => ['nullable', 'file', 'mimes:png,jpg,jpeg,svg,webp', 'max:2048'],
+            'logo_light_file' => ['nullable', 'file', 'max:5120'],
             'logo_light_url' => ['nullable', 'string', 'max:500'],
             // Backward-compatible generic logo input
-            'logo_file' => ['nullable', 'file', 'mimes:png,jpg,jpeg,svg,webp', 'max:2048'],
+            'logo_file' => ['nullable', 'file', 'max:5120'],
             'logo_url' => ['nullable', 'string', 'max:500'],
-            'favicon_file' => ['nullable', 'file', 'mimes:ico,png,svg,webp,jpg,jpeg', 'max:1024'],
+            'favicon_file' => ['nullable', 'file', 'max:2048'],
             'favicon_url' => ['nullable', 'string', 'max:500'],
             'brand_name' => ['nullable', 'string', 'max:50'],
         ]);
@@ -442,10 +449,17 @@ class AdminController extends Controller
             mkdir($destinationPath, 0755, true);
         }
 
+        $allowedImageExts = ['png', 'jpg', 'jpeg', 'svg', 'webp'];
+        $allowedFaviconExts = ['ico', 'png', 'svg', 'webp', 'jpg', 'jpeg'];
+
         // Dark theme logo handling
         if ($request->hasFile('logo_dark_file')) {
             $file = $request->file('logo_dark_file');
-            $filename = 'logo_dark_' . time() . '_' . Str::random(6) . '.' . $file->getClientOriginalExtension();
+            $ext = strtolower($file->getClientOriginalExtension());
+            if (!in_array($ext, $allowedImageExts, true)) {
+                return back()->withErrors(['logo_dark_file' => 'Karanlık tema logosu desteklenen formatta olmalıdır: PNG, JPG, JPEG, SVG, WebP.']);
+            }
+            $filename = 'logo_dark_' . time() . '_' . Str::random(6) . '.' . $ext;
             $file->move($destinationPath, $filename);
             $logoPath = '/uploads/branding/' . $filename;
             SystemSetting::set('system_logo_dark', $logoPath);
@@ -455,7 +469,11 @@ class AdminController extends Controller
             SystemSetting::set('system_logo', $validated['logo_dark_url']);
         } elseif ($request->hasFile('logo_file')) {
             $file = $request->file('logo_file');
-            $filename = 'logo_' . time() . '_' . Str::random(6) . '.' . $file->getClientOriginalExtension();
+            $ext = strtolower($file->getClientOriginalExtension());
+            if (!in_array($ext, $allowedImageExts, true)) {
+                return back()->withErrors(['logo_file' => 'Logo desteklenen formatta olmalıdır: PNG, JPG, JPEG, SVG, WebP.']);
+            }
+            $filename = 'logo_' . time() . '_' . Str::random(6) . '.' . $ext;
             $file->move($destinationPath, $filename);
             $logoPath = '/uploads/branding/' . $filename;
             SystemSetting::set('system_logo_dark', $logoPath);
@@ -468,7 +486,11 @@ class AdminController extends Controller
         // Light theme logo handling
         if ($request->hasFile('logo_light_file')) {
             $file = $request->file('logo_light_file');
-            $filename = 'logo_light_' . time() . '_' . Str::random(6) . '.' . $file->getClientOriginalExtension();
+            $ext = strtolower($file->getClientOriginalExtension());
+            if (!in_array($ext, $allowedImageExts, true)) {
+                return back()->withErrors(['logo_light_file' => 'Aydınlık tema logosu desteklenen formatta olmalıdır: PNG, JPG, JPEG, SVG, WebP.']);
+            }
+            $filename = 'logo_light_' . time() . '_' . Str::random(6) . '.' . $ext;
             $file->move($destinationPath, $filename);
             $logoLightPath = '/uploads/branding/' . $filename;
             SystemSetting::set('system_logo_light', $logoLightPath);
@@ -479,7 +501,11 @@ class AdminController extends Controller
         // Favicon handling
         if ($request->hasFile('favicon_file')) {
             $file = $request->file('favicon_file');
-            $filename = 'favicon_' . time() . '_' . Str::random(6) . '.' . $file->getClientOriginalExtension();
+            $ext = strtolower($file->getClientOriginalExtension());
+            if (!in_array($ext, $allowedFaviconExts, true)) {
+                return back()->withErrors(['favicon_file' => 'Favicon desteklenen formatta olmalıdır: ICO, PNG, SVG, WebP.']);
+            }
+            $filename = 'favicon_' . time() . '_' . Str::random(6) . '.' . $ext;
             $file->move($destinationPath, $filename);
             $faviconPath = '/uploads/branding/' . $filename;
             SystemSetting::set('system_favicon', $faviconPath);
