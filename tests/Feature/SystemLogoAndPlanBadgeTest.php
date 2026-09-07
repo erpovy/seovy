@@ -101,6 +101,32 @@ class SystemLogoAndPlanBadgeTest extends TestCase
         }
     }
 
+    public function test_admin_can_upload_svg_logo_file(): void
+    {
+        $svgContent = '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="40" viewBox="0 0 100 40"><text x="10" y="25" fill="#4f46e5">Logo</text></svg>';
+        $file = UploadedFile::fake()->createWithContent('brand_logo.svg', $svgContent);
+
+        $response = $this->actingAs($this->admin)->post('/admin/settings/logo', [
+            'logo_file' => $file,
+            'brand_name' => 'VectorBrand',
+        ]);
+
+        $response->assertSessionHas('success');
+
+        $logoPath = SystemSetting::get('system_logo');
+        $this->assertNotNull($logoPath);
+        $this->assertStringStartsWith('/uploads/branding/', $logoPath);
+        $this->assertStringEndsWith('.svg', $logoPath);
+
+        // Verify physical file was created
+        $this->assertTrue(File::exists(public_path($logoPath)));
+
+        // Clean up created test file
+        if (File::exists(public_path($logoPath))) {
+            File::delete(public_path($logoPath));
+        }
+    }
+
     public function test_admin_can_reset_logo_to_default(): void
     {
         SystemSetting::set('system_logo', '/uploads/branding/old_logo.png');

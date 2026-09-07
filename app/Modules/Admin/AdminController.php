@@ -419,7 +419,7 @@ class AdminController extends Controller
         }
 
         $validated = $request->validate([
-            'logo_file' => ['nullable', 'file', 'image', 'mimes:png,jpg,jpeg,svg,webp', 'max:2048'],
+            'logo_file' => ['nullable', 'file', 'mimes:png,jpg,jpeg,svg,webp', 'max:2048'],
             'logo_url' => ['nullable', 'string', 'max:500'],
             'brand_name' => ['nullable', 'string', 'max:50'],
         ]);

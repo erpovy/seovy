@@ -183,7 +183,7 @@ const activePreview = computed(() => {
                         <input
                             ref="fileInputRef"
                             type="file"
-                            accept="image/png, image/jpeg, image/svg+xml, image/webp"
+                            accept=".svg, image/svg+xml, .png, image/png, .jpg, .jpeg, image/jpeg, .webp, image/webp"
                             class="hidden"
                             @change="onFileChange"
                         />
