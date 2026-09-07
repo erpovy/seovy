@@ -23,7 +23,10 @@
         "plan_billing": "Tarife & Limits",
         "profile_settings": "Profileinstellungen",
         "select_workspace": "Arbeitsbereich wählen",
-        "system_admin": "System-Admin"
+        "system_admin": "System-Admin",
+        "active_plan": "Aktiver Plan",
+        "manage_subscription": "Abonnement & Kontingente verwalten",
+        "upgrade": "Upgrade"
     },
     "common": {
         "save": "Speichern",
@@ -477,7 +480,10 @@
         "card_expiry": "Gültig bis",
         "total_payable": "Gesamtbetrag",
         "confirm_test_payment": "Testkauf bestätigen",
-        "pay_now": "Jetzt abonnieren"
+        "pay_now": "Jetzt abonnieren",
+        "plan_free_title": "Kostenloser Plan",
+        "plan_pro_title": "Pro Plan",
+        "plan_agency_title": "Agentur Plan"
     },
     "members": {
         "page_title": "Team & Rollen",
@@ -801,7 +807,47 @@
         "sales_th_date": "Kaufdatum",
         "sales_no_records": "Noch keine Käufe vorhanden",
         "sales_no_records_desc": "Bestellungen werden hier angezeigt, wenn Benutzer Pläne kaufen oder Simulationen ausführen.",
-        "sales_modal_receipt_title": "Kaufdetails & Beleg"
+        "sales_modal_receipt_title": "Kaufdetails & Beleg",
+        "logo": {
+            "card_title": "Systemlogo & Branding-Einstellungen",
+            "custom_active": "Benutzerdefiniertes Logo aktiv",
+            "default_active": "Standard-Logo",
+            "card_desc": "Passen Sie Ihr Logo und Ihren Markennamen an, die in allen Benutzerseiten und der Seitenleiste angezeigt werden.",
+            "btn_reset": "Auf Standard zurücksetzen",
+            "confirm_reset": "Möchten Sie das Systemlogo wirklich auf den Standard zurücksetzen?",
+            "brand_name": "Marke / Systemname",
+            "brand_name_hint": "Plattformname, der neben dem Logo oder ohne Bild angezeigt wird.",
+            "mode_file": "Bilddatei hochladen",
+            "mode_url": "Logo-URL-Adresse",
+            "drag_or_browse": "Klicken Sie zum Auswählen oder ziehen Sie eine Logodatei hierher",
+            "supported_formats": "PNG, SVG, JPG oder WebP (Empfohlen: Transparenter Hintergrund, max. 2 MB)",
+            "cancel": "Abbrechen",
+            "url_hint": "Geben Sie einen direkten HTTPS-Link zu einem transparenten Logo-Bild ein.",
+            "save_btn": "Logo & Marke speichern",
+            "saving": "Wird gespeichert...",
+            "live_preview": "Live-Vorschau",
+            "preview_sidebar": "Dunkler Hintergrund & Seitenleisten-Vorschau",
+            "preview_light": "Heller Hintergrund Kontrast-Test"
+        },
+        "logo_card_title": "Systemlogo & Branding-Einstellungen",
+        "logo_custom_active": "Benutzerdefiniertes Logo aktiv",
+        "logo_default_active": "Standard-Logo",
+        "logo_card_desc": "Passen Sie Ihr Logo und Ihren Markennamen an, die in allen Benutzerseiten und der Seitenleiste angezeigt werden.",
+        "logo_btn_reset": "Auf Standard zurücksetzen",
+        "logo_confirm_reset": "Möchten Sie das Systemlogo wirklich auf den Standard zurücksetzen?",
+        "logo_brand_name": "Marke / Systemname",
+        "logo_brand_name_hint": "Plattformname, der neben dem Logo oder ohne Bild angezeigt wird.",
+        "logo_mode_file": "Bilddatei hochladen",
+        "logo_mode_url": "Logo-URL-Adresse",
+        "logo_drag_or_browse": "Klicken Sie zum Auswählen oder ziehen Sie eine Logodatei hierher",
+        "logo_supported_formats": "PNG, SVG, JPG oder WebP (Empfohlen: Transparenter Hintergrund, max. 2 MB)",
+        "logo_cancel": "Abbrechen",
+        "logo_url_hint": "Geben Sie einen direkten HTTPS-Link zu einem transparenten Logo-Bild ein.",
+        "logo_save_btn": "Logo & Marke speichern",
+        "logo_saving": "Wird gespeichert...",
+        "logo_live_preview": "Live-Vorschau",
+        "logo_preview_sidebar": "Dunkler Hintergrund & Seitenleisten-Vorschau",
+        "logo_preview_light": "Heller Hintergrund Kontrast-Test"
     },
     "languages": {
         "select": "Sprache wählen",

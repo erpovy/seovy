@@ -160,6 +160,9 @@ Route::middleware('auth')->group(function () {
 
         // Sales & Purchase Logs
         Route::get('/sales', [AdminController::class, 'sales'])->name('sales');
+
+        // System Logo & Branding Settings
+        Route::post('/settings/logo', [AdminController::class, 'updateLogo'])->name('settings.logo');
     });
 });
 

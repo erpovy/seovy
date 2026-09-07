@@ -23,7 +23,10 @@
         "plan_billing": "套餐与配额",
         "profile_settings": "个人设置",
         "select_workspace": "选择工作区",
-        "system_admin": "系统管理"
+        "system_admin": "系统管理",
+        "active_plan": "当前套餐",
+        "manage_subscription": "管理订阅与配额",
+        "upgrade": "升级"
     },
     "common": {
         "save": "保存",
@@ -477,7 +480,10 @@
         "card_expiry": "有效期限",
         "total_payable": "应付总额",
         "confirm_test_payment": "确认测试购买",
-        "pay_now": "安全支付并订阅"
+        "pay_now": "安全支付并订阅",
+        "plan_free_title": "免费版套餐",
+        "plan_pro_title": "专业版套餐",
+        "plan_agency_title": "代理商套餐"
     },
     "members": {
         "page_title": "团队成员与角色",
@@ -801,7 +807,47 @@
         "sales_th_date": "购买时间",
         "sales_no_records": "暂无购买记录",
         "sales_no_records_desc": "当用户购买套餐或执行模拟购买时，订单将在此展示。",
-        "sales_modal_receipt_title": "购买明细与收据"
+        "sales_modal_receipt_title": "购买明细与收据",
+        "logo": {
+            "card_title": "系统标志与品牌设置",
+            "custom_active": "自定义标志生效中",
+            "default_active": "默认标志",
+            "card_desc": "自定义所有用户页面和侧边栏导航中展示的系统标志与品牌名称。",
+            "btn_reset": "恢复默认设置",
+            "confirm_reset": "您确定要将系统标志恢复为默认设置吗？",
+            "brand_name": "品牌 / 系统名称",
+            "brand_name_hint": "展示在标志旁边或未上传图像时展示的平台名称。",
+            "mode_file": "上传图像文件",
+            "mode_url": "标志 URL 地址",
+            "drag_or_browse": "点击选择或拖放您的标志文件",
+            "supported_formats": "PNG、SVG、JPG 或 WebP（推荐：透明背景，最大 2 MB）",
+            "cancel": "取消",
+            "url_hint": "输入可直接访问的透明背景标志图像 HTTPS 链接。",
+            "save_btn": "保存标志与品牌",
+            "saving": "正在保存...",
+            "live_preview": "实时预览",
+            "preview_sidebar": "暗色背景与侧边栏预览",
+            "preview_light": "浅色背景对比度测试"
+        },
+        "logo_card_title": "系统标志与品牌设置",
+        "logo_custom_active": "自定义标志生效中",
+        "logo_default_active": "默认标志",
+        "logo_card_desc": "自定义所有用户页面和侧边栏导航中展示的系统标志与品牌名称。",
+        "logo_btn_reset": "恢复默认设置",
+        "logo_confirm_reset": "您确定要将系统标志恢复为默认设置吗？",
+        "logo_brand_name": "品牌 / 系统名称",
+        "logo_brand_name_hint": "展示在标志旁边或未上传图像时展示的平台名称。",
+        "logo_mode_file": "上传图像文件",
+        "logo_mode_url": "标志 URL 地址",
+        "logo_drag_or_browse": "点击选择或拖放您的标志文件",
+        "logo_supported_formats": "PNG、SVG、JPG 或 WebP（推荐：透明背景，最大 2 MB）",
+        "logo_cancel": "取消",
+        "logo_url_hint": "输入可直接访问的透明背景标志图像 HTTPS 链接。",
+        "logo_save_btn": "保存标志与品牌",
+        "logo_saving": "正在保存...",
+        "logo_live_preview": "实时预览",
+        "logo_preview_sidebar": "暗色背景与侧边栏预览",
+        "logo_preview_light": "浅色背景对比度测试"
     },
     "languages": {
         "select": "选择语言",

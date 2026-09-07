@@ -23,7 +23,10 @@
         "plan_billing": "Plans & Forfaits",
         "profile_settings": "Paramètres du Profil",
         "select_workspace": "Choisir un Espace",
-        "system_admin": "Admin Système"
+        "system_admin": "Admin Système",
+        "active_plan": "Forfait Actif",
+        "manage_subscription": "Gérer l'abonnement et les quotas",
+        "upgrade": "Améliorer"
     },
     "common": {
         "save": "Enregistrer",
@@ -477,7 +480,10 @@
         "card_expiry": "Date d'expiration",
         "total_payable": "Total à payer",
         "confirm_test_payment": "Confirmer l'achat de test",
-        "pay_now": "Payer et s'abonner"
+        "pay_now": "Payer et s'abonner",
+        "plan_free_title": "Forfait Gratuit",
+        "plan_pro_title": "Forfait Pro",
+        "plan_agency_title": "Forfait Agence"
     },
     "members": {
         "page_title": "Équipe & Rôles",
@@ -801,7 +807,47 @@
         "sales_th_date": "Date d'achat",
         "sales_no_records": "Aucun enregistrement d'achat",
         "sales_no_records_desc": "Les commandes apparaîtront ici dès les achats ou simulations de test.",
-        "sales_modal_receipt_title": "Détails et reçu de la commande"
+        "sales_modal_receipt_title": "Détails et reçu de la commande",
+        "logo": {
+            "card_title": "Logo du Système et Paramètres de Marque",
+            "custom_active": "Logo personnalisé actif",
+            "default_active": "Logo par défaut",
+            "card_desc": "Personnalisez votre logo et le nom de votre marque affichés sur toutes les pages utilisateur et dans la barre latérale.",
+            "btn_reset": "Réinitialiser par défaut",
+            "confirm_reset": "Êtes-vous sûr de vouloir réinitialiser le logo du système par défaut ?",
+            "brand_name": "Nom de la marque / du système",
+            "brand_name_hint": "Nom de la plateforme affiché à côté du logo ou lorsqu'aucune image n'est fournie.",
+            "mode_file": "Téléverser un fichier image",
+            "mode_url": "Adresse URL du logo",
+            "drag_or_browse": "Cliquez pour parcourir ou glissez-déposez votre fichier de logo",
+            "supported_formats": "PNG, SVG, JPG ou WebP (Recommandé : Fond transparent, Max 2 Mo)",
+            "cancel": "Annuler",
+            "url_hint": "Entrez un lien HTTPS direct vers une image de logo transparente.",
+            "save_btn": "Enregistrer le logo et la marque",
+            "saving": "Enregistrement...",
+            "live_preview": "Aperçu en direct",
+            "preview_sidebar": "Fond sombre et aperçu de la barre latérale",
+            "preview_light": "Test de contraste sur fond clair"
+        },
+        "logo_card_title": "Logo du Système et Paramètres de Marque",
+        "logo_custom_active": "Logo personnalisé actif",
+        "logo_default_active": "Logo par défaut",
+        "logo_card_desc": "Personnalisez votre logo et le nom de votre marque affichés sur toutes les pages utilisateur et dans la barre latérale.",
+        "logo_btn_reset": "Réinitialiser par défaut",
+        "logo_confirm_reset": "Êtes-vous sûr de vouloir réinitialiser le logo du système par défaut ?",
+        "logo_brand_name": "Nom de la marque / du système",
+        "logo_brand_name_hint": "Nom de la plateforme affiché à côté du logo ou lorsqu'aucune image n'est fournie.",
+        "logo_mode_file": "Téléverser un fichier image",
+        "logo_mode_url": "Adresse URL du logo",
+        "logo_drag_or_browse": "Cliquez pour parcourir ou glissez-déposez votre fichier de logo",
+        "logo_supported_formats": "PNG, SVG, JPG ou WebP (Recommandé : Fond transparent, Max 2 Mo)",
+        "logo_cancel": "Annuler",
+        "logo_url_hint": "Entrez un lien HTTPS direct vers une image de logo transparente.",
+        "logo_save_btn": "Enregistrer le logo et la marque",
+        "logo_saving": "Enregistrement...",
+        "logo_live_preview": "Aperçu en direct",
+        "logo_preview_sidebar": "Fond sombre et aperçu de la barre latérale",
+        "logo_preview_light": "Test de contraste sur fond clair"
     },
     "languages": {
         "select": "Sélectionner la Langue",

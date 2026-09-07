@@ -23,7 +23,10 @@
         "plan_billing": "Plan & Billing",
         "profile_settings": "Profile Settings",
         "select_workspace": "Select Workspace",
-        "system_admin": "System Admin"
+        "system_admin": "System Admin",
+        "active_plan": "Active Plan",
+        "manage_subscription": "Manage Subscription & Quotas",
+        "upgrade": "Upgrade"
     },
     "common": {
         "save": "Save",
@@ -477,7 +480,10 @@
         "card_expiry": "Expiration Date",
         "total_payable": "Total Payable",
         "confirm_test_payment": "Confirm Test Purchase",
-        "pay_now": "Pay & Subscribe Now"
+        "pay_now": "Pay & Subscribe Now",
+        "plan_free_title": "Free Plan",
+        "plan_pro_title": "Pro Plan",
+        "plan_agency_title": "Agency Plan"
     },
     "members": {
         "page_title": "Team & Roles",
@@ -801,7 +807,47 @@
         "sales_th_date": "Purchase Date",
         "sales_no_records": "No Purchase Records Yet",
         "sales_no_records_desc": "Orders will appear here when users buy plans or test simulations are triggered.",
-        "sales_modal_receipt_title": "Purchase Details & Receipt"
+        "sales_modal_receipt_title": "Purchase Details & Receipt",
+        "logo": {
+            "card_title": "System Logo & Branding Settings",
+            "custom_active": "Custom Logo Active",
+            "default_active": "Default Logo",
+            "card_desc": "Customize your brand name and logo displayed across all user pages and sidebar navigation.",
+            "btn_reset": "Reset to Default",
+            "confirm_reset": "Are you sure you want to reset the system logo to default?",
+            "brand_name": "Brand / System Name",
+            "brand_name_hint": "Platform name shown next to the logo or when no image logo is uploaded.",
+            "mode_file": "Upload Image File",
+            "mode_url": "Logo URL Address",
+            "drag_or_browse": "Click to browse or drag and drop your logo file",
+            "supported_formats": "PNG, SVG, JPG or WebP (Recommended: Transparent background, Max 2 MB)",
+            "cancel": "Cancel",
+            "url_hint": "Enter a direct HTTPS link to a transparent logo image.",
+            "save_btn": "Save Logo & Branding",
+            "saving": "Saving...",
+            "live_preview": "Live Preview",
+            "preview_sidebar": "Dark Background & Sidebar Preview",
+            "preview_light": "Light Background Contrast Check"
+        },
+        "logo_card_title": "System Logo & Branding Settings",
+        "logo_custom_active": "Custom Logo Active",
+        "logo_default_active": "Default Logo",
+        "logo_card_desc": "Customize your brand name and logo displayed across all user pages and sidebar navigation.",
+        "logo_btn_reset": "Reset to Default",
+        "logo_confirm_reset": "Are you sure you want to reset the system logo to default?",
+        "logo_brand_name": "Brand / System Name",
+        "logo_brand_name_hint": "Platform name shown next to the logo or when no image logo is uploaded.",
+        "logo_mode_file": "Upload Image File",
+        "logo_mode_url": "Logo URL Address",
+        "logo_drag_or_browse": "Click to browse or drag and drop your logo file",
+        "logo_supported_formats": "PNG, SVG, JPG or WebP (Recommended: Transparent background, Max 2 MB)",
+        "logo_cancel": "Cancel",
+        "logo_url_hint": "Enter a direct HTTPS link to a transparent logo image.",
+        "logo_save_btn": "Save Logo & Branding",
+        "logo_saving": "Saving...",
+        "logo_live_preview": "Live Preview",
+        "logo_preview_sidebar": "Dark Background & Sidebar Preview",
+        "logo_preview_light": "Light Background Contrast Check"
     },
     "languages": {
         "select": "Select Language",

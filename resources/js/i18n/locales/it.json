@@ -23,7 +23,10 @@
         "plan_billing": "Piani & Limiti",
         "profile_settings": "Impostazioni Profilo",
         "select_workspace": "Seleziona Area",
-        "system_admin": "Admin Sistema"
+        "system_admin": "Admin Sistema",
+        "active_plan": "Piano Attivo",
+        "manage_subscription": "Gestisci abbonamento e quote",
+        "upgrade": "Aggiorna"
     },
     "common": {
         "save": "Salva",
@@ -477,7 +480,10 @@
         "card_expiry": "Data di Scadenza",
         "total_payable": "Totale da Pagare",
         "confirm_test_payment": "Conferma Acquisto di Test",
-        "pay_now": "Paga e Abbonati"
+        "pay_now": "Paga e Abbonati",
+        "plan_free_title": "Piano Gratuito",
+        "plan_pro_title": "Piano Pro",
+        "plan_agency_title": "Piano Agenzia"
     },
     "members": {
         "page_title": "Team & Ruoli",
@@ -801,7 +807,47 @@
         "sales_th_date": "Data Acquisto",
         "sales_no_records": "Nessun Acquisto Registrato",
         "sales_no_records_desc": "Gli ordini appariranno qui quando gli utenti acquistano piani o eseguono simulazioni.",
-        "sales_modal_receipt_title": "Dettagli e Ricevuta dell'Ordine"
+        "sales_modal_receipt_title": "Dettagli e Ricevuta dell'Ordine",
+        "logo": {
+            "card_title": "Logo di Sistema e Impostazioni Brand",
+            "custom_active": "Logo personalizzato attivo",
+            "default_active": "Logo predefinito",
+            "card_desc": "Personalizza il logo e il nome del marchio visualizzati in tutte le pagine utente e nella barra laterale.",
+            "btn_reset": "Ripristina predefinito",
+            "confirm_reset": "Sei sicuro di voler ripristinare il logo di sistema predefinito?",
+            "brand_name": "Nome Brand / Sistema",
+            "brand_name_hint": "Nome della piattaforma mostrato accanto al logo o se non è presente un'immagine.",
+            "mode_file": "Carica file immagine",
+            "mode_url": "Indirizzo URL del Logo",
+            "drag_or_browse": "Clicca per sfogliare o trascina e rilascia il file del logo",
+            "supported_formats": "PNG, SVG, JPG o WebP (Consigliato: Sfondo trasparente, Max 2 MB)",
+            "cancel": "Annulla",
+            "url_hint": "Inserisci un link HTTPS diretto a un'immagine di logo trasparente.",
+            "save_btn": "Salva Logo e Brand",
+            "saving": "Salvataggio...",
+            "live_preview": "Anteprima dal vivo",
+            "preview_sidebar": "Sfondo scuro e anteprima barra laterale",
+            "preview_light": "Controllo contrasto su sfondo chiaro"
+        },
+        "logo_card_title": "Logo di Sistema e Impostazioni Brand",
+        "logo_custom_active": "Logo personalizzato attivo",
+        "logo_default_active": "Logo predefinito",
+        "logo_card_desc": "Personalizza il logo e il nome del marchio visualizzati in tutte le pagine utente e nella barra laterale.",
+        "logo_btn_reset": "Ripristina predefinito",
+        "logo_confirm_reset": "Sei sicuro di voler ripristinare il logo di sistema predefinito?",
+        "logo_brand_name": "Nome Brand / Sistema",
+        "logo_brand_name_hint": "Nome della piattaforma mostrato accanto al logo o se non è presente un'immagine.",
+        "logo_mode_file": "Carica file immagine",
+        "logo_mode_url": "Indirizzo URL del Logo",
+        "logo_drag_or_browse": "Clicca per sfogliare o trascina e rilascia il file del logo",
+        "logo_supported_formats": "PNG, SVG, JPG o WebP (Consigliato: Sfondo trasparente, Max 2 MB)",
+        "logo_cancel": "Annulla",
+        "logo_url_hint": "Inserisci un link HTTPS diretto a un'immagine di logo trasparente.",
+        "logo_save_btn": "Salva Logo e Brand",
+        "logo_saving": "Salvataggio...",
+        "logo_live_preview": "Anteprima dal vivo",
+        "logo_preview_sidebar": "Sfondo scuro e anteprima barra laterale",
+        "logo_preview_light": "Controllo contrasto su sfondo chiaro"
     },
     "languages": {
         "select": "Seleziona Lingua",

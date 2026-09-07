@@ -44,6 +44,11 @@ class HandleInertiaRequests extends Middleware
                 $ws = $user->currentWorkspace;
                 if ($ws) {
                     $membership = $ws->users()->where('users.id', $user->id)->first();
+                    $subscription = $ws->subscription;
+                    $planCode = $subscription?->plan_name ?? 'free';
+                    $planModel = \App\Models\SubscriptionPlan::where('code', $planCode)->first();
+                    $planTitle = $planModel ? $planModel->name : ucfirst($planCode);
+
                     $currentWorkspace = [
                         'id' => $ws->id,
                         'name' => $ws->name,
@@ -51,6 +56,13 @@ class HandleInertiaRequests extends Middleware
                         'owner_id' => $ws->owner_id,
                         'personal_team' => $ws->personal_team,
                         'role' => $membership ? $membership->pivot->role : ($user->is_platform_admin ? 'owner' : 'viewer'),
+                        'plan_code' => $planCode,
+                        'plan_name' => $planTitle,
+                        'subscription' => $subscription ? [
+                            'plan_name' => $subscription->plan_name,
+                            'status' => $subscription->status,
+                            'current_period_end' => $subscription->current_period_end,
+                        ] : null,
                     ];
                 }
             }
@@ -58,6 +70,10 @@ class HandleInertiaRequests extends Middleware
 
         return [
             ...parent::share($request),
+            'system_settings' => [
+                'logo' => \App\Models\SystemSetting::get('system_logo', null),
+                'brand_name' => \App\Models\SystemSetting::get('brand_name', 'Seovy'),
+            ],
             'auth' => [
                 'user' => $user ? [
                     'id' => $user->id,

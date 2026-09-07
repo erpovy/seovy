@@ -23,7 +23,10 @@
         "plan_billing": "Planes y Cuotas",
         "profile_settings": "Ajustes de Perfil",
         "select_workspace": "Seleccionar Espacio",
-        "system_admin": "Admin del Sistema"
+        "system_admin": "Admin del Sistema",
+        "active_plan": "Plan Activo",
+        "manage_subscription": "Gestionar suscripción y cuotas",
+        "upgrade": "Mejorar"
     },
     "common": {
         "save": "Guardar",
@@ -477,7 +480,10 @@
         "card_expiry": "Fecha de Expiración",
         "total_payable": "Total a Pagar",
         "confirm_test_payment": "Confirmar Compra de Prueba",
-        "pay_now": "Pagar y Suscribirse"
+        "pay_now": "Pagar y Suscribirse",
+        "plan_free_title": "Plan Gratuito",
+        "plan_pro_title": "Plan Pro",
+        "plan_agency_title": "Plan Agencia"
     },
     "members": {
         "page_title": "Equipo y Roles",
@@ -801,7 +807,47 @@
         "sales_th_date": "Fecha de Compra",
         "sales_no_records": "Sin Registros de Compras Aún",
         "sales_no_records_desc": "Los pedidos aparecerán aquí cuando los usuarios compren planes o se ejecuten pruebas.",
-        "sales_modal_receipt_title": "Detalles y Recibo de Compra"
+        "sales_modal_receipt_title": "Detalles y Recibo de Compra",
+        "logo": {
+            "card_title": "Logo del Sistema y Ajustes de Marca",
+            "custom_active": "Logo personalizado activo",
+            "default_active": "Logo predeterminado",
+            "card_desc": "Personalice el logotipo y el nombre de marca que se muestran en todas las páginas de usuario y en la barra lateral.",
+            "btn_reset": "Restablecer por defecto",
+            "confirm_reset": "¿Está seguro de que desea restablecer el logotipo del sistema al valor predeterminado?",
+            "brand_name": "Nombre de Marca / Sistema",
+            "brand_name_hint": "Nombre de la plataforma mostrado junto al logo o cuando no hay imagen.",
+            "mode_file": "Subir archivo de imagen",
+            "mode_url": "Dirección URL del Logo",
+            "drag_or_browse": "Haga clic para buscar o arrastre y suelte su archivo de logotipo",
+            "supported_formats": "PNG, SVG, JPG o WebP (Recomendado: Fondo transparente, Máx. 2 MB)",
+            "cancel": "Cancelar",
+            "url_hint": "Introduzca un enlace HTTPS directo a una imagen de logotipo transparente.",
+            "save_btn": "Guardar Logotipo y Marca",
+            "saving": "Guardando...",
+            "live_preview": "Vista previa en vivo",
+            "preview_sidebar": "Fondo oscuro y vista previa de barra lateral",
+            "preview_light": "Prueba de contraste en fondo claro"
+        },
+        "logo_card_title": "Logo del Sistema y Ajustes de Marca",
+        "logo_custom_active": "Logo personalizado activo",
+        "logo_default_active": "Logo predeterminado",
+        "logo_card_desc": "Personalice el logotipo y el nombre de marca que se muestran en todas las páginas de usuario y en la barra lateral.",
+        "logo_btn_reset": "Restablecer por defecto",
+        "logo_confirm_reset": "¿Está seguro de que desea restablecer el logotipo del sistema al valor predeterminado?",
+        "logo_brand_name": "Nombre de Marca / Sistema",
+        "logo_brand_name_hint": "Nombre de la plataforma mostrado junto al logo o cuando no hay imagen.",
+        "logo_mode_file": "Subir archivo de imagen",
+        "logo_mode_url": "Dirección URL del Logo",
+        "logo_drag_or_browse": "Haga clic para buscar o arrastre y suelte su archivo de logotipo",
+        "logo_supported_formats": "PNG, SVG, JPG o WebP (Recomendado: Fondo transparente, Máx. 2 MB)",
+        "logo_cancel": "Cancelar",
+        "logo_url_hint": "Introduzca un enlace HTTPS directo a una imagen de logotipo transparente.",
+        "logo_save_btn": "Guardar Logotipo y Marca",
+        "logo_saving": "Guardando...",
+        "logo_live_preview": "Vista previa en vivo",
+        "logo_preview_sidebar": "Fondo oscuro y vista previa de barra lateral",
+        "logo_preview_light": "Prueba de contraste en fondo claro"
     },
     "languages": {
         "select": "Seleccionar Idioma",

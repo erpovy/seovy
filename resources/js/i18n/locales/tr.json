@@ -23,7 +23,10 @@
         "plan_billing": "Plan ve Abonelik",
         "profile_settings": "Profil Ayarları",
         "select_workspace": "Çalışma Alanı Seç",
-        "system_admin": "Sistem Yöneticisi"
+        "system_admin": "Sistem Yöneticisi",
+        "active_plan": "Aktif Paket",
+        "manage_subscription": "Aboneliği ve Kotaları Yönet",
+        "upgrade": "Yükselt"
     },
     "common": {
         "save": "Kaydet",
@@ -477,7 +480,10 @@
         "card_expiry": "Son Kullanma Tarihi",
         "total_payable": "Ödenecek Toplam Tutar",
         "confirm_test_payment": "Test Satın Alımını Onayla",
-        "pay_now": "Güvenli Ödeme Yap ve Abone Ol"
+        "pay_now": "Güvenli Ödeme Yap ve Abone Ol",
+        "plan_free_title": "Ücretsiz Plan",
+        "plan_pro_title": "Pro Plan",
+        "plan_agency_title": "Ajans Planı"
     },
     "members": {
         "page_title": "Ekip & Roller",
@@ -801,7 +807,47 @@
         "sales_th_date": "Satın Alma Tarihi",
         "sales_no_records": "Henüz Bir Satın Alma Kaydı Yok",
         "sales_no_records_desc": "Kullanıcılar paket satın aldığında veya test simülasyonu çalıştırıldığında siparişler burada listelenir.",
-        "sales_modal_receipt_title": "Satın Alma Detayı & Fiş"
+        "sales_modal_receipt_title": "Satın Alma Detayı & Fiş",
+        "logo": {
+            "card_title": "Sistem Logosu & Marka Ayarları",
+            "custom_active": "Özel Logo Aktif",
+            "default_active": "Varsayılan Logo",
+            "card_desc": "Platformun tüm kullanıcı sayfalarında ve sol menüde (sidebar) görüntülenecek logonuzu ve marka adınızı özelleştirin.",
+            "btn_reset": "Varsayılana Sıfırla",
+            "confirm_reset": "Sistem logosunu varsayılana sıfırlamak istediğinize emin misiniz?",
+            "brand_name": "Marka / Sistem Adı",
+            "brand_name_hint": "Logonun yanında veya logo bulunmadığında görüntülenecek platform adı.",
+            "mode_file": "Görsel Yükle (Dosya)",
+            "mode_url": "Logo URL Adresi",
+            "drag_or_browse": "Yeni logo seçmek için tıklayın veya dosyayı sürükleyin",
+            "supported_formats": "PNG, SVG, JPG veya WebP (Önerilen: Şeffaf arka plan, Maksimum 2 MB)",
+            "cancel": "Vazgeç",
+            "url_hint": "Doğrudan HTTPS erişilebilir şeffaf logo görseli bağlantısı girin.",
+            "save_btn": "Logoyu & Markayı Kaydet",
+            "saving": "Kaydediliyor...",
+            "live_preview": "Canlı Önizleme",
+            "preview_sidebar": "Koyu Zemin & Sol Menü Önizlemesi",
+            "preview_light": "Açık Zemin Kontrast Testi"
+        },
+        "logo_card_title": "Sistem Logosu & Marka Ayarları",
+        "logo_custom_active": "Özel Logo Aktif",
+        "logo_default_active": "Varsayılan Logo",
+        "logo_card_desc": "Platformun tüm kullanıcı sayfalarında ve sol menüde (sidebar) görüntülenecek logonuzu ve marka adınızı özelleştirin.",
+        "logo_btn_reset": "Varsayılana Sıfırla",
+        "logo_confirm_reset": "Sistem logosunu varsayılana sıfırlamak istediğinize emin misiniz?",
+        "logo_brand_name": "Marka / Sistem Adı",
+        "logo_brand_name_hint": "Logonun yanında veya logo bulunmadığında görüntülenecek platform adı.",
+        "logo_mode_file": "Görsel Yükle (Dosya)",
+        "logo_mode_url": "Logo URL Adresi",
+        "logo_drag_or_browse": "Yeni logo seçmek için tıklayın veya dosyayı sürükleyin",
+        "logo_supported_formats": "PNG, SVG, JPG veya WebP (Önerilen: Şeffaf arka plan, Maksimum 2 MB)",
+        "logo_cancel": "Vazgeç",
+        "logo_url_hint": "Doğrudan HTTPS erişilebilir şeffaf logo görseli bağlantısı girin.",
+        "logo_save_btn": "Logoyu & Markayı Kaydet",
+        "logo_saving": "Kaydediliyor...",
+        "logo_live_preview": "Canlı Önizleme",
+        "logo_preview_sidebar": "Koyu Zemin & Sol Menü Önizlemesi",
+        "logo_preview_light": "Açık Zemin Kontrast Testi"
     },
     "languages": {
         "select": "Dil Seçin",

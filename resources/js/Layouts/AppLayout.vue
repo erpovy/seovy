@@ -14,6 +14,7 @@ import {
     Menu,
     X,
     ChevronDown,
+    ChevronRight,
     LogOut,
     User as UserIcon,
     AlertCircle,
@@ -36,6 +37,21 @@ const flash = computed(() => ((page.props as any)?.flash) || {});
 const errors = computed(() => ((page.props as any)?.errors) || {});
 const { t } = useI18n();
 
+const systemSettings = computed(() => ((page.props as any)?.system_settings) || {});
+const systemLogo = computed(() => systemSettings.value.logo || null);
+const brandName = computed(() => systemSettings.value.brand_name || 'Seovy');
+
+const currentPlanName = computed(() => {
+    if (auth.value.current_workspace?.plan_name) {
+        return auth.value.current_workspace.plan_name;
+    }
+    const code = auth.value.current_workspace?.subscription?.plan_name || auth.value.current_workspace?.plan_code || 'free';
+    if (code === 'free') return t('billing.plan_free_title', 'Ücretsiz Plan');
+    if (code === 'pro') return t('billing.plan_pro_title', 'Pro Plan');
+    if (code === 'agency') return t('billing.plan_agency_title', 'Ajans Planı');
+    return code.charAt(0).toUpperCase() + code.slice(1);
+});
+
 const mobileMenuOpen = ref(false);
 const workspaceDropdownOpen = ref(false);
 const userDropdownOpen = ref(false);
@@ -55,19 +71,59 @@ const switchWorkspace = (workspaceId: number) => {
         <!-- Sidebar Navigation (Desktop) -->
         <aside class="hidden md:flex flex-col w-64 bg-slate-900/60 border-r border-slate-800/80 p-4 justify-between backdrop-blur-md sticky top-0 h-screen z-30">
             <div class="space-y-6">
-                <!-- Brand / Logo -->
-                <div class="flex items-center justify-between px-2">
-                    <Link href="/dashboard" class="flex items-center space-x-3 group">
-                        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform">
-                            <Activity class="w-5 h-5 text-white" />
-                        </div>
-                        <span class="text-xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-slate-400">
-                            Seovy
+                <!-- Brand / Logo & Plan Badge -->
+                <div class="px-2 space-y-2.5">
+                    <div class="flex items-center justify-between">
+                        <Link href="/dashboard" class="flex items-center space-x-3 group min-w-0">
+                            <template v-if="systemLogo">
+                                <img
+                                    :src="systemLogo"
+                                    :alt="brandName"
+                                    class="h-9 max-w-[130px] object-contain rounded-lg shadow-sm"
+                                    @error="($event.target as HTMLElement).style.display = 'none'"
+                                />
+                            </template>
+                            <template v-else>
+                                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform shrink-0">
+                                    <Activity class="w-5 h-5 text-white" />
+                                </div>
+                                <span class="text-xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-slate-400 truncate">
+                                    {{ brandName }}
+                                </span>
+                            </template>
+                        </Link>
+                        <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 shrink-0">
+                            {{ auth.current_workspace?.role ?? t('nav.member') }}
                         </span>
-                    </Link>
-                    <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
-                        {{ auth.current_workspace?.role ?? t('nav.member') }}
-                    </span>
+                    </div>
+
+                    <!-- Active Subscription Plan Badge directly below the Logo -->
+                    <div>
+                        <Link
+                            href="/billing"
+                            class="flex items-center justify-between px-2.5 py-1.5 rounded-xl bg-gradient-to-r from-indigo-950/40 via-purple-950/20 to-slate-900 border border-indigo-500/20 hover:border-indigo-500/50 hover:bg-slate-800/80 transition-all group/plan shadow-sm"
+                            :title="t('nav.manage_subscription', 'Aboneliği ve Kotaları Yönet')"
+                        >
+                            <div class="flex items-center space-x-2 min-w-0">
+                                <span class="relative flex h-2 w-2 shrink-0">
+                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                    <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                                </span>
+                                <div class="flex flex-col min-w-0">
+                                    <span class="text-[9px] uppercase tracking-wider font-semibold text-slate-400 leading-none mb-0.5">
+                                        {{ t('nav.active_plan', 'Aktif Paket') }}
+                                    </span>
+                                    <span class="text-xs font-bold text-white group-hover/plan:text-indigo-300 transition-colors truncate">
+                                        {{ currentPlanName }}
+                                    </span>
+                                </div>
+                            </div>
+                            <span class="text-[10px] font-medium text-indigo-400/80 group-hover/plan:text-indigo-300 flex items-center space-x-0.5 shrink-0 ml-1">
+                                <span>{{ t('nav.upgrade', 'Yükselt') }}</span>
+                                <ChevronRight class="w-3 h-3" />
+                            </span>
+                        </Link>
+                    </div>
                 </div>
 
                 <!-- Workspace Switcher Dropdown -->
@@ -274,11 +330,21 @@ const switchWorkspace = (workspaceId: number) => {
         <div class="flex-1 flex flex-col min-w-0">
             <!-- Mobile Top Bar -->
             <header class="md:hidden flex items-center justify-between px-4 py-3 bg-slate-900/80 border-b border-slate-800 sticky top-0 z-40">
-                <Link href="/dashboard" class="flex items-center space-x-2">
-                    <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center">
-                        <Activity class="w-4 h-4 text-white" />
-                    </div>
-                    <span class="font-bold text-lg text-white">Seovy</span>
+                <Link href="/dashboard" class="flex items-center space-x-2 min-w-0">
+                    <template v-if="systemLogo">
+                        <img
+                            :src="systemLogo"
+                            :alt="brandName"
+                            class="h-7 max-w-[110px] object-contain rounded"
+                            @error="($event.target as HTMLElement).style.display = 'none'"
+                        />
+                    </template>
+                    <template v-else>
+                        <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center shrink-0">
+                            <Activity class="w-4 h-4 text-white" />
+                        </div>
+                        <span class="font-bold text-lg text-white truncate">{{ brandName }}</span>
+                    </template>
                 </Link>
 
                 <div class="flex items-center space-x-2">
@@ -298,6 +364,23 @@ const switchWorkspace = (workspaceId: number) => {
                 v-if="mobileMenuOpen"
                 class="md:hidden bg-slate-900/95 border-b border-slate-800 p-4 space-y-3 z-30"
             >
+                <!-- Mobile Plan Badge -->
+                <Link
+                    href="/billing"
+                    class="flex items-center justify-between px-3 py-2 rounded-xl bg-indigo-950/40 border border-indigo-500/20 text-xs text-white"
+                    @click="mobileMenuOpen = false"
+                >
+                    <div class="flex items-center space-x-2">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                        <span class="text-slate-400">{{ t('nav.active_plan', 'Aktif Paket') }}:</span>
+                        <span class="font-bold text-indigo-300">{{ currentPlanName }}</span>
+                    </div>
+                    <span class="text-[10px] text-indigo-400 font-semibold flex items-center space-x-0.5">
+                        <span>{{ t('nav.upgrade', 'Yükselt') }}</span>
+                        <ChevronRight class="w-3 h-3" />
+                    </span>
+                </Link>
+
                 <nav class="space-y-1">
                     <Link
                         href="/dashboard"

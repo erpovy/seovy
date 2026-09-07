@@ -10,12 +10,14 @@ use App\Models\PaymentSetting;
 use App\Models\PaymentTransaction;
 use App\Models\Project;
 use App\Models\SubscriptionPlan;
+use App\Models\SystemSetting;
 use App\Models\User;
 use App\Models\Workspace;
 use App\Modules\Billing\Services\PaymentSimulationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 class AdminController extends Controller
@@ -168,6 +170,10 @@ class AdminController extends Controller
             'plansList' => $plansList,
             'recentTransactions' => $recentTransactions,
             'workspacesList' => $workspacesList,
+            'systemSettings' => [
+                'logo' => SystemSetting::get('system_logo', null),
+                'brand_name' => SystemSetting::get('brand_name', 'Seovy'),
+            ],
             'filters' => [
                 'search' => $request->search ?? '',
                 'filter' => $request->filter ?? 'all',
@@ -392,6 +398,56 @@ class AdminController extends Controller
         $this->simulationService->simulateRefund($transaction, $request->user());
 
         return back()->with('success', "{$transaction->transaction_id} nolu işlem için iade simülasyonu yapıldı.");
+    }
+
+    /**
+     * Update system branding and logo.
+     */
+    public function updateLogo(Request $request)
+    {
+        $this->authorizeAdmin($request);
+
+        if ($request->input('action') === 'reset') {
+            SystemSetting::set('system_logo', null);
+            SystemSetting::set('brand_name', 'Seovy');
+
+            AuditLog::log('system_settings.logo_reset', 'SystemSetting', 0, [
+                'action' => 'reset_to_default',
+            ]);
+
+            return back()->with('success', 'Sistem logosu ve marka adı varsayılana sıfırlandı.');
+        }
+
+        $validated = $request->validate([
+            'logo_file' => ['nullable', 'file', 'image', 'mimes:png,jpg,jpeg,svg,webp', 'max:2048'],
+            'logo_url' => ['nullable', 'string', 'max:500'],
+            'brand_name' => ['nullable', 'string', 'max:50'],
+        ]);
+
+        if ($request->hasFile('logo_file')) {
+            $file = $request->file('logo_file');
+            $filename = 'logo_' . time() . '_' . Str::random(6) . '.' . $file->getClientOriginalExtension();
+            $destinationPath = public_path('uploads/branding');
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0755, true);
+            }
+            $file->move($destinationPath, $filename);
+            $logoPath = '/uploads/branding/' . $filename;
+            SystemSetting::set('system_logo', $logoPath);
+        } elseif ($request->filled('logo_url')) {
+            SystemSetting::set('system_logo', $validated['logo_url']);
+        }
+
+        if ($request->filled('brand_name')) {
+            SystemSetting::set('brand_name', $validated['brand_name']);
+        }
+
+        AuditLog::log('system_settings.logo_updated', 'SystemSetting', 0, [
+            'logo' => SystemSetting::get('system_logo'),
+            'brand_name' => SystemSetting::get('brand_name'),
+        ]);
+
+        return back()->with('success', 'Sistem logosu ve marka ayarları başarıyla güncellendi.');
     }
 
     protected function authorizeAdmin(Request $request): void

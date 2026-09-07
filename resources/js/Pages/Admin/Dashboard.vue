@@ -36,6 +36,7 @@ import { useI18n } from '@/i18n';
 import PaymentsTab from '@/Pages/Admin/Partials/PaymentsTab.vue';
 import PlansTab from '@/Pages/Admin/Partials/PlansTab.vue';
 import SalesTab from '@/Pages/Admin/Partials/SalesTab.vue';
+import LogoSettingsCard from '@/Pages/Admin/Partials/LogoSettingsCard.vue';
 
 const { t } = useI18n();
 
@@ -72,6 +73,10 @@ const props = defineProps<{
     plansList?: Array<any>;
     recentTransactions?: Array<any>;
     workspacesList?: Array<any>;
+    systemSettings?: {
+        logo?: string | null;
+        brand_name?: string | null;
+    };
     filters: {
         search?: string;
         filter?: string;
@@ -711,6 +716,9 @@ const filteredAuditLogs = computed(() => {
                         </div>
                     </div>
                 </div>
+
+                <!-- System Branding & Logo Settings Card -->
+                <LogoSettingsCard :system-settings="systemSettings" />
             </div>
 
             <!-- Tab 3: Audit Logs (Human Readable with Categories & Details) -->
