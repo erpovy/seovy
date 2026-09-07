@@ -1,0 +1,13 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Block direct access to sensitive configuration files
+    <FilesMatch "^(\.env|\.git|composer\.(json|lock)|package\.(json|lock)|phpunit\.xml)">
+        Order allow,deny
+        Deny from all
+    </FilesMatch>
+
+    # Forward all web traffic to Laravel public directory
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule ^(.*)$ public/$1 [L,QSA]
+</IfModule>

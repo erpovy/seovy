@@ -91,6 +91,7 @@ class HandleInertiaRequests extends Middleware
                 'success' => fn () => $request->session()->get('success'),
                 'error' => fn () => $request->session()->get('error'),
                 'info' => fn () => $request->session()->get('info'),
+                'cron_command' => fn () => $request->session()->get('cron_command'),
             ],
             'locale' => function () use ($request) {
                 $loc = $request->session()->get('locale', $request->cookie('seovy_locale', config('app.locale', 'en')));

@@ -62,6 +62,7 @@ Route::get('/invitations/{token}/accept', [WorkspaceMemberController::class, 'ac
 // 2. Install Wizard Routes (Guarded against re-installation)
 Route::middleware([EnsureNotInstalled::class])->group(function () {
     Route::get('/install', [InstallController::class, 'index'])->name('install.index');
+    Route::post('/install/test-db', [InstallController::class, 'testDatabase'])->name('install.test-db');
     Route::post('/install', [InstallController::class, 'process'])->name('install.process');
 });
 

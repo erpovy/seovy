@@ -1,14 +1,24 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
-import { Activity, Lock, Mail, ArrowRight, AlertCircle } from 'lucide-vue-next';
+import { Activity, Lock, Mail, ArrowRight, AlertCircle, CheckCircle2, Copy, Check, Terminal } from 'lucide-vue-next';
 import LanguageSelector from '@/Components/LanguageSelector.vue';
 
 const page = usePage();
 const systemSettings = computed(() => ((page.props as any)?.system_settings) || {});
+const flash = computed(() => ((page.props as any)?.flash) || {});
 const logoDark = computed(() => systemSettings.value.logo_dark || systemSettings.value.logo || null);
 const brandName = computed(() => systemSettings.value.brand_name || 'Seovy');
 const logoFailed = ref(false);
+
+const cronCopied = ref(false);
+const copyCron = (cmd: string) => {
+    navigator.clipboard.writeText(cmd);
+    cronCopied.value = true;
+    setTimeout(() => {
+        cronCopied.value = false;
+    }, 2000);
+};
 
 const form = useForm({
     email: '',
@@ -63,6 +73,34 @@ const submit = () => {
 
         <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md px-4">
             <div class="bg-slate-900/60 backdrop-blur-xl border border-slate-800/80 py-8 px-6 sm:px-10 shadow-2xl rounded-3xl">
+                <!-- Success Flash Alert -->
+                <div v-if="flash.success" class="mb-5 p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs space-y-3">
+                    <div class="flex items-start space-x-2.5">
+                        <CheckCircle2 class="w-5 h-5 shrink-0 text-emerald-400 mt-0.5" />
+                        <span class="font-medium leading-relaxed">{{ flash.success }}</span>
+                    </div>
+
+                    <!-- Optional Cron Command Box -->
+                    <div v-if="flash.cron_command" class="p-3 bg-slate-950/80 rounded-xl border border-slate-800 text-[11px] space-y-1.5 text-slate-300">
+                        <div class="flex items-center justify-between">
+                            <span class="font-semibold text-slate-400 flex items-center space-x-1.5">
+                                <Terminal class="w-3.5 h-3.5 text-indigo-400" />
+                                <span>cPanel / Sunucu Cron Job:</span>
+                            </span>
+                            <button
+                                type="button"
+                                @click="copyCron(flash.cron_command)"
+                                class="text-indigo-400 hover:text-indigo-300 text-[10px] font-mono flex items-center space-x-1"
+                            >
+                                <Check v-if="cronCopied" class="w-3 h-3 text-emerald-400" />
+                                <Copy v-else class="w-3 h-3" />
+                                <span>{{ cronCopied ? 'Kopyalandı' : 'Kopyala' }}</span>
+                            </button>
+                        </div>
+                        <code class="block font-mono text-[10px] text-indigo-300 break-all select-all">{{ flash.cron_command }}</code>
+                    </div>
+                </div>
+
                 <!-- Errors -->
                 <div v-if="form.errors.email" class="mb-4 p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs flex items-center space-x-2">
                     <AlertCircle class="w-4 h-4 shrink-0" />
