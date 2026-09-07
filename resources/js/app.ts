@@ -4,6 +4,9 @@ import '../css/app.css';
 import { createApp, h, DefineComponent } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
 import { i18nPlugin } from './i18n';
+import { useTheme } from './composables/useTheme';
+
+useTheme().initTheme();
 
 const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Seovy';
 

@@ -9,8 +9,14 @@ import {
     LogOut,
     CheckCircle2,
     AlertCircle,
-    Smartphone
+    Smartphone,
+    Sun,
+    Moon,
+    Laptop
 } from 'lucide-vue-next';
+import { useTheme } from '@/composables/useTheme';
+
+const { currentTheme, isDark, setTheme } = useTheme();
 
 const props = defineProps<{
     user: any;
@@ -177,6 +183,73 @@ const logoutOtherSessions = () => {
                 >
                     {{ user.two_factor_enabled ? $t('profile.disable_2fa') : $t('profile.enable_2fa') }}
                 </button>
+            </div>
+
+            <!-- Interface & Theme Preference Card -->
+            <div class="p-6 sm:p-8 rounded-3xl bg-slate-900/50 border border-slate-800/80 space-y-4">
+                <div>
+                    <h2 class="text-base font-bold text-white flex items-center space-x-2">
+                        <Sun v-if="!isDark" class="w-4 h-4 text-amber-400" />
+                        <Moon v-else class="w-4 h-4 text-indigo-400" />
+                        <span>{{ $t('profile.theme_title') }}</span>
+                    </h2>
+                    <p class="text-xs text-slate-400 mt-1 max-w-md">
+                        {{ $t('profile.theme_desc') }}
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+                    <button
+                        type="button"
+                        @click="setTheme('light')"
+                        class="p-4 rounded-2xl border flex items-center space-x-3 transition-all text-left"
+                        :class="currentTheme === 'light'
+                            ? 'bg-indigo-600/15 border-indigo-500 text-white font-semibold ring-1 ring-indigo-500'
+                            : 'bg-slate-950/60 hover:bg-slate-950 border-slate-800 text-slate-300'"
+                    >
+                        <div class="w-9 h-9 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center shrink-0">
+                            <Sun class="w-5 h-5" />
+                        </div>
+                        <div>
+                            <div class="text-xs font-bold text-white">{{ $t('profile.theme_light') }}</div>
+                            <div class="text-[10px] text-slate-400 mt-0.5">{{ $t('profile.theme_light_hint') }}</div>
+                        </div>
+                    </button>
+
+                    <button
+                        type="button"
+                        @click="setTheme('dark')"
+                        class="p-4 rounded-2xl border flex items-center space-x-3 transition-all text-left"
+                        :class="currentTheme === 'dark'
+                            ? 'bg-indigo-600/15 border-indigo-500 text-white font-semibold ring-1 ring-indigo-500'
+                            : 'bg-slate-950/60 hover:bg-slate-950 border-slate-800 text-slate-300'"
+                    >
+                        <div class="w-9 h-9 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center shrink-0">
+                            <Moon class="w-5 h-5" />
+                        </div>
+                        <div>
+                            <div class="text-xs font-bold text-white">{{ $t('profile.theme_dark') }}</div>
+                            <div class="text-[10px] text-slate-400 mt-0.5">{{ $t('profile.theme_dark_hint') }}</div>
+                        </div>
+                    </button>
+
+                    <button
+                        type="button"
+                        @click="setTheme('system')"
+                        class="p-4 rounded-2xl border flex items-center space-x-3 transition-all text-left"
+                        :class="currentTheme === 'system'
+                            ? 'bg-indigo-600/15 border-indigo-500 text-white font-semibold ring-1 ring-indigo-500'
+                            : 'bg-slate-950/60 hover:bg-slate-950 border-slate-800 text-slate-300'"
+                    >
+                        <div class="w-9 h-9 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center shrink-0">
+                            <Laptop class="w-5 h-5" />
+                        </div>
+                        <div>
+                            <div class="text-xs font-bold text-white">{{ $t('profile.theme_system') }}</div>
+                            <div class="text-[10px] text-slate-400 mt-0.5">{{ $t('profile.theme_system_hint') }}</div>
+                        </div>
+                    </button>
+                </div>
             </div>
 
             <!-- Active Sessions Section -->

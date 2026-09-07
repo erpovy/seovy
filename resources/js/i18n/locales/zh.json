@@ -81,7 +81,9 @@
         "running": "运行中",
         "seconds": "秒",
         "duration": "耗时",
-        "unknown": "未知"
+        "unknown": "未知",
+        "theme_light": "切换至浅色模式",
+        "theme_dark": "切换至深色模式"
     },
     "dashboard": {
         "title": "SEO 指挥中心",
@@ -572,7 +574,15 @@
         "current_device": "当前正在使用的设备",
         "logout_others": "下线其他登录设备",
         "logout_others_button": "登出所有其他设备会话",
-        "password_placeholder": "请输入当前有效密码"
+        "password_placeholder": "请输入当前有效密码",
+        "theme_title": "界面与主题偏好",
+        "theme_desc": "根据您的视觉习惯选择深色、浅色或跟随系统外观的主题。",
+        "theme_light": "浅色主题",
+        "theme_light_hint": "清新明亮的外观",
+        "theme_dark": "深色主题",
+        "theme_dark_hint": "护眼舒适的暗色外观",
+        "theme_system": "跟随系统",
+        "theme_system_hint": "自动与您的设备系统外观保持一致"
     },
     "auth": {
         "login_page_title": "登录",

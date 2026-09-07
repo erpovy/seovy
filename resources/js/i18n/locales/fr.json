@@ -81,7 +81,9 @@
         "running": "En cours",
         "seconds": "secondes",
         "duration": "Durée",
-        "unknown": "Inconnu"
+        "unknown": "Inconnu",
+        "theme_light": "Passer au mode clair",
+        "theme_dark": "Passer au mode sombre"
     },
     "dashboard": {
         "title": "Centre de Commande SEO",
@@ -572,7 +574,15 @@
         "current_device": "Appareil Actuel",
         "logout_others": "Déconnecter Autres Sessions",
         "logout_others_button": "Se Déconnecter de Tous les Autres Appareils",
-        "password_placeholder": "Votre mot de passe actuel"
+        "password_placeholder": "Votre mot de passe actuel",
+        "theme_title": "Préférence d'interface et de thème",
+        "theme_desc": "Choisissez entre le thème sombre, clair ou synchronisé avec votre système.",
+        "theme_light": "Thème Clair",
+        "theme_light_hint": "Apparence lumineuse et claire",
+        "theme_dark": "Thème Sombre",
+        "theme_dark_hint": "Agréable pour les yeux en basse lumière",
+        "theme_system": "Préférence Système",
+        "theme_system_hint": "S'adapte automatiquement aux paramètres de votre appareil"
     },
     "auth": {
         "login_page_title": "Connexion",

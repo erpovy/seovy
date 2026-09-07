@@ -81,7 +81,9 @@
         "running": "In corso",
         "seconds": "secondi",
         "duration": "Durata",
-        "unknown": "Sconosciuto"
+        "unknown": "Sconosciuto",
+        "theme_light": "Passa al tema chiaro",
+        "theme_dark": "Passa al tema scuro"
     },
     "dashboard": {
         "title": "Centro di Controllo SEO",
@@ -572,7 +574,15 @@
         "current_device": "Dispositivo Attuale",
         "logout_others": "Disconnetti Altre Sessioni",
         "logout_others_button": "Disconnetti da Tutti gli Altri Dispositivi",
-        "password_placeholder": "La tua password attuale"
+        "password_placeholder": "La tua password attuale",
+        "theme_title": "Preferenze Interfaccia e Tema",
+        "theme_desc": "Scegli tra aspetto scuro, chiaro o sincronizzato con le impostazioni del tuo sistema.",
+        "theme_light": "Tema Chiaro",
+        "theme_light_hint": "Aspetto fresco e luminoso",
+        "theme_dark": "Tema Scuro",
+        "theme_dark_hint": "Riposante per gli occhi",
+        "theme_system": "Preferenza di Sistema",
+        "theme_system_hint": "Si adatta automaticamente alle impostazioni del dispositivo"
     },
     "auth": {
         "login_page_title": "Accedi",

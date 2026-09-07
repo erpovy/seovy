@@ -81,7 +81,9 @@
         "running": "Running",
         "seconds": "seconds",
         "duration": "Duration",
-        "unknown": "Unknown"
+        "unknown": "Unknown",
+        "theme_light": "Switch to Light Mode",
+        "theme_dark": "Switch to Dark Mode"
     },
     "dashboard": {
         "title": "SEO Command Center",
@@ -572,7 +574,15 @@
         "current_device": "Current Device",
         "logout_others": "Log Out Other Browser Sessions",
         "logout_others_button": "Log Out Other Sessions",
-        "password_placeholder": "Your current password"
+        "password_placeholder": "Your current password",
+        "theme_title": "Interface & Theme Preference",
+        "theme_desc": "Choose between dark, light, or system appearance based on your comfort and preference.",
+        "theme_light": "Light Theme",
+        "theme_light_hint": "Clean and bright appearance",
+        "theme_dark": "Dark Theme",
+        "theme_dark_hint": "Easy on the eyes dark appearance",
+        "theme_system": "System Preference",
+        "theme_system_hint": "Automatically matches your device settings"
     },
     "auth": {
         "login_page_title": "Log In",

@@ -81,7 +81,9 @@
         "running": "En ejecución",
         "seconds": "segundos",
         "duration": "Duración",
-        "unknown": "Desconocido"
+        "unknown": "Desconocido",
+        "theme_light": "Cambiar a modo claro",
+        "theme_dark": "Cambiar a modo oscuro"
     },
     "dashboard": {
         "title": "Centro de Mando SEO",
@@ -572,7 +574,15 @@
         "current_device": "Dispositivo Actual",
         "logout_others": "Cerrar Otras Sesiones del Navegador",
         "logout_others_button": "Cerrar Sesión en Todos los Demás Dispositivos",
-        "password_placeholder": "Tu contraseña actual"
+        "password_placeholder": "Tu contraseña actual",
+        "theme_title": "Preferencia de Interfaz y Tema",
+        "theme_desc": "Elija entre apariencia oscura, clara o sincronizada con las preferencias de su sistema.",
+        "theme_light": "Tema Claro",
+        "theme_light_hint": "Apariencia limpia y luminosa",
+        "theme_dark": "Tema Oscuro",
+        "theme_dark_hint": "Agradable para la vista en entornos oscuros",
+        "theme_system": "Preferencia del Sistema",
+        "theme_system_hint": "Coincide automáticamente con la configuración de su dispositivo"
     },
     "auth": {
         "login_page_title": "Iniciar Sesión",

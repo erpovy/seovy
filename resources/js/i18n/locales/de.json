@@ -81,7 +81,9 @@
         "running": "Läuft",
         "seconds": "Sekunden",
         "duration": "Dauer",
-        "unknown": "Unbekannt"
+        "unknown": "Unbekannt",
+        "theme_light": "Zum hellen Design wechseln",
+        "theme_dark": "Zum dunklen Design wechseln"
     },
     "dashboard": {
         "title": "SEO-Kommandozentrale",
@@ -572,7 +574,15 @@
         "current_device": "Aktuelles Gerät",
         "logout_others": "Andere Sitzungen abmelden",
         "logout_others_button": "Von allen anderen Geräten abmelden",
-        "password_placeholder": "Ihr aktuelles Passwort"
+        "password_placeholder": "Ihr aktuelles Passwort",
+        "theme_title": "Oberfläche & Theme-Einstellung",
+        "theme_desc": "Wählen Sie zwischen dunklem, hellem oder an das System angepasstem Design.",
+        "theme_light": "Helles Theme",
+        "theme_light_hint": "Helle und übersichtliche Ansicht",
+        "theme_dark": "Dunkles Theme",
+        "theme_dark_hint": "Augenschonende dunkle Ansicht",
+        "theme_system": "Systemeinstellung",
+        "theme_system_hint": "Passt sich automatisch den Geräteeinstellungen an"
     },
     "auth": {
         "login_page_title": "Anmelden",

@@ -81,7 +81,9 @@
         "running": "Çalışıyor",
         "seconds": "saniye",
         "duration": "Süre",
-        "unknown": "Bilinmiyor"
+        "unknown": "Bilinmiyor",
+        "theme_light": "Aydınlık Temaya Geç",
+        "theme_dark": "Karanlık Temaya Geç"
     },
     "dashboard": {
         "title": "SEO Kontrol Merkezi",
@@ -572,7 +574,15 @@
         "current_device": "Mevcut Cihaz",
         "logout_others": "Diğer Cihazlardan Çıkış Yap",
         "logout_others_button": "Diğer Tüm Cihazlardan Çıkış Yap",
-        "password_placeholder": "Mevcut parolanız"
+        "password_placeholder": "Mevcut parolanız",
+        "theme_title": "Arayüz ve Tema Tercihi",
+        "theme_desc": "Göz konforunuza göre karanlık, aydınlık veya sistem tercihinize uyumlu arayüz temasını seçin.",
+        "theme_light": "Aydınlık Tema",
+        "theme_light_hint": "Ferah ve aydınlık zemin",
+        "theme_dark": "Karanlık Tema",
+        "theme_dark_hint": "Göz yormayan koyu zemin",
+        "theme_system": "Sistem Tercihi",
+        "theme_system_hint": "Cihaz ayarlarını otomatik takip eder"
     },
     "auth": {
         "login_page_title": "Giriş Yap",

@@ -25,6 +25,7 @@ import {
     DollarSign
 } from 'lucide-vue-next';
 import LanguageSelector from '@/Components/LanguageSelector.vue';
+import ThemeToggle from '@/Components/ThemeToggle.vue';
 import { useI18n } from '@/i18n';
 
 defineProps<{
@@ -277,9 +278,12 @@ const switchWorkspace = (workspaceId: number) => {
 
             <!-- Footer: Language Selector & User Profile -->
             <div class="border-t border-slate-800/80 pt-3 px-2 space-y-2 relative">
-                <!-- Language Selector (Dropdown opens upwards) -->
-                <div>
-                    <LanguageSelector placement="top" />
+                <!-- Language Selector & Theme Toggle -->
+                <div class="flex items-center space-x-2">
+                    <div class="flex-1 min-w-0">
+                        <LanguageSelector placement="top" />
+                    </div>
+                    <ThemeToggle />
                 </div>
 
                 <!-- User Profile Button -->
@@ -348,6 +352,7 @@ const switchWorkspace = (workspaceId: number) => {
                 </Link>
 
                 <div class="flex items-center space-x-2">
+                    <ThemeToggle compact />
                     <LanguageSelector compact placement="bottom" />
                     <button
                         @click="mobileMenuOpen = !mobileMenuOpen"
