@@ -8,7 +8,9 @@ import {
     Zap, 
     Layers, 
     BarChart3, 
-    ArrowRight 
+    ArrowRight,
+    Sparkles,
+    CreditCard
 } from 'lucide-vue-next';
 import LanguageSelector from '@/Components/LanguageSelector.vue';
 
