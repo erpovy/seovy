@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { Link, usePage, router } from '@inertiajs/vue3';
 import {
     Activity,
@@ -46,6 +46,10 @@ const systemLogoLight = computed(() => systemSettings.value.logo_light || system
 const activeLogo = computed(() => (isDark.value ? systemLogoDark.value : (systemLogoLight.value || systemLogoDark.value)));
 const brandName = computed(() => systemSettings.value.brand_name || 'Seovy');
 const logoFailed = ref(false);
+
+watch(activeLogo, () => {
+    logoFailed.value = false;
+});
 
 const currentPlanName = computed(() => {
     if (auth.value.current_workspace?.plan_name) {

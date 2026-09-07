@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { useForm, router, usePage } from '@inertiajs/vue3';
 import { useI18n } from '@/i18n';
 import {
@@ -14,7 +14,8 @@ import {
     Globe,
     Type,
     Moon,
-    Sun
+    Sun,
+    CheckCircle2
 } from 'lucide-vue-next';
 
 const props = defineProps<{
@@ -75,6 +76,24 @@ const form = useForm({
 });
 
 const isResetting = ref(false);
+const saveSuccessMessage = ref<string | null>(null);
+
+// Watch external changes (from Inertia response or props) and sync form
+watch(
+    () => [currentDarkLogo.value, currentLightLogo.value, currentFavicon.value, currentBrandName.value],
+    ([newDark, newLight, newFavicon, newBrand]) => {
+        if (!form.logo_dark_file) {
+            form.logo_dark_url = newDark || '';
+        }
+        if (!form.logo_light_file) {
+            form.logo_light_url = newLight || '';
+        }
+        if (!form.favicon_file) {
+            form.favicon_url = newFavicon || '';
+        }
+        form.brand_name = newBrand || 'Seovy';
+    }
+);
 
 const onDarkFileChange = (e: Event) => {
     const target = e.target as HTMLInputElement;
@@ -140,6 +159,7 @@ const clearSelectedFavicon = () => {
 };
 
 const submitForm = () => {
+    saveSuccessMessage.value = null;
     form.post('/admin/settings/logo', {
         forceFormData: true,
         preserveScroll: true,
@@ -147,6 +167,10 @@ const submitForm = () => {
             clearSelectedDarkFile();
             clearSelectedLightFile();
             clearSelectedFavicon();
+            saveSuccessMessage.value = t('admin.logo_save_success', 'Logolar ve marka ayarları başarıyla kaydedildi.');
+            setTimeout(() => {
+                saveSuccessMessage.value = null;
+            }, 6000);
         },
     });
 };
@@ -154,6 +178,7 @@ const submitForm = () => {
 const resetToDefault = () => {
     if (confirm(t('admin.logo_confirm_reset', 'Sistem logolarını ve faviconu varsayılana sıfırlamak istediğinize emin misiniz?'))) {
         isResetting.value = true;
+        saveSuccessMessage.value = null;
         router.post('/admin/settings/logo', { action: 'reset' }, {
             preserveScroll: true,
             onFinish: () => {
@@ -165,6 +190,10 @@ const resetToDefault = () => {
                 form.logo_dark_url = '';
                 form.logo_light_url = '';
                 form.favicon_url = '';
+                saveSuccessMessage.value = t('admin.logo_reset_success', 'Varsayılan marka ve logolara dönüldü.');
+                setTimeout(() => {
+                    saveSuccessMessage.value = null;
+                }, 6000);
             },
         });
     }
@@ -172,20 +201,34 @@ const resetToDefault = () => {
 
 const activeDarkPreview = computed(() => {
     if (darkPreviewUrl.value) return darkPreviewUrl.value;
-    if (darkUploadMode.value === 'url' && form.logo_dark_url.trim()) return form.logo_dark_url.trim();
+    if (darkUploadMode.value === 'url' && form.logo_dark_url?.trim()) return form.logo_dark_url.trim();
     return currentDarkLogo.value;
 });
 
 const activeLightPreview = computed(() => {
     if (lightPreviewUrl.value) return lightPreviewUrl.value;
-    if (lightUploadMode.value === 'url' && form.logo_light_url.trim()) return form.logo_light_url.trim();
+    if (lightUploadMode.value === 'url' && form.logo_light_url?.trim()) return form.logo_light_url.trim();
     return currentLightLogo.value || activeDarkPreview.value;
 });
 
 const activeFaviconPreview = computed(() => {
     if (faviconPreviewUrl.value) return faviconPreviewUrl.value;
-    if (faviconUploadMode.value === 'url' && form.favicon_url.trim()) return form.favicon_url.trim();
+    if (faviconUploadMode.value === 'url' && form.favicon_url?.trim()) return form.favicon_url.trim();
     return currentFavicon.value || activeDarkPreview.value || activeLightPreview.value;
+});
+
+const darkPreviewFailed = ref(false);
+const lightPreviewFailed = ref(false);
+const faviconPreviewFailed = ref(false);
+
+watch(activeDarkPreview, () => {
+    darkPreviewFailed.value = false;
+});
+watch(activeLightPreview, () => {
+    lightPreviewFailed.value = false;
+});
+watch(activeFaviconPreview, () => {
+    faviconPreviewFailed.value = false;
 });
 </script>
 
@@ -224,6 +267,21 @@ const activeFaviconPreview = computed(() => {
                     <span>{{ t('admin.logo_btn_reset', 'Varsayılana Sıfırla') }}</span>
                 </button>
             </div>
+        </div>
+
+        <!-- Success Notification Banner -->
+        <div v-if="saveSuccessMessage" class="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs flex items-center justify-between shadow-lg shadow-emerald-500/5">
+            <div class="flex items-center space-x-2.5">
+                <CheckCircle2 class="w-4 h-4 shrink-0 text-emerald-400" />
+                <span class="font-medium">{{ saveSuccessMessage }}</span>
+            </div>
+            <button
+                type="button"
+                @click="saveSuccessMessage = null"
+                class="text-emerald-400/70 hover:text-emerald-300 ml-3"
+            >
+                &times;
+            </button>
         </div>
 
         <form @submit.prevent="submitForm" class="space-y-6">
@@ -277,8 +335,8 @@ const activeFaviconPreview = computed(() => {
                             </span>
                         </div>
 
-                        <!-- Dark Theme Logo Form Fields -->
-                        <div v-if="activeLogoTab === 'dark'" class="space-y-3">
+                        <!-- Dark Theme Logo Form Fields (Using v-show so file input element and state are preserved) -->
+                        <div v-show="activeLogoTab === 'dark'" class="space-y-3">
                             <div class="flex items-center space-x-2 bg-slate-900 p-1 rounded-xl border border-slate-800 text-xs font-medium w-fit">
                                 <button
                                     type="button"
@@ -300,7 +358,7 @@ const activeFaviconPreview = computed(() => {
                                 </button>
                             </div>
 
-                            <div v-if="darkUploadMode === 'file'" class="space-y-2">
+                            <div v-show="darkUploadMode === 'file'" class="space-y-2">
                                 <input
                                     ref="darkFileInputRef"
                                     type="file"
@@ -334,9 +392,14 @@ const activeFaviconPreview = computed(() => {
                                         {{ t('admin.logo_cancel', 'Vazgeç') }}
                                     </button>
                                 </div>
+
+                                <div v-if="form.errors.logo_dark_file" class="text-xs text-rose-400 flex items-center space-x-1.5 mt-1">
+                                    <AlertCircle class="w-3.5 h-3.5 shrink-0" />
+                                    <span>{{ form.errors.logo_dark_file }}</span>
+                                </div>
                             </div>
 
-                            <div v-else class="space-y-2">
+                            <div v-show="darkUploadMode === 'url'" class="space-y-2">
                                 <input
                                     v-model="form.logo_dark_url"
                                     type="url"
@@ -346,11 +409,15 @@ const activeFaviconPreview = computed(() => {
                                 <p class="text-[11px] text-slate-500">
                                     {{ t('admin.logo_url_hint', 'Doğrudan HTTPS erişilebilir şeffaf logo görseli bağlantısı girin.') }}
                                 </p>
+                                <div v-if="form.errors.logo_dark_url" class="text-xs text-rose-400 flex items-center space-x-1.5 mt-1">
+                                    <AlertCircle class="w-3.5 h-3.5 shrink-0" />
+                                    <span>{{ form.errors.logo_dark_url }}</span>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Light Theme Logo Form Fields -->
-                        <div v-if="activeLogoTab === 'light'" class="space-y-3">
+                        <!-- Light Theme Logo Form Fields (Using v-show so file input element and state are preserved) -->
+                        <div v-show="activeLogoTab === 'light'" class="space-y-3">
                             <div class="flex items-center space-x-2 bg-slate-900 p-1 rounded-xl border border-slate-800 text-xs font-medium w-fit">
                                 <button
                                     type="button"
@@ -372,7 +439,7 @@ const activeFaviconPreview = computed(() => {
                                 </button>
                             </div>
 
-                            <div v-if="lightUploadMode === 'file'" class="space-y-2">
+                            <div v-show="lightUploadMode === 'file'" class="space-y-2">
                                 <input
                                     ref="lightFileInputRef"
                                     type="file"
@@ -406,9 +473,14 @@ const activeFaviconPreview = computed(() => {
                                         {{ t('admin.logo_cancel', 'Vazgeç') }}
                                     </button>
                                 </div>
+
+                                <div v-if="form.errors.logo_light_file" class="text-xs text-rose-400 flex items-center space-x-1.5 mt-1">
+                                    <AlertCircle class="w-3.5 h-3.5 shrink-0" />
+                                    <span>{{ form.errors.logo_light_file }}</span>
+                                </div>
                             </div>
 
-                            <div v-else class="space-y-2">
+                            <div v-show="lightUploadMode === 'url'" class="space-y-2">
                                 <input
                                     v-model="form.logo_light_url"
                                     type="url"
@@ -418,6 +490,10 @@ const activeFaviconPreview = computed(() => {
                                 <p class="text-[11px] text-slate-500">
                                     {{ t('admin.logo_light_url_hint', 'Aydınlık tema için doğrudan HTTPS erişilebilir koyu renkli logo görseli bağlantısı girin.') }}
                                 </p>
+                                <div v-if="form.errors.logo_light_url" class="text-xs text-rose-400 flex items-center space-x-1.5 mt-1">
+                                    <AlertCircle class="w-3.5 h-3.5 shrink-0" />
+                                    <span>{{ form.errors.logo_light_url }}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -460,7 +536,7 @@ const activeFaviconPreview = computed(() => {
                         </div>
 
                         <!-- Favicon File Upload Mode -->
-                        <div v-if="faviconUploadMode === 'file'" class="space-y-2">
+                        <div v-show="faviconUploadMode === 'file'" class="space-y-2">
                             <input
                                 ref="faviconInputRef"
                                 type="file"
@@ -494,10 +570,15 @@ const activeFaviconPreview = computed(() => {
                                     {{ t('admin.logo_cancel', 'Vazgeç') }}
                                 </button>
                             </div>
+
+                            <div v-if="form.errors.favicon_file" class="text-xs text-rose-400 flex items-center space-x-1.5 mt-1">
+                                <AlertCircle class="w-3.5 h-3.5 shrink-0" />
+                                <span>{{ form.errors.favicon_file }}</span>
+                            </div>
                         </div>
 
                         <!-- Favicon Direct URL Mode -->
-                        <div v-else class="space-y-2">
+                        <div v-show="faviconUploadMode === 'url'" class="space-y-2">
                             <input
                                 v-model="form.favicon_url"
                                 type="url"
@@ -507,13 +588,17 @@ const activeFaviconPreview = computed(() => {
                             <p class="text-[11px] text-slate-500">
                                 {{ t('admin.logo_url_hint', 'Doğrudan HTTPS erişilebilir favicon bağlantısı girin.') }}
                             </p>
+                            <div v-if="form.errors.favicon_url" class="text-xs text-rose-400 flex items-center space-x-1.5 mt-1">
+                                <AlertCircle class="w-3.5 h-3.5 shrink-0" />
+                                <span>{{ form.errors.favicon_url }}</span>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Errors -->
-                    <div v-if="form.errors.logo_dark_file || form.errors.logo_dark_url || form.errors.logo_light_file || form.errors.logo_light_url || form.errors.favicon_file || form.errors.favicon_url" class="text-xs text-rose-400 bg-rose-950/30 border border-rose-500/30 p-3 rounded-xl flex items-center space-x-2">
+                    <!-- Global Form Errors Alert -->
+                    <div v-if="Object.keys(form.errors).length > 0" class="text-xs text-rose-400 bg-rose-950/30 border border-rose-500/30 p-3 rounded-xl flex items-center space-x-2">
                         <AlertCircle class="w-4 h-4 shrink-0" />
-                        <span>{{ form.errors.logo_dark_file || form.errors.logo_dark_url || form.errors.logo_light_file || form.errors.logo_light_url || form.errors.favicon_file || form.errors.favicon_url }}</span>
+                        <span>{{ Object.values(form.errors)[0] }}</span>
                     </div>
 
                     <!-- Submit Button -->
@@ -549,12 +634,14 @@ const activeFaviconPreview = computed(() => {
                         </div>
                         <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-between">
                             <div class="flex items-center space-x-3 min-w-0">
-                                <template v-if="activeDarkPreview">
+                                <template v-if="activeDarkPreview && !darkPreviewFailed">
                                     <img
+                                        :key="activeDarkPreview"
                                         :src="activeDarkPreview"
                                         alt="Dark Logo Preview"
                                         class="h-9 max-w-[130px] object-contain rounded-lg"
-                                        @error="($event.target as HTMLElement).style.display = 'none'"
+                                        @error="darkPreviewFailed = true"
+                                        @load="darkPreviewFailed = false"
                                     />
                                 </template>
                                 <template v-else>
@@ -608,12 +695,14 @@ const activeFaviconPreview = computed(() => {
                         </div>
                         <div class="p-3 rounded-xl bg-white border border-slate-200 flex items-center justify-between shadow-sm">
                             <div class="flex items-center space-x-3 min-w-0">
-                                <template v-if="activeLightPreview">
+                                <template v-if="activeLightPreview && !lightPreviewFailed">
                                     <img
+                                        :key="activeLightPreview"
                                         :src="activeLightPreview"
                                         alt="Light Logo Preview"
                                         class="h-9 max-w-[130px] object-contain rounded-lg"
-                                        @error="($event.target as HTMLElement).style.display = 'none'"
+                                        @error="lightPreviewFailed = true"
+                                        @load="lightPreviewFailed = false"
                                     />
                                 </template>
                                 <template v-else>
@@ -662,11 +751,13 @@ const activeFaviconPreview = computed(() => {
                         <div class="bg-slate-900 border border-slate-800 rounded-xl p-2.5 flex items-center space-x-2.5 shadow-sm">
                             <div class="w-5 h-5 rounded flex items-center justify-center overflow-hidden shrink-0 bg-slate-800 border border-slate-700/60">
                                 <img
-                                    v-if="activeFaviconPreview"
+                                    v-if="activeFaviconPreview && !faviconPreviewFailed"
+                                    :key="activeFaviconPreview"
                                     :src="activeFaviconPreview"
                                     alt="Favicon"
                                     class="w-4 h-4 object-contain"
-                                    @error="($event.target as HTMLElement).style.display = 'none'"
+                                    @error="faviconPreviewFailed = true"
+                                    @load="faviconPreviewFailed = false"
                                 />
                                 <Activity v-else class="w-3.5 h-3.5 text-indigo-400" />
                             </div>
