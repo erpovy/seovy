@@ -135,8 +135,114 @@ html.light tbody tr:hover {
 html.light h1.text-white,
 html.light h2.text-white,
 html.light h3.text-white,
-html.light h4.text-white {
+html.light h4.text-white,
+html.light h5.text-white,
+html.light h6.text-white {
     color: #0f172a !important;
+}
+
+/* Sidebar navigation links in light mode */
+html.light aside nav a:not(.bg-indigo-600) {
+    color: #334155 !important;
+}
+html.light aside nav a:not(.bg-indigo-600):hover {
+    color: #0f172a !important;
+    background-color: #f1f5f9 !important;
+}
+html.light aside nav a.bg-indigo-600 {
+    color: #ffffff !important;
+}
+html.light aside nav a.bg-indigo-600 * {
+    color: #ffffff !important;
+}
+
+/* Titles, table texts, counters and labels that had text-white */
+html.light td .font-bold.text-white,
+html.light td .font-semibold.text-white,
+html.light td .text-white,
+html.light th .text-white,
+html.light .font-extrabold.text-white,
+html.light span.text-white:not(.bg-indigo-600 *):not(.bg-emerald-600 *):not(.bg-rose-600 *):not(.bg-violet-600 *):not(.bg-amber-600 *):not(.bg-blue-600 *):not(.bg-pink-600 *):not([class*="bg-gradient"] *),
+html.light div.text-white:not(.bg-indigo-600 *):not(.bg-emerald-600 *):not(.bg-rose-600 *):not(.bg-violet-600 *):not(.bg-amber-600 *):not(.bg-blue-600 *):not(.bg-pink-600 *):not([class*="bg-gradient"] *),
+html.light a.text-white:not(.bg-indigo-600):not(.bg-indigo-500):not(.bg-emerald-600):not(.bg-rose-600):not([class*="bg-gradient"]) {
+    color: #0f172a !important;
+}
+
+/* Secondary muted text contrast optimization in light mode */
+html.light .text-slate-400 {
+    color: #475569 !important;
+}
+
+html.light .text-slate-500 {
+    color: #64748b !important;
+}
+
+html.light .text-slate-300:not(button.bg-indigo-600 *):not(button.bg-emerald-600 *) {
+    color: #1e293b !important;
+}
+
+html.light .text-slate-200:not(button.bg-indigo-600 *):not(button.bg-emerald-600 *) {
+    color: #0f172a !important;
+}
+
+/* Brand name gradient fallback in light mode */
+html.light .bg-clip-text.text-transparent.bg-gradient-to-r {
+    background-image: linear-gradient(to right, #0f172a, #334155, #475569) !important;
+}
+
+/* Sub-panels and inner pill backgrounds inside light mode cards */
+html.light .bg-slate-950,
+html.light .bg-slate-950\/80,
+html.light .bg-slate-950\/70,
+html.light .bg-slate-950\/60,
+html.light .bg-slate-950\/40 {
+    background-color: #f1f5f9 !important;
+    border-color: #e2e8f0 !important;
+}
+
+/* Modals & Dropdown menus in light mode */
+html.light [class*="fixed"] .bg-slate-900,
+html.light .fixed .bg-slate-900,
+html.light .absolute.bg-slate-900 {
+    background-color: #ffffff !important;
+    border-color: #e2e8f0 !important;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Modal backdrop blur in light mode */
+html.light .bg-black\/80,
+html.light .bg-slate-950\/80 {
+    background-color: rgba(15, 23, 42, 0.45) !important;
+}
+
+/* Code and JSON / technical evidence viewer in light mode */
+html.light pre,
+html.light code:not(.bg-indigo-600 *) {
+    background-color: #f8fafc !important;
+    color: #0f172a !important;
+    border-color: #e2e8f0 !important;
+}
+
+/* Active plan badge in sidebar in light mode */
+html.light .bg-gradient-to-r.from-indigo-950\/40 {
+    background-image: linear-gradient(to right, #eef2ff, #f5f3ff, #ffffff) !important;
+    border-color: #c7d2fe !important;
+}
+
+/* Retain white text for solid saturated action buttons */
+html.light .bg-indigo-600,
+html.light .bg-indigo-500,
+html.light .bg-emerald-600,
+html.light .bg-rose-600,
+html.light .bg-violet-600 {
+    color: #ffffff !important;
+}
+html.light .bg-indigo-600 *,
+html.light .bg-indigo-500 *,
+html.light .bg-emerald-600 *,
+html.light .bg-rose-600 *,
+html.light .bg-violet-600 * {
+    color: #ffffff !important;
 }
 
 /* Light mode card shadows */
