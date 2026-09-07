@@ -120,7 +120,7 @@ const getColorClass = (color?: string) => {
 </script>
 
 <template>
-    <Head :title="`${featuresTitle || 'Platform Özellikleri'} - ${brandName}`" />
+    <Head :title="`${featuresTitle || $t('features.page_title', 'Platform Özellikleri')} - ${brandName}`" />
 
     <div class="min-h-screen bg-slate-950 text-slate-100 selection:bg-indigo-500 selection:text-white flex flex-col justify-between">
         <!-- Top Navigation -->

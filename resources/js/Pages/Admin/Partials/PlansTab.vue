@@ -119,7 +119,7 @@ const submitForm = () => {
 };
 
 const deletePlan = (plan: any) => {
-    if (confirm(`"${plan.name}" planını silmek istediğinize emin misiniz?`)) {
+    if (confirm(`"${plan.name}" ${t('admin.plans_confirm_delete', 'planını silmek istediğinize emin misiniz?')}`)) {
         router.delete(`/admin/plans/${plan.id}`);
     }
 };
@@ -236,7 +236,7 @@ const deletePlan = (plan: any) => {
                         type="button"
                         @click="deletePlan(plan)"
                         class="p-2 rounded-xl text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
-                        title="Planı Sil"
+                        :title="$t('admin.plans_delete_title', 'Planı Sil')"
                     >
                         <Trash2 class="w-4 h-4" />
                     </button>
@@ -249,7 +249,7 @@ const deletePlan = (plan: any) => {
             v-if="isModalOpen"
             class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-150"
         >
-            <div class="w-full max-w-xl rounded-3xl bg-slate-900 border border-slate-800 p-6 sm:p-8 shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto">
+            <div class="w-full max-w-2xl rounded-3xl bg-slate-900 border border-slate-800 p-6 sm:p-8 shadow-2xl space-y-6">
                 <div class="flex items-center justify-between border-b border-slate-800 pb-4">
                     <div class="flex items-center space-x-3">
                         <div class="w-10 h-10 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
@@ -282,7 +282,7 @@ const deletePlan = (plan: any) => {
                                 type="text"
                                 required
                                 class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-indigo-500"
-                                placeholder="Örn: Kurumsal Plus"
+                                :placeholder="$t('admin.plans_name_placeholder', 'Örn: Kurumsal Plus')"
                             />
                         </div>
 
@@ -392,7 +392,7 @@ const deletePlan = (plan: any) => {
                             v-model="form.featuresText"
                             rows="5"
                             class="w-full px-3.5 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white font-sans text-xs focus:outline-none focus:border-indigo-500"
-                            placeholder="Her satıra bir özellik maddesi yazın..."
+                            :placeholder="$t('admin.plans_features_placeholder', 'Her satıra bir özellik maddesi yazın...')"
                         ></textarea>
                     </div>
 

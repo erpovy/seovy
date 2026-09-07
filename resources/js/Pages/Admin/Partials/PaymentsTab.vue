@@ -385,7 +385,7 @@ const selectedTxn = ref<any>(null);
                             :class="paymentSettings.test_mode ? 'bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-amber-500/20' : 'bg-slate-800 hover:bg-slate-700 text-white border border-slate-700'"
                         >
                             <Sliders class="w-4 h-4" />
-                            <span>{{ $t('admin.pos_toggle_test_mode') }}: {{ paymentSettings.test_mode ? 'KAPAT' : 'AÇ' }}</span>
+                            <span>{{ $t('admin.pos_toggle_test_mode') }}: {{ paymentSettings.test_mode ? $t('admin.pos_status_off', 'KAPAT') : $t('admin.pos_status_on', 'AÇ') }}</span>
                         </button>
                     </div>
                 </div>
@@ -417,7 +417,7 @@ const selectedTxn = ref<any>(null);
                                 class="w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-indigo-500"
                             >
                                 <option v-for="ws in workspacesList" :key="ws.id" :value="ws.id">
-                                    {{ ws.name }} ({{ ws.owner?.email || 'Müşteri' }})
+                                    {{ ws.name }} ({{ ws.owner?.email || $t('admin.customer', 'Müşteri') }})
                                 </option>
                             </select>
                         </div>
@@ -449,10 +449,10 @@ const selectedTxn = ref<any>(null);
                                 required
                                 class="w-full px-3 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-indigo-500"
                             >
-                                <option value="pro">Pro Plan (499 ₺ / $29)</option>
-                                <option value="agency">Ajans Planı (1.499 ₺ / $89)</option>
-                                <option value="free">Ücretsiz Plan (0 ₺)</option>
-                                <option value="custom">Özel Tutar</option>
+                                <option value="pro">{{ $t('billing.plan_pro_title', 'Pro Plan') }} (499 ₺ / $29)</option>
+                                <option value="agency">{{ $t('admin.pos_plan_agency', 'Ajans Planı (1.499 ₺ / $89)') }}</option>
+                                <option value="free">{{ $t('admin.pos_plan_free', 'Ücretsiz Plan (0 ₺)') }}</option>
+                                <option value="custom">{{ $t('admin.pos_plan_custom', 'Özel Tutar') }}</option>
                             </select>
                         </div>
 
@@ -508,16 +508,16 @@ const selectedTxn = ref<any>(null);
                             <span>{{ $t('admin.pos_ledger_title') }}</span>
                         </h3>
                         <p class="text-xs text-slate-400 mt-0.5">
-                            Gerçekleşen tüm canlı ve simüle edilmiş satın alma işlemleri.
+                            {{ $t('admin.pos_ledger_subtitle', 'Gerçekleşen tüm canlı ve simüle edilmiş satın alma işlemleri.') }}
                         </p>
                     </div>
                 </div>
 
                 <div v-if="recentTransactions.length === 0" class="p-12 rounded-3xl bg-slate-900/40 border border-slate-800 text-center">
                     <CreditCard class="w-12 h-12 text-slate-600 mx-auto mb-3" />
-                    <h4 class="text-sm font-semibold text-white">Henüz işlem kaydı bulunmuyor</h4>
+                    <h4 class="text-sm font-semibold text-white">{{ $t('admin.pos_no_transactions', 'Henüz işlem kaydı bulunmuyor') }}</h4>
                     <p class="text-xs text-slate-400 max-w-sm mx-auto mt-1 mb-4">
-                        Yukarıdaki Satın Alma Simülatörünü kullanarak ilk test işleminizi hemen gerçekleştirebilirsiniz.
+                        {{ $t('admin.pos_no_transactions_hint', 'Yukarıdaki Satın Alma Simülatörünü kullanarak ilk test işleminizi hemen gerçekleştirebilirsiniz.') }}
                     </p>
                 </div>
 
@@ -628,7 +628,7 @@ const selectedTxn = ref<any>(null);
                             {{ countryFlags[editingGateway.country_code] || '🌐' }}
                         </div>
                         <div>
-                            <h3 class="text-base font-bold text-white">{{ editingGateway.name }} POS Ayarları</h3>
+                            <h3 class="text-base font-bold text-white">{{ editingGateway.name }} {{ $t('admin.pos_gateway_settings', 'POS Ayarları') }}</h3>
                             <p class="text-xs text-slate-400">{{ editingGateway.country_name }} &bull; {{ editingGateway.currency }}</p>
                         </div>
                     </div>
@@ -644,23 +644,23 @@ const selectedTxn = ref<any>(null);
                 <form @submit.prevent="saveGatewaySettings" class="space-y-4">
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-semibold text-slate-300 mb-1.5">Durum</label>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1.5">{{ $t('common.status', 'Durum') }}</label>
                             <select
                                 v-model="editForm.is_active"
                                 class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white"
                             >
-                                <option :value="true">Aktif (Kullanılabilir)</option>
-                                <option :value="false">Pasif (Kapalı)</option>
+                                <option :value="true">{{ $t('admin.pos_active_opt', 'Aktif (Kullanılabilir)') }}</option>
+                                <option :value="false">{{ $t('admin.pos_inactive_opt', 'Pasif (Kapalı)') }}</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-slate-300 mb-1.5">Çalışma Modu</label>
+                            <label class="block text-xs font-semibold text-slate-300 mb-1.5">{{ $t('admin.pos_mode_label', 'Çalışma Modu') }}</label>
                             <select
                                 v-model="editForm.mode"
                                 class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white"
                             >
-                                <option value="test">Test / Sandbox Modu</option>
-                                <option value="live">Canlı (Production) Modu</option>
+                                <option value="test">{{ $t('admin.sales_mode_test', 'Test / Sandbox Modu') }}</option>
+                                <option value="live">{{ $t('admin.pos_mode_live', 'Canlı (Production) Modu') }}</option>
                             </select>
                         </div>
                     </div>
@@ -678,7 +678,7 @@ const selectedTxn = ref<any>(null);
                             />
                         </div>
                         <div v-if="Object.keys(editForm.credentials).length === 0" class="text-xs text-slate-500 italic">
-                            Özel kimlik anahtarı gerektirmiyor veya varsayılan konfigürasyonda.
+                            {{ $t('admin.pos_no_credentials', 'Özel kimlik anahtarı gerektirmiyor veya varsayılan konfigürasyonda.') }}
                         </div>
                     </div>
 
@@ -710,33 +710,33 @@ const selectedTxn = ref<any>(null);
         >
             <div class="w-full max-w-lg rounded-3xl bg-slate-900 border border-slate-800 p-6 shadow-2xl space-y-4">
                 <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                    <h3 class="text-base font-bold text-white">İşlem Detayları: {{ selectedTxn.transaction_id }}</h3>
+                    <h3 class="text-base font-bold text-white">{{ $t('admin.pos_txn_details', 'İşlem Detayları') }}: {{ selectedTxn.transaction_id }}</h3>
                     <button @click="selectedTxn = null" class="p-1 text-slate-400 hover:text-white">
                         <X class="w-4 h-4" />
                     </button>
                 </div>
                 <div class="space-y-2 text-xs">
                     <div class="flex justify-between py-1 border-b border-slate-800/60">
-                        <span class="text-slate-400">Çalışma Alanı:</span>
+                        <span class="text-slate-400">{{ $t('admin.pos_workspace_label', 'Çalışma Alanı') }}:</span>
                         <span class="text-white font-semibold">{{ selectedTxn.workspace?.name || '-' }}</span>
                     </div>
                     <div class="flex justify-between py-1 border-b border-slate-800/60">
-                        <span class="text-slate-400">POS Sağlayıcı:</span>
+                        <span class="text-slate-400">{{ $t('admin.pos_provider_label', 'POS Sağlayıcı') }}:</span>
                         <span class="text-white font-semibold">{{ selectedTxn.gateway_name }}</span>
                     </div>
                     <div class="flex justify-between py-1 border-b border-slate-800/60">
-                        <span class="text-slate-400">Tutar:</span>
+                        <span class="text-slate-400">{{ $t('admin.pos_amount', 'Tutar') }}:</span>
                         <span class="text-emerald-400 font-bold font-mono">{{ selectedTxn.amount }} {{ selectedTxn.currency }}</span>
                     </div>
                     <div class="flex justify-between py-1 border-b border-slate-800/60">
-                        <span class="text-slate-400">Kart Bilgisi:</span>
+                        <span class="text-slate-400">{{ $t('admin.sales_payment_method', 'Kart Bilgisi') }}:</span>
                         <span class="text-slate-200 font-mono">{{ selectedTxn.card_brand }} **** {{ selectedTxn.card_last_four }}</span>
                     </div>
                     <div v-if="selectedTxn.error_message" class="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs">
-                        <strong>Hata Mesajı:</strong> {{ selectedTxn.error_message }}
+                        <strong>{{ $t('admin.pos_error_message_label', 'Hata Mesajı') }}:</strong> {{ selectedTxn.error_message }}
                     </div>
                     <div class="pt-2">
-                        <span class="text-slate-400 block mb-1">Yanıt Payload'ı (JSON):</span>
+                        <span class="text-slate-400 block mb-1">{{ $t('admin.pos_response_payload', 'Yanıt Payload\'ı (JSON)') }}:</span>
                         <pre class="p-3 rounded-xl bg-slate-950 border border-slate-800 text-[11px] text-slate-300 overflow-x-auto font-mono max-h-40">{{ JSON.stringify(selectedTxn.response_payload, null, 2) }}</pre>
                     </div>
                 </div>

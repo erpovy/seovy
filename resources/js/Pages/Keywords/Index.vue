@@ -184,7 +184,7 @@ const providerDisplayName = computed(() => {
                         class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 hover:border-slate-600 text-xs font-semibold flex items-center space-x-1.5 transition-all"
                     >
                         <Settings class="w-3.5 h-3.5 text-indigo-400" />
-                        <span>{{ $t('keywords.serp_settings') || 'SERP Ayarları' }}</span>
+                        <span>{{ $t('keywords.serp_settings') }}</span>
                     </button>
                 </div>
             </div>
@@ -340,17 +340,17 @@ const providerDisplayName = computed(() => {
                     <div class="flex items-center justify-between">
                         <h2 class="text-base font-bold text-white flex items-center space-x-2">
                             <Settings class="w-4 h-4 text-indigo-400" />
-                            <span>{{ $t('keywords.serp_modal_title') || 'SERP Sağlayıcı ve Sıralama Ayarları' }}</span>
+                            <span>{{ $t('keywords.serp_modal_title') }}</span>
                         </h2>
                         <button @click="showSerpModal = false" class="text-slate-400 hover:text-white text-xs">✕</button>
                     </div>
                     <p class="text-xs text-slate-400">
-                        {{ $t('keywords.serp_modal_desc') || 'Anahtar kelime sıralamalarınızın canlı olarak nasıl kontrol edileceğini yapılandırın.' }}
+                        {{ $t('keywords.serp_modal_desc') }}
                     </p>
 
                     <form @submit.prevent="submitSerp" class="space-y-4 text-xs">
                         <div>
-                            <label class="block font-semibold text-slate-300 mb-1.5">{{ $t('keywords.provider_choice') || 'Arama Motoru Sağlayıcısı' }}</label>
+                            <label class="block font-semibold text-slate-300 mb-1.5">{{ $t('keywords.provider_choice') }}</label>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                 <button
                                     type="button"
@@ -358,8 +358,8 @@ const providerDisplayName = computed(() => {
                                     class="p-3 rounded-xl border text-left transition-all flex flex-col justify-between"
                                     :class="serpForm.provider === 'smart' ? 'bg-indigo-600/10 border-indigo-500 text-white' : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:text-slate-200'"
                                 >
-                                    <span class="font-bold text-xs text-indigo-400">⚡ {{ $t('keywords.provider_smart') || 'Dahili Akıllı Motor' }}</span>
-                                    <span class="text-[10px] text-slate-400 mt-1">{{ $t('keywords.provider_smart_desc') || 'Ücretsiz, API gerektirmez. Canlı web araması ve site alaka düzeyini kullanır.' }}</span>
+                                    <span class="font-bold text-xs text-indigo-400">⚡ {{ $t('keywords.provider_smart') }}</span>
+                                    <span class="text-[10px] text-slate-400 mt-1">{{ $t('keywords.provider_smart_desc') }}</span>
                                 </button>
 
                                 <button
@@ -369,7 +369,7 @@ const providerDisplayName = computed(() => {
                                     :class="serpForm.provider === 'serpapi' ? 'bg-indigo-600/10 border-indigo-500 text-white' : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:text-slate-200'"
                                 >
                                     <span class="font-bold text-xs text-cyan-400">SerpApi (Google)</span>
-                                    <span class="text-[10px] text-slate-400 mt-1">{{ $t('keywords.provider_serpapi_desc') || 'Google SERP API üzerinden anlık resmi Google arama sonuçları.' }}</span>
+                                    <span class="text-[10px] text-slate-400 mt-1">{{ $t('keywords.provider_serpapi_desc') }}</span>
                                 </button>
 
                                 <button
@@ -379,7 +379,7 @@ const providerDisplayName = computed(() => {
                                     :class="serpForm.provider === 'dataforseo' ? 'bg-indigo-600/10 border-indigo-500 text-white' : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:text-slate-200'"
                                 >
                                     <span class="font-bold text-xs text-amber-400">DataForSEO API</span>
-                                    <span class="text-[10px] text-slate-400 mt-1">{{ $t('keywords.provider_dataforseo_desc') || 'Kurumsal DataForSEO hesabınız ile canlı sıralamalar.' }}</span>
+                                    <span class="text-[10px] text-slate-400 mt-1">{{ $t('keywords.provider_dataforseo_desc') }}</span>
                                 </button>
 
                                 <button
@@ -388,8 +388,8 @@ const providerDisplayName = computed(() => {
                                     class="p-3 rounded-xl border text-left transition-all flex flex-col justify-between"
                                     :class="serpForm.provider === 'mock' ? 'bg-indigo-600/10 border-indigo-500 text-white' : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:text-slate-200'"
                                 >
-                                    <span class="font-bold text-xs text-slate-300">Demo Modu</span>
-                                    <span class="text-[10px] text-slate-400 mt-1">{{ $t('keywords.provider_mock_desc') || 'Geliştirme ve test amaçlı simüle veriler üretir.' }}</span>
+                                    <span class="font-bold text-xs text-slate-300">{{ $t('keywords.provider_mock') }}</span>
+                                    <span class="text-[10px] text-slate-400 mt-1">{{ $t('keywords.provider_mock_desc') }}</span>
                                 </button>
                             </div>
                         </div>

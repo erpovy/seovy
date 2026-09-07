@@ -104,14 +104,13 @@ const MAX_FILE_SIZE = 2 * 1024 * 1024;
 
 const validateFile = (file: File): boolean => {
     if (file.size > MAX_FILE_SIZE) {
-        const sizeMb = (file.size / (1024 * 1024)).toFixed(1);
-        globalErrorMessage.value = `"${file.name}" dosyası ${sizeMb} MB. Sunucu yükleme sınırı 2 MB'tır. Lütfen daha küçük bir görsel seçin veya SVG formatı kullanın.`;
+        globalErrorMessage.value = `"${file.name}": ${t('admin.logo_err_size', 'Sunucu yükleme sınırı 2 MB\'tır. Lütfen daha küçük bir görsel seçin.')}`;
         return false;
     }
     const ext = file.name.split('.').pop()?.toLowerCase() || '';
     const validExts = ['png', 'jpg', 'jpeg', 'svg', 'webp', 'ico'];
     if (!validExts.includes(ext)) {
-        globalErrorMessage.value = `"${file.name}" dosya türü desteklenmiyor. Desteklenen türler: PNG, JPG, SVG, WebP, ICO.`;
+        globalErrorMessage.value = `"${file.name}": ${t('admin.logo_err_format', 'Desteklenmeyen dosya türü. Desteklenen türler: PNG, JPG, SVG, WebP, ICO.')}`;
         return false;
     }
     globalErrorMessage.value = null;
@@ -407,10 +406,10 @@ const resetToDefault = () => {
                                     <h4 class="text-xs font-bold text-white uppercase tracking-wider">
                                         {{ t('admin.logo_tab_dark', 'Karanlık Tema Logosu') }}
                                     </h4>
-                                    <span class="text-[11px] text-slate-500">Koyu zeminlerde görüntülenecek açık logo</span>
+                                    <span class="text-[11px] text-slate-500">{{ t('admin.logo_dark_desc', 'Koyu zeminlerde görüntülenecek açık logo') }}</span>
                                 </div>
                             </div>
-                            <span v-if="currentDarkLogo" class="w-2 h-2 rounded-full bg-emerald-400" title="Kayıtlı logo mevcut"></span>
+                            <span v-if="currentDarkLogo" class="w-2 h-2 rounded-full bg-emerald-400" :title="t('admin.logo_registered_exists', 'Kayıtlı logo mevcut')"></span>
                         </div>
 
                         <!-- Dark Logo Preview Area -->
@@ -428,7 +427,7 @@ const resetToDefault = () => {
                             <template v-else>
                                 <div class="flex items-center space-x-2 text-slate-500 text-xs font-medium">
                                     <Activity class="w-4 h-4 text-indigo-400" />
-                                    <span>{{ form.brand_name || 'Seovy' }} (Varsayılan)</span>
+                                    <span>{{ form.brand_name || 'Seovy' }} ({{ t('common.default', 'Varsayılan') }})</span>
                                 </div>
                             </template>
                         </div>
@@ -453,9 +452,9 @@ const resetToDefault = () => {
                             >
                                 <Upload class="w-5 h-5 text-indigo-400 mb-1.5" />
                                 <span class="text-xs font-semibold text-white">
-                                    {{ form.logo_dark_file ? form.logo_dark_file.name : 'Karanlık tema logosu seç veya sürükle' }}
+                                    {{ form.logo_dark_file ? form.logo_dark_file.name : t('admin.logo_dark_select', 'Karanlık tema logosu seç veya sürükle') }}
                                 </span>
-                                <span class="text-[11px] text-slate-500 mt-0.5">PNG, SVG, JPG veya WebP (Maks 2 MB)</span>
+                                <span class="text-[11px] text-slate-500 mt-0.5">{{ t('admin.logo_supported_formats', 'PNG, SVG, JPG veya WebP (Maks 2 MB)') }}</span>
                             </div>
 
                             <!-- Selected File Badge -->
@@ -474,7 +473,7 @@ const resetToDefault = () => {
                                     class="text-[11px] text-indigo-400 hover:text-indigo-300 flex items-center space-x-1"
                                 >
                                     <Globe class="w-3 h-3" />
-                                    <span>{{ showDarkUrlInput ? 'URL girişini gizle' : 'Veya doğrudan logo URL adresi gir' }}</span>
+                                    <span>{{ showDarkUrlInput ? t('admin.logo_hide_url', 'URL girişini gizle') : t('admin.logo_or_enter_url', 'Veya doğrudan logo URL adresi gir') }}</span>
                                 </button>
                                 <input
                                     v-if="showDarkUrlInput"
@@ -500,10 +499,10 @@ const resetToDefault = () => {
                                     <h4 class="text-xs font-bold text-white uppercase tracking-wider">
                                         {{ t('admin.logo_tab_light', 'Aydınlık Tema Logosu') }}
                                     </h4>
-                                    <span class="text-[11px] text-slate-500">Açık zeminlerde görüntülenecek koyu logo</span>
+                                    <span class="text-[11px] text-slate-500">{{ t('admin.logo_light_desc', 'Açık zeminlerde görüntülenecek koyu logo') }}</span>
                                 </div>
                             </div>
-                            <span v-if="currentLightLogo" class="w-2 h-2 rounded-full bg-emerald-400" title="Kayıtlı logo mevcut"></span>
+                            <span v-if="currentLightLogo" class="w-2 h-2 rounded-full bg-emerald-400" :title="t('admin.logo_registered_exists', 'Kayıtlı logo mevcut')"></span>
                         </div>
 
                         <!-- Light Logo Preview Area (Light background so dark logo is clearly visible) -->
@@ -521,7 +520,7 @@ const resetToDefault = () => {
                             <template v-else>
                                 <div class="flex items-center space-x-2 text-slate-700 text-xs font-medium">
                                     <Activity class="w-4 h-4 text-indigo-600" />
-                                    <span>{{ form.brand_name || 'Seovy' }} (Varsayılan)</span>
+                                    <span>{{ form.brand_name || 'Seovy' }} ({{ t('common.default', 'Varsayılan') }})</span>
                                 </div>
                             </template>
                         </div>
@@ -546,9 +545,9 @@ const resetToDefault = () => {
                             >
                                 <Upload class="w-5 h-5 text-amber-400 mb-1.5" />
                                 <span class="text-xs font-semibold text-white">
-                                    {{ form.logo_light_file ? form.logo_light_file.name : 'Aydınlık tema logosu seç veya sürükle' }}
+                                    {{ form.logo_light_file ? form.logo_light_file.name : t('admin.logo_light_select', 'Aydınlık tema logosu seç veya sürükle') }}
                                 </span>
-                                <span class="text-[11px] text-slate-500 mt-0.5">PNG, SVG, JPG veya WebP (Maks 2 MB)</span>
+                                <span class="text-[11px] text-slate-500 mt-0.5">{{ t('admin.logo_supported_formats', 'PNG, SVG, JPG veya WebP (Maks 2 MB)') }}</span>
                             </div>
 
                             <!-- Selected File Badge -->
@@ -567,7 +566,7 @@ const resetToDefault = () => {
                                     class="text-[11px] text-amber-400 hover:text-amber-300 flex items-center space-x-1"
                                 >
                                     <Globe class="w-3 h-3" />
-                                    <span>{{ showLightUrlInput ? 'URL girişini gizle' : 'Veya doğrudan logo URL adresi gir' }}</span>
+                                    <span>{{ showLightUrlInput ? t('admin.logo_hide_url', 'URL girişini gizle') : t('admin.logo_or_enter_url', 'Veya doğrudan logo URL adresi gir') }}</span>
                                 </button>
                                 <input
                                     v-if="showLightUrlInput"
@@ -593,10 +592,10 @@ const resetToDefault = () => {
                             <h4 class="text-xs font-bold text-white uppercase tracking-wider">
                                 {{ t('admin.logo_favicon_title', 'Favicon (Tarayıcı Sekme Simgesi)') }}
                             </h4>
-                            <span class="text-[11px] text-slate-500">Tarayıcı sekmelerinde görüntülenecek simge (16x16 / 32x32)</span>
+                            <span class="text-[11px] text-slate-500">{{ t('admin.logo_favicon_desc', 'Tarayıcı sekmelerinde görüntülenecek simge (16x16 / 32x32)') }}</span>
                         </div>
                     </div>
-                    <span v-if="currentFavicon" class="w-2 h-2 rounded-full bg-emerald-400" title="Kayıtlı favicon mevcut"></span>
+                    <span v-if="currentFavicon" class="w-2 h-2 rounded-full bg-emerald-400" :title="t('admin.logo_registered_favicon_exists', 'Kayıtlı favicon mevcut')"></span>
                 </div>
 
                 <div class="flex flex-col sm:flex-row items-center gap-4">
@@ -636,7 +635,7 @@ const resetToDefault = () => {
                         >
                             <Upload class="w-4 h-4 text-amber-400 mr-2 shrink-0" />
                             <span class="text-xs font-medium text-white">
-                                {{ form.favicon_file ? form.favicon_file.name : 'Favicon dosyası seç veya sürükle (.ico, .png, .svg)' }}
+                                {{ form.favicon_file ? form.favicon_file.name : t('admin.logo_favicon_select', 'Favicon dosyası seç veya sürükle (.ico, .png, .svg)') }}
                             </span>
                         </div>
 
@@ -661,7 +660,7 @@ const resetToDefault = () => {
                     <span>{{ (form.processing || isSaving) ? t('admin.logo_saving', 'Kaydediliyor...') : t('admin.logo_save_btn', 'Logoları & Markayı Kaydet') }}</span>
                 </button>
                 <span class="text-[11px] text-slate-500">
-                    Karanlık ve aydınlık tema logoları anında aktif hale gelir.
+                    {{ t('admin.logo_instant_active', 'Karanlık ve aydınlık tema logoları anında aktif hale gelir.') }}
                 </span>
             </div>
         </form>

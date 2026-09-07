@@ -197,7 +197,7 @@ const getActionMeta = (action: string) => {
         return {
             label: hasTranslation ? translated : action,
             color: action.includes('deleted') ? 'bg-rose-500/10 text-rose-400 border border-rose-500/20' : 'bg-amber-500/10 text-amber-400 border border-amber-500/20',
-            badgeText: 'SEO Görevi',
+            badgeText: t('admin.log_badge_seo_task', 'SEO Görevi'),
             icon: CheckSquare,
         };
     }
@@ -205,7 +205,7 @@ const getActionMeta = (action: string) => {
         return {
             label: hasTranslation ? translated : action,
             color: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20',
-            badgeText: 'Sıra Takibi',
+            badgeText: t('admin.log_badge_rank_tracking', 'Sıra Takibi'),
             icon: Tag,
         };
     }
@@ -213,7 +213,7 @@ const getActionMeta = (action: string) => {
         return {
             label: hasTranslation ? translated : action,
             color: 'bg-slate-800 text-slate-300 border border-slate-700',
-            badgeText: 'Rapor',
+            badgeText: t('admin.log_badge_report', 'Rapor'),
             icon: FileText,
         };
     }
@@ -221,7 +221,7 @@ const getActionMeta = (action: string) => {
         return {
             label: hasTranslation ? translated : action,
             color: 'bg-amber-500/10 text-amber-400 border border-amber-500/20',
-            badgeText: 'Abonelik',
+            badgeText: t('admin.log_badge_billing', 'Abonelik'),
             icon: CreditCard,
         };
     }
@@ -229,7 +229,7 @@ const getActionMeta = (action: string) => {
     return {
         label: hasTranslation ? translated : action,
         color: 'bg-slate-800 text-slate-300 border border-slate-700',
-        badgeText: 'Sistem',
+        badgeText: t('admin.log_badge_system', 'Sistem'),
         icon: Activity,
     };
 };
@@ -240,19 +240,19 @@ const formatLogDetails = (log: any) => {
     const items: Array<{ label: string; value: string; isLink?: boolean }> = [];
 
     if (d.domain) items.push({ label: 'Domain', value: d.domain, isLink: true });
-    if (d.start_url) items.push({ label: 'Başlangıç URL', value: d.start_url, isLink: true });
+    if (d.start_url) items.push({ label: t('admin.log_detail_start_url', 'Başlangıç URL'), value: d.start_url, isLink: true });
     if (d.url && !d.start_url) items.push({ label: 'URL', value: d.url, isLink: true });
-    if (d.name) items.push({ label: 'Ad', value: d.name });
-    if (d.title) items.push({ label: 'Başlık', value: d.title });
-    if (d.keyword) items.push({ label: 'Kelime', value: d.keyword });
-    if (d.email) items.push({ label: 'E-Posta', value: d.email });
-    if (d.new_plan) items.push({ label: 'Plan', value: d.new_plan });
-    if (d.role) items.push({ label: 'Rol', value: d.role });
-    if (d.pages_crawled !== undefined) items.push({ label: 'Sayfa', value: `${d.pages_crawled} sayfa` });
-    if (d.health_score !== undefined && d.health_score !== null) items.push({ label: 'Sağlık', value: `%${d.health_score}` });
-    if (d.count !== undefined) items.push({ label: 'Adet', value: `${d.count}` });
-    if (d.method) items.push({ label: 'Yöntem', value: d.method });
-    if (d.provider) items.push({ label: 'Sağlayıcı', value: d.provider });
+    if (d.name) items.push({ label: t('admin.log_detail_name', 'Ad'), value: d.name });
+    if (d.title) items.push({ label: t('admin.log_detail_title', 'Başlık'), value: d.title });
+    if (d.keyword) items.push({ label: t('admin.log_detail_keyword', 'Kelime'), value: d.keyword });
+    if (d.email) items.push({ label: t('admin.log_detail_email', 'E-Posta'), value: d.email });
+    if (d.new_plan) items.push({ label: t('admin.log_detail_plan', 'Plan'), value: d.new_plan });
+    if (d.role) items.push({ label: t('admin.log_detail_role', 'Rol'), value: d.role });
+    if (d.pages_crawled !== undefined) items.push({ label: t('admin.log_detail_page', 'Sayfa'), value: `${d.pages_crawled}` });
+    if (d.health_score !== undefined && d.health_score !== null) items.push({ label: t('admin.log_detail_health', 'Sağlık'), value: `%${d.health_score}` });
+    if (d.count !== undefined) items.push({ label: t('admin.log_detail_count', 'Adet'), value: `${d.count}` });
+    if (d.method) items.push({ label: t('admin.log_detail_method', 'Yöntem'), value: d.method });
+    if (d.provider) items.push({ label: t('admin.log_detail_provider', 'Sağlayıcı'), value: d.provider });
 
     return items;
 };
@@ -843,7 +843,7 @@ const filteredAuditLogs = computed(() => {
             <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl">
                 <div class="p-5 border-b border-slate-800 flex items-center justify-between">
                     <div>
-                        <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Denetim Günlüğü Ham Verisi</div>
+                        <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider">{{ $t('admin.audit_log_raw_data', 'Denetim Günlüğü Ham Verisi') }}</div>
                         <h4 class="font-bold text-white text-sm mt-0.5">{{ getActionMeta(selectedLog.action).label }}</h4>
                     </div>
                     <button @click="selectedLog = null" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white">

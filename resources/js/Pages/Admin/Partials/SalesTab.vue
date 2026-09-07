@@ -175,9 +175,9 @@ const runRefund = (txn: any) => {
                         class="px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-slate-300 focus:outline-none focus:border-indigo-500"
                     >
                         <option value="all">{{ $t('admin.sales_filter_all_plans') }}</option>
-                        <option value="pro">Pro Plan</option>
-                        <option value="agency">Ajans Planı</option>
-                        <option value="free">Ücretsiz Plan</option>
+                        <option value="pro">{{ $t('billing.plan_pro_title', 'Pro Plan') }}</option>
+                        <option value="agency">{{ $t('billing.plan_agency_title', 'Ajans Planı') }}</option>
+                        <option value="free">{{ $t('billing.plan_free_title', 'Ücretsiz Plan') }}</option>
                     </select>
 
                     <!-- Mode Filter -->
@@ -344,7 +344,7 @@ const runRefund = (txn: any) => {
                                         type="button"
                                         @click="selectedTxn = txn"
                                         class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors"
-                                        title="Sipariş Detayı / Fiş"
+                                        :title="$t('admin.sales_receipt_title', 'Sipariş Detayı / Fiş')"
                                     >
                                         <ExternalLink class="w-3.5 h-3.5" />
                                     </button>
@@ -383,42 +383,42 @@ const runRefund = (txn: any) => {
 
                 <div class="space-y-2.5 text-xs">
                     <div class="flex justify-between py-1.5 border-b border-slate-800/60">
-                        <span class="text-slate-400">Satın Alan Hesap:</span>
+                        <span class="text-slate-400">{{ $t('admin.sales_account', 'Satın Alan Hesap') }}:</span>
                         <span class="font-bold text-white">{{ selectedTxn.workspace?.name || selectedTxn.customer_name }}</span>
                     </div>
                     <div class="flex justify-between py-1.5 border-b border-slate-800/60">
-                        <span class="text-slate-400">Müşteri E-Postası:</span>
+                        <span class="text-slate-400">{{ $t('admin.sales_customer_email', 'Müşteri E-Postası') }}:</span>
                         <span class="font-mono text-slate-300">{{ selectedTxn.customer_email || selectedTxn.user?.email || '-' }}</span>
                     </div>
                     <div class="flex justify-between py-1.5 border-b border-slate-800/60">
-                        <span class="text-slate-400">Satın Alınan Paket:</span>
+                        <span class="text-slate-400">{{ $t('admin.sales_purchased_plan', 'Satın Alınan Paket') }}:</span>
                         <span class="font-bold text-indigo-400 uppercase">{{ selectedTxn.plan_name }}</span>
                     </div>
                     <div class="flex justify-between py-1.5 border-b border-slate-800/60">
-                        <span class="text-slate-400">Ödenen Tutar:</span>
+                        <span class="text-slate-400">{{ $t('admin.sales_paid_amount', 'Ödenen Tutar') }}:</span>
                         <span class="font-bold text-emerald-400 text-sm font-mono">{{ selectedTxn.amount }} {{ selectedTxn.currency }}</span>
                     </div>
                     <div class="flex justify-between py-1.5 border-b border-slate-800/60">
-                        <span class="text-slate-400">Ödeme Sağlayıcı:</span>
+                        <span class="text-slate-400">{{ $t('admin.sales_provider', 'Ödeme Sağlayıcı') }}:</span>
                         <span class="text-slate-200">{{ selectedTxn.gateway_name }}</span>
                     </div>
                     <div class="flex justify-between py-1.5 border-b border-slate-800/60">
-                        <span class="text-slate-400">Kart / Ödeme Yöntemi:</span>
+                        <span class="text-slate-400">{{ $t('admin.sales_payment_method', 'Kart / Ödeme Yöntemi') }}:</span>
                         <span class="text-slate-300 font-mono">{{ selectedTxn.card_brand }} •••• {{ selectedTxn.card_last_four }}</span>
                     </div>
                     <div class="flex justify-between py-1.5 border-b border-slate-800/60">
-                        <span class="text-slate-400">İşlem Modu:</span>
+                        <span class="text-slate-400">{{ $t('admin.sales_transaction_mode', 'İşlem Modu') }}:</span>
                         <span class="font-bold" :class="selectedTxn.is_simulation ? 'text-amber-400' : 'text-emerald-400'">
-                            {{ selectedTxn.is_simulation ? 'Test / Simülasyon' : 'Canlı (Production)' }}
+                            {{ selectedTxn.is_simulation ? $t('admin.sales_mode_test', 'Test / Simülasyon') : $t('admin.sales_mode_live', 'Canlı (Production)') }}
                         </span>
                     </div>
 
                     <div v-if="selectedTxn.error_message" class="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-xs">
-                        <strong>Hata:</strong> {{ selectedTxn.error_message }}
+                        <strong>{{ $t('common.error', 'Hata') }}:</strong> {{ selectedTxn.error_message }}
                     </div>
 
                     <div class="pt-2">
-                        <span class="text-slate-400 block mb-1">Banka & POS Yanıtı (JSON):</span>
+                        <span class="text-slate-400 block mb-1">{{ $t('admin.sales_bank_response', 'Banka & POS Yanıtı (JSON)') }}:</span>
                         <pre class="p-3 rounded-xl bg-slate-950 border border-slate-800 text-[11px] text-slate-300 overflow-x-auto font-mono max-h-40">{{ JSON.stringify(selectedTxn.response_payload, null, 2) }}</pre>
                     </div>
                 </div>

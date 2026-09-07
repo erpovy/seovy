@@ -47,9 +47,9 @@ const props = defineProps<{
 
 const { t } = useI18n();
 
-const defaultBadge = 'Platform Özellikleri & Mimarisi';
-const defaultTitle = 'Gelişmiş Teknik SEO & Tarama Özellikleri';
-const defaultSubtitle = 'Kendi sunucunuzda çalışan, çoklu çalışma alanları, SSRF korumalı crawler ve 25+ teknik analiz kuralı içeren kurumsal platform.';
+const defaultBadge = t('features.page_title', 'Platform Özellikleri & Mimarisi');
+const defaultTitle = t('welcome.headline_1', 'Gelişmiş Teknik SEO & Tarama Altyapısı');
+const defaultSubtitle = t('welcome.description', 'Kendi sunucunuzda çalışan, çoklu çalışma alanları, SSRF korumalı crawler ve 25+ teknik analiz kuralı içeren kurumsal platform.');
 
 const currentBadge = computed(() => props.systemSettings?.features_badge || defaultBadge);
 const currentTitle = computed(() => props.systemSettings?.features_title || defaultTitle);
@@ -65,38 +65,38 @@ const form = useForm({
 const isSaving = ref(false);
 const isResetting = ref(false);
 
-const availableIcons = [
-    { name: 'Search', label: 'Tarayıcı / Arama', icon: Search },
-    { name: 'ShieldCheck', label: 'Güvenlik / Doğrulama', icon: ShieldCheck },
-    { name: 'Layers', label: 'Çalışma Alanı / Katman', icon: Layers },
-    { name: 'BarChart3', label: 'Grafik / Sıra Takibi', icon: BarChart3 },
-    { name: 'Sparkles', label: 'Yapay Zeka (AI)', icon: Sparkles },
-    { name: 'CreditCard', label: 'Ödeme / Faturalandırma', icon: CreditCard },
-    { name: 'Zap', label: 'Hız / Performans', icon: Zap },
-    { name: 'Globe', label: 'Web / Domain', icon: Globe },
-    { name: 'Cpu', label: 'Motor / Altyapı', icon: Cpu },
-    { name: 'FileText', label: 'Rapor / Denetim', icon: FileText },
-    { name: 'Lock', label: 'İzole / Şifreleme', icon: Lock },
-    { name: 'Activity', label: 'Sağlık / Durum', icon: Activity },
-];
+const availableIcons = computed(() => [
+    { name: 'Search', label: t('admin.features_icon_search', 'Tarayıcı / Arama'), icon: Search },
+    { name: 'ShieldCheck', label: t('admin.features_icon_shield', 'Güvenlik / Doğrulama'), icon: ShieldCheck },
+    { name: 'Layers', label: t('admin.features_icon_layers', 'Çalışma Alanı / Katman'), icon: Layers },
+    { name: 'BarChart3', label: t('admin.features_icon_barchart', 'Analiz / Sıralama'), icon: BarChart3 },
+    { name: 'Sparkles', label: t('admin.features_icon_sparkles', 'Yapay Zeka / Öneri'), icon: Sparkles },
+    { name: 'CreditCard', label: t('admin.features_icon_creditcard', 'Ödeme / Faturalandırma'), icon: CreditCard },
+    { name: 'Zap', label: t('admin.features_icon_zap', 'Hız / Performans'), icon: Zap },
+    { name: 'Globe', label: t('admin.features_icon_globe', 'Global / Ağ'), icon: Globe },
+    { name: 'Cpu', label: t('admin.features_icon_cpu', 'Motor / Altyapı'), icon: Cpu },
+    { name: 'FileText', label: t('admin.features_icon_filetext', 'Rapor / Dökümantasyon'), icon: FileText },
+    { name: 'Lock', label: t('admin.features_icon_lock', 'Gizlilik / Erişim'), icon: Lock },
+    { name: 'Activity', label: t('admin.features_icon_activity', 'Canlı İzleme / Sistem'), icon: Activity },
+]);
 
-const availableColors = [
-    { name: 'indigo', label: 'İndigo', bg: 'bg-indigo-500' },
-    { name: 'violet', label: 'Mor', bg: 'bg-violet-500' },
-    { name: 'cyan', label: 'Camgöbeği', bg: 'bg-cyan-500' },
-    { name: 'emerald', label: 'Zümrüt Yeşili', bg: 'bg-emerald-500' },
-    { name: 'amber', label: 'Kehribar Sarı', bg: 'bg-amber-500' },
-    { name: 'pink', label: 'Pembe', bg: 'bg-pink-500' },
-];
+const availableColors = computed(() => [
+    { name: 'indigo', label: t('admin.color_indigo', 'İndigo'), bg: 'bg-indigo-500' },
+    { name: 'violet', label: t('admin.color_violet', 'Mor'), bg: 'bg-violet-500' },
+    { name: 'cyan', label: t('admin.color_cyan', 'Camgöbeği'), bg: 'bg-cyan-500' },
+    { name: 'emerald', label: t('admin.color_emerald', 'Zümrüt Yeşili'), bg: 'bg-emerald-500' },
+    { name: 'amber', label: t('admin.color_amber', 'Kehribar'), bg: 'bg-amber-500' },
+    { name: 'pink', label: t('admin.color_pink', 'Pembe'), bg: 'bg-pink-500' },
+]);
 
 const addFeature = () => {
     form.features_list.push({
         id: 'f_' + Date.now().toString(36),
-        title: 'Yeni Platform Özelliği',
-        description: 'Bu özelliğin sağladığı faydayı ve teknik yeteneklerini açıklayan metin.',
+        title: t('admin.features_new_item_title', 'Yeni Özellik Maddesi'),
+        description: t('admin.features_new_item_desc', 'Bu özelliğin sağladığı faydayı ve teknik detayları açıklayın.'),
         icon: 'Sparkles',
         color: 'indigo',
-        badge: 'Yeni',
+        badge: '',
         is_active: true,
     });
 };
@@ -185,7 +185,7 @@ const resetToDefaults = () => {
                     <input
                         v-model="form.features_badge"
                         type="text"
-                        placeholder="Örn: Platform Özellikleri & Mimarisi"
+                        :placeholder="t('admin.features_badge_placeholder', 'Örn: Platform Özellikleri & Mimarisi')"
                         class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
                     />
                 </div>
@@ -197,7 +197,7 @@ const resetToDefaults = () => {
                     <input
                         v-model="form.features_title"
                         type="text"
-                        placeholder="Örn: Gelişmiş Teknik SEO & Tarama Özellikleri"
+                        :placeholder="t('admin.features_title_placeholder', 'Örn: Gelişmiş Teknik SEO & Tarama Özellikleri')"
                         class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
                     />
                 </div>
@@ -209,7 +209,7 @@ const resetToDefaults = () => {
                     <textarea
                         v-model="form.features_subtitle"
                         rows="2"
-                        placeholder="Özellikler sayfasının üstünde yer alan tanıtım paragrafı..."
+                        :placeholder="t('admin.features_subtitle_placeholder', 'Örn: Kendi sunucunuzda çalışan, çoklu çalışma alanları...')"
                         class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
                     ></textarea>
                 </div>
@@ -254,7 +254,7 @@ const resetToDefaults = () => {
                                     #{{ idx + 1 }}
                                 </span>
                                 <span class="text-xs font-semibold text-white truncate max-w-[200px] sm:max-w-xs">
-                                    {{ feature.title || 'Başlıksız Özellik' }}
+                                    {{ feature.title || t('admin.features_new_item_title', 'Yeni Özellik') }}
                                 </span>
                                 <span
                                     class="text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider"
