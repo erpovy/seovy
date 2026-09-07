@@ -26,7 +26,10 @@
         "system_admin": "Системный администратор",
         "active_plan": "Текущий тариф",
         "manage_subscription": "Управление подпиской и лимитами",
-        "upgrade": "Улучшить"
+        "upgrade": "Улучшить",
+        "features": "Возможности",
+        "tab_features": "Страница возможностей",
+        "home": "Главная"
     },
     "common": {
         "save": "Сохранить",
@@ -871,10 +874,50 @@
         "logo_light_desc": "Темный логотип для отображения на светлом фоне",
         "logo_dark_drag_or_browse": "Нажмите или перетащите файл логотипа темной темы",
         "logo_light_drag_or_browse": "Нажмите или перетащите файл логотипа светлой темы",
-        "logo_light_url_hint": "Прямая ссылка HTTPS на темный логотип для светлой темы."
+        "logo_light_url_hint": "Прямая ссылка HTTPS на темный логотип для светлой темы.",
+        "tab_features": "Страница возможностей",
+        "features_badge_label": "Управление возможностями",
+        "features_title": "Настройка лендинга и возможностей",
+        "features_desc": "Управляйте заголовками, описаниями и карточками функций на сайте.",
+        "features_btn_reset": "Сбросить по умолчанию",
+        "features_confirm_reset": "Вы уверены, что хотите сбросить настройки до стандартных?",
+        "features_page_badge": "Бейдж / Подзаголовок",
+        "features_page_title": "Главный заголовок",
+        "features_page_subtitle": "Описание / Текст",
+        "features_cards_title": "Карточки возможностей",
+        "features_cards_desc": "Меняйте порядок, скрывайте или добавляйте новые возможности.",
+        "features_btn_add": "Добавить возможность",
+        "features_empty": "Возможности пока не добавлены.",
+        "features_published": "Опубликовано",
+        "features_hidden": "Скрыто",
+        "features_move_up": "Вверх",
+        "features_move_down": "Вниз",
+        "features_hide": "Скрыть",
+        "features_show": "Показать",
+        "features_col_title": "Название возможности",
+        "features_col_badge": "Мини-бейдж (опционально)",
+        "features_col_icon": "Иконка",
+        "features_col_desc": "Описание",
+        "features_col_color": "Цвет",
+        "features_btn_save": "Сохранить возможности",
+        "features_saving": "Сохранение...",
+        "features_preview_page": "Предпросмотр /features"
     },
     "languages": {
         "select": "Выбрать язык",
         "current": "Текущий язык"
+    },
+    "features": {
+        "page_title": "Возможности платформы & Архитектура",
+        "home_link": "Главная",
+        "features_link": "Возможности",
+        "cta_start": "Начать сейчас",
+        "cta_back_home": "Вернуться на главную",
+        "active_badge": "Активная функция",
+        "conversion_title": "Начните анализ вашего сайта сегодня",
+        "conversion_subtitle": "Обнаруживайте все технические ошибки за секунды и улучшайте рейтинг SEO.",
+        "conversion_register": "Создать бесплатный аккаунт",
+        "conversion_login": "Войти в аккаунт",
+        "details": "Подробнее"
     }
 }

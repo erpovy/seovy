@@ -26,7 +26,10 @@
         "system_admin": "System Admin",
         "active_plan": "Active Plan",
         "manage_subscription": "Manage Subscription & Quotas",
-        "upgrade": "Upgrade"
+        "upgrade": "Upgrade",
+        "features": "Features",
+        "tab_features": "Features Page",
+        "home": "Home"
     },
     "common": {
         "save": "Save",
@@ -871,10 +874,50 @@
         "logo_light_desc": "Dark/colored logo displayed on light theme backgrounds",
         "logo_dark_drag_or_browse": "Click or drag to select dark theme logo",
         "logo_light_drag_or_browse": "Click or drag to select light theme logo",
-        "logo_light_url_hint": "Enter direct HTTPS link to dark-colored logo for light mode."
+        "logo_light_url_hint": "Enter direct HTTPS link to dark-colored logo for light mode.",
+        "tab_features": "Features Page",
+        "features_badge_label": "Features Page Management",
+        "features_title": "Landing Page & Features Page Customization",
+        "features_desc": "Manage headlines, descriptions, and feature cards displayed on the landing and /features pages.",
+        "features_btn_reset": "Reset to Defaults",
+        "features_confirm_reset": "Are you sure you want to reset all features and headlines to factory defaults?",
+        "features_page_badge": "Badge / Pre-headline",
+        "features_page_title": "Main Title",
+        "features_page_subtitle": "Subtitle / Description",
+        "features_cards_title": "Feature Cards",
+        "features_cards_desc": "Reorder cards, toggle active/inactive status, or add new capabilities.",
+        "features_btn_add": "Add New Feature",
+        "features_empty": "No features configured yet. Click 'Add New Feature' or 'Reset to Defaults'.",
+        "features_published": "Published",
+        "features_hidden": "Hidden",
+        "features_move_up": "Move Up",
+        "features_move_down": "Move Down",
+        "features_hide": "Hide",
+        "features_show": "Show",
+        "features_col_title": "Feature Title",
+        "features_col_badge": "Mini Badge (Optional)",
+        "features_col_icon": "Icon",
+        "features_col_desc": "Description",
+        "features_col_color": "Color Theme",
+        "features_btn_save": "Save Features & Page",
+        "features_saving": "Saving...",
+        "features_preview_page": "Preview /features Page"
     },
     "languages": {
         "select": "Select Language",
         "current": "Current Language"
+    },
+    "features": {
+        "page_title": "Platform Features & Architecture",
+        "home_link": "Home",
+        "features_link": "Features",
+        "cta_start": "Get Started Now",
+        "cta_back_home": "Back to Home",
+        "active_badge": "Active Feature",
+        "conversion_title": "Start analyzing your website today",
+        "conversion_subtitle": "Identify all technical issues in seconds, boost your SEO health score, and collaborate with your team.",
+        "conversion_register": "Create Free Account",
+        "conversion_login": "Log in to Existing Account",
+        "details": "Details"
     }
 }

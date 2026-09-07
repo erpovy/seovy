@@ -19,6 +19,9 @@ import {
     ExternalLink
 } from 'lucide-vue-next';
 import LanguageSelector from '@/Components/LanguageSelector.vue';
+import { useI18n } from '@/i18n';
+
+const { t } = useI18n();
 
 interface FeatureItem {
     id: string;
@@ -152,14 +155,14 @@ const getColorClass = (color?: string) => {
                         href="/"
                         class="px-3 py-2 text-sm font-medium text-slate-400 hover:text-white transition-colors"
                     >
-                        Ana Sayfa
+                        {{ $t('features.home_link', 'Ana Sayfa') }}
                     </Link>
 
                     <Link
                         href="/features"
                         class="px-3 py-2 text-sm font-semibold text-indigo-400 border-b-2 border-indigo-500 transition-colors"
                     >
-                        Özellikler
+                        {{ $t('features.features_link', 'Özellikler') }}
                     </Link>
 
                     <LanguageSelector placement="bottom" />
@@ -195,15 +198,15 @@ const getColorClass = (color?: string) => {
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 text-center">
                 <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-semibold mb-6">
                     <Zap class="w-3.5 h-3.5" />
-                    <span>{{ featuresBadge || 'Platform Özellikleri & Mimarisi' }}</span>
+                    <span>{{ featuresBadge || $t('features.page_title', 'Platform Özellikleri & Mimarisi') }}</span>
                 </div>
 
                 <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight max-w-4xl mx-auto leading-tight sm:leading-tight">
-                    {{ featuresTitle || 'Gelişmiş Teknik SEO & Tarama Altyapısı' }}
+                    {{ featuresTitle || $t('welcome.headline_1', 'Gelişmiş Teknik SEO & Tarama Altyapısı') }}
                 </h1>
 
                 <p class="mt-6 text-base sm:text-lg text-slate-400 max-w-2xl mx-auto font-normal leading-relaxed">
-                    {{ featuresSubtitle || 'Kendi sunucunuzda çalışan, çoklu çalışma alanları, SSRF korumalı crawler ve 25+ teknik analiz kuralı içeren kurumsal platform.' }}
+                    {{ featuresSubtitle || $t('welcome.description', 'Kendi sunucunuzda çalışan, çoklu çalışma alanları, SSRF korumalı crawler ve 25+ teknik analiz kuralı içeren kurumsal platform.') }}
                 </p>
 
                 <!-- Action CTA -->
@@ -212,14 +215,14 @@ const getColorClass = (color?: string) => {
                         href="/register"
                         class="px-6 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold shadow-lg shadow-indigo-600/25 flex items-center space-x-2 transition-all transform hover:-translate-y-0.5 text-sm"
                     >
-                        <span>Hemen Başlayın</span>
+                        <span>{{ $t('features.cta_start', 'Hemen Başlayın') }}</span>
                         <ArrowRight class="w-4 h-4" />
                     </Link>
                     <Link
                         href="/"
                         class="px-6 py-3 rounded-xl bg-slate-900/80 hover:bg-slate-800 text-slate-300 hover:text-white font-medium border border-slate-800 transition-all text-sm"
                     >
-                        Ana Sayfaya Dön
+                        {{ $t('features.cta_back_home', 'Ana Sayfaya Dön') }}
                     </Link>
                 </div>
 
@@ -263,7 +266,7 @@ const getColorClass = (color?: string) => {
                         <div class="pt-5 mt-5 border-t border-slate-800/60 flex items-center justify-between text-xs text-slate-500">
                             <span class="flex items-center space-x-1 font-medium text-emerald-400">
                                 <CheckCircle2 class="w-3.5 h-3.5" />
-                                <span>Aktif Özellik</span>
+                                <span>{{ $t('features.active_badge', 'Aktif Özellik') }}</span>
                             </span>
                             <span class="font-mono text-[10px] text-slate-600 uppercase tracking-wider">
                                 {{ feature.color || 'core' }}
@@ -278,24 +281,24 @@ const getColorClass = (color?: string) => {
                     <div class="absolute -left-16 -bottom-16 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
                     <h2 class="text-2xl sm:text-3xl font-bold text-white tracking-tight">
-                        Web sitenizi bugün analiz etmeye başlayın
+                        {{ $t('features.conversion_title', 'Web sitenizi bugün analiz etmeye başlayın') }}
                     </h2>
                     <p class="mt-3 text-sm sm:text-base text-slate-400 max-w-xl mx-auto">
-                        Tüm teknik hataları saniyeler içinde tespit edin, SEO skorunuzu yükseltin ve ekibinizle tek platformda çalışın.
+                        {{ $t('features.conversion_subtitle', 'Tüm teknik hataları saniyeler içinde tespit edin, SEO skorunuzu yükseltin ve ekibinizle tek platformda çalışın.') }}
                     </p>
                     <div class="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
                         <Link
                             href="/register"
                             class="w-full sm:w-auto px-7 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold shadow-lg shadow-indigo-600/30 flex items-center justify-center space-x-2 transition-all text-sm"
                         >
-                            <span>Ücretsiz Hesap Oluştur</span>
+                            <span>{{ $t('features.conversion_register', 'Ücretsiz Hesap Oluştur') }}</span>
                             <ArrowRight class="w-4 h-4" />
                         </Link>
                         <Link
                             href="/login"
                             class="w-full sm:w-auto px-6 py-3 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-300 font-medium border border-slate-800 text-sm"
                         >
-                            Mevcut Hesaba Giriş
+                            {{ $t('features.conversion_login', 'Mevcut Hesaba Giriş') }}
                         </Link>
                     </div>
                 </div>

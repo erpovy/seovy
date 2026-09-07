@@ -26,7 +26,10 @@
         "system_admin": "Admin Sistema",
         "active_plan": "Piano Attivo",
         "manage_subscription": "Gestisci abbonamento e quote",
-        "upgrade": "Aggiorna"
+        "upgrade": "Aggiorna",
+        "features": "Funzionalità",
+        "tab_features": "Pagina Funzionalità",
+        "home": "Home"
     },
     "common": {
         "save": "Salva",
@@ -871,10 +874,50 @@
         "logo_light_desc": "Logo scuro visualizzato su sfondi chiari",
         "logo_dark_drag_or_browse": "Fai clic o trascina per scegliere il logo scuro",
         "logo_light_drag_or_browse": "Fai clic o trascina per scegliere il logo chiaro",
-        "logo_light_url_hint": "Inserisci il link HTTPS diretto al logo scuro per la modalità chiara."
+        "logo_light_url_hint": "Inserisci il link HTTPS diretto al logo scuro per la modalità chiara.",
+        "tab_features": "Pagina Funzionalità",
+        "features_badge_label": "Gestione Funzionalità",
+        "features_title": "Personalizzazione Pagina Funzionalità",
+        "features_desc": "Gestisci titoli, descrizioni e schede dei moduli visualizzate sul sito.",
+        "features_btn_reset": "Ripristina Predefiniti",
+        "features_confirm_reset": "Sei sicuro di voler ripristinare tutte le impostazioni predefinite?",
+        "features_page_badge": "Badge / Intestazione",
+        "features_page_title": "Titolo Principale",
+        "features_page_subtitle": "Sottotitolo / Descrizione",
+        "features_cards_title": "Schede Funzionalità",
+        "features_cards_desc": "Riordina, attiva/disattiva o aggiungi nuove funzionalità.",
+        "features_btn_add": "Aggiungi Funzionalità",
+        "features_empty": "Nessuna funzionalità configurata finora.",
+        "features_published": "Pubblicato",
+        "features_hidden": "Nascosto",
+        "features_move_up": "Sposta su",
+        "features_move_down": "Sposta giù",
+        "features_hide": "Nascondi",
+        "features_show": "Mostra",
+        "features_col_title": "Titolo Funzionalità",
+        "features_col_badge": "Mini Badge (Opzionale)",
+        "features_col_icon": "Icona",
+        "features_col_desc": "Descrizione",
+        "features_col_color": "Colore",
+        "features_btn_save": "Salva Funzionalità",
+        "features_saving": "Salvataggio...",
+        "features_preview_page": "Anteprima /features"
     },
     "languages": {
         "select": "Seleziona Lingua",
         "current": "Lingua Corrente"
+    },
+    "features": {
+        "page_title": "Funzionalità & Architettura",
+        "home_link": "Home",
+        "features_link": "Funzionalità",
+        "cta_start": "Inizia Ora",
+        "cta_back_home": "Torna alla Home",
+        "active_badge": "Funzionalità Attiva",
+        "conversion_title": "Inizia ad analizzare il tuo sito oggi",
+        "conversion_subtitle": "Rileva tutti gli errori tecnici in pochi secondi e aumenta il tuo punteggio SEO.",
+        "conversion_register": "Crea un Account Gratuito",
+        "conversion_login": "Accedi all'Account Esistente",
+        "details": "Dettagli"
     }
 }

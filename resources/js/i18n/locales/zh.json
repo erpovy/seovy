@@ -26,7 +26,10 @@
         "system_admin": "系统管理",
         "active_plan": "当前套餐",
         "manage_subscription": "管理订阅与配额",
-        "upgrade": "升级"
+        "upgrade": "升级",
+        "features": "平台功能",
+        "tab_features": "功能页面",
+        "home": "首页"
     },
     "common": {
         "save": "保存",
@@ -871,10 +874,50 @@
         "logo_light_desc": "在浅色界面背景上显示的深色标志",
         "logo_dark_drag_or_browse": "点击或拖拽选择深色主题标志",
         "logo_light_drag_or_browse": "点击或拖拽选择浅色主题标志",
-        "logo_light_url_hint": "输入浅色主题下深色标志的直接 HTTPS 链接。"
+        "logo_light_url_hint": "输入浅色主题下深色标志的直接 HTTPS 链接。",
+        "tab_features": "功能页面",
+        "features_badge_label": "功能页面管理",
+        "features_title": "首页与功能页自定义",
+        "features_desc": "管理展示在首页与 /features 页面上的标题、描述和功能卡片。",
+        "features_btn_reset": "恢复默认",
+        "features_confirm_reset": "您确定要将所有功能和标题恢复为出厂默认设置吗？",
+        "features_page_badge": "徽章 / 顶部标签",
+        "features_page_title": "主标题",
+        "features_page_subtitle": "副标题 / 介绍描述",
+        "features_cards_title": "功能卡片",
+        "features_cards_desc": "调整卡片顺序、切换启用/隐藏状态，或添加新功能。",
+        "features_btn_add": "添加新功能",
+        "features_empty": "尚未配置任何功能卡片。",
+        "features_published": "已发布",
+        "features_hidden": "已隐藏",
+        "features_move_up": "上移",
+        "features_move_down": "下移",
+        "features_hide": "隐藏",
+        "features_show": "显示",
+        "features_col_title": "功能标题",
+        "features_col_badge": "微型徽章 (可选)",
+        "features_col_icon": "图标",
+        "features_col_desc": "描述",
+        "features_col_color": "颜色主题",
+        "features_btn_save": "保存功能与页面设置",
+        "features_saving": "保存中...",
+        "features_preview_page": "预览 /features 页面"
     },
     "languages": {
         "select": "选择语言",
         "current": "当前语言"
+    },
+    "features": {
+        "page_title": "平台功能与架构",
+        "home_link": "首页",
+        "features_link": "功能",
+        "cta_start": "立即开始",
+        "cta_back_home": "返回首页",
+        "active_badge": "有效功能",
+        "conversion_title": "立即开始分析您的网站",
+        "conversion_subtitle": "几秒内检测所有技术性SEO错误，提升健康度并与团队高效协作。",
+        "conversion_register": "免费创建账户",
+        "conversion_login": "登录已有账户",
+        "details": "详情"
     }
 }

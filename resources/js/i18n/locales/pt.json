@@ -26,7 +26,10 @@
         "system_admin": "Admin do Sistema",
         "active_plan": "Plano Ativo",
         "manage_subscription": "Gerenciar assinatura e cotas",
-        "upgrade": "Fazer Upgrade"
+        "upgrade": "Fazer Upgrade",
+        "features": "Recursos",
+        "tab_features": "Página de Recursos",
+        "home": "Início"
     },
     "common": {
         "save": "Salvar",
@@ -871,10 +874,50 @@
         "logo_light_desc": "Logotipo escuro exibido em fundos claros",
         "logo_dark_drag_or_browse": "Clique ou arraste para selecionar o logotipo escuro",
         "logo_light_drag_or_browse": "Clique ou arraste para selecionar o logotipo claro",
-        "logo_light_url_hint": "Insira o link HTTPS direto para o logotipo escuro no modo claro."
+        "logo_light_url_hint": "Insira o link HTTPS direto para o logotipo escuro no modo claro.",
+        "tab_features": "Página de Recursos",
+        "features_badge_label": "Gerenciamento de Recursos",
+        "features_title": "Personalização de Recursos",
+        "features_desc": "Gerencie títulos, descrições e cartões exibidos na landing page e /features.",
+        "features_btn_reset": "Restaurar Padrões",
+        "features_confirm_reset": "Tem certeza de que deseja restaurar as configurações de fábrica?",
+        "features_page_badge": "Selo / Pré-título",
+        "features_page_title": "Título Principal",
+        "features_page_subtitle": "Subtítulo / Descrição",
+        "features_cards_title": "Cartões de Recursos",
+        "features_cards_desc": "Reordene, ative/desative ou adicione novos recursos.",
+        "features_btn_add": "Adicionar Recurso",
+        "features_empty": "Nenhum recurso definido ainda.",
+        "features_published": "Publicado",
+        "features_hidden": "Oculto",
+        "features_move_up": "Mover para Cima",
+        "features_move_down": "Mover para Baixo",
+        "features_hide": "Ocultar",
+        "features_show": "Mostrar",
+        "features_col_title": "Título do Recurso",
+        "features_col_badge": "Mini Selo (Opcional)",
+        "features_col_icon": "Ícone",
+        "features_col_desc": "Descrição",
+        "features_col_color": "Cor",
+        "features_btn_save": "Salvar Recursos",
+        "features_saving": "Salvando...",
+        "features_preview_page": "Pré-visualizar /features"
     },
     "languages": {
         "select": "Selecionar Idioma",
         "current": "Idioma Atual"
+    },
+    "features": {
+        "page_title": "Recursos da Plataforma",
+        "home_link": "Início",
+        "features_link": "Recursos",
+        "cta_start": "Começar Agora",
+        "cta_back_home": "Voltar ao Início",
+        "active_badge": "Recurso Ativo",
+        "conversion_title": "Comece a analisar seu site hoje",
+        "conversion_subtitle": "Detecte todos os erros técnicos em segundos e aumente sua pontuação de SEO.",
+        "conversion_register": "Criar Conta Gratuita",
+        "conversion_login": "Entrar na Conta",
+        "details": "Detalhes"
     }
 }

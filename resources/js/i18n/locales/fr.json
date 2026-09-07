@@ -26,7 +26,10 @@
         "system_admin": "Admin Système",
         "active_plan": "Forfait Actif",
         "manage_subscription": "Gérer l'abonnement et les quotas",
-        "upgrade": "Améliorer"
+        "upgrade": "Améliorer",
+        "features": "Fonctionnalités",
+        "tab_features": "Page Fonctionnalités",
+        "home": "Accueil"
     },
     "common": {
         "save": "Enregistrer",
@@ -871,10 +874,50 @@
         "logo_light_desc": "Logo sombre affiché sur les fonds clairs",
         "logo_dark_drag_or_browse": "Cliquez ou glissez pour sélectionner le logo sombre",
         "logo_light_drag_or_browse": "Cliquez ou glissez pour sélectionner le logo clair",
-        "logo_light_url_hint": "Entrez le lien HTTPS direct vers le logo sombre pour le mode clair."
+        "logo_light_url_hint": "Entrez le lien HTTPS direct vers le logo sombre pour le mode clair.",
+        "tab_features": "Page Fonctionnalités",
+        "features_badge_label": "Gestion des fonctionnalités",
+        "features_title": "Personnalisation de la page fonctionnalités",
+        "features_desc": "Gérez les titres, descriptions et cartes de modules affichés sur le site.",
+        "features_btn_reset": "Réinitialiser par défaut",
+        "features_confirm_reset": "Voulez-vous vraiment réinitialiser toutes les fonctionnalités aux valeurs par défaut ?",
+        "features_page_badge": "Badge / En-tête",
+        "features_page_title": "Titre principal",
+        "features_page_subtitle": "Sous-titre / Description",
+        "features_cards_title": "Cartes de fonctionnalités",
+        "features_cards_desc": "Réorganisez les cartes, activez/désactivez-les ou ajoutez-en de nouvelles.",
+        "features_btn_add": "Ajouter une fonctionnalité",
+        "features_empty": "Aucune fonctionnalité configurée pour le moment.",
+        "features_published": "Publié",
+        "features_hidden": "Masqué",
+        "features_move_up": "Monter",
+        "features_move_down": "Descendre",
+        "features_hide": "Masquer",
+        "features_show": "Afficher",
+        "features_col_title": "Titre de la fonctionnalité",
+        "features_col_badge": "Mini badge (optionnel)",
+        "features_col_icon": "Icône",
+        "features_col_desc": "Description",
+        "features_col_color": "Thème de couleur",
+        "features_btn_save": "Enregistrer les fonctionnalités",
+        "features_saving": "Enregistrement...",
+        "features_preview_page": "Aperçu de la page /features"
     },
     "languages": {
         "select": "Sélectionner la Langue",
         "current": "Langue Actuelle"
+    },
+    "features": {
+        "page_title": "Fonctionnalités de la Plateforme",
+        "home_link": "Accueil",
+        "features_link": "Fonctionnalités",
+        "cta_start": "Commencer maintenant",
+        "cta_back_home": "Retour à l'accueil",
+        "active_badge": "Fonctionnalité active",
+        "conversion_title": "Commencez à analyser votre site aujourd'hui",
+        "conversion_subtitle": "Détectez toutes les erreurs techniques en quelques secondes et boostez votre score SEO.",
+        "conversion_register": "Créer un compte gratuit",
+        "conversion_login": "Se connecter au compte existant",
+        "details": "Détails"
     }
 }

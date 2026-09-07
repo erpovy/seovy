@@ -26,7 +26,10 @@
         "system_admin": "مدير النظام",
         "active_plan": "الباقة النشطة",
         "manage_subscription": "إدارة الاشتراك والحصص",
-        "upgrade": "ترقية"
+        "upgrade": "ترقية",
+        "features": "المميزات",
+        "tab_features": "صفحة المميزات",
+        "home": "الرئيسية"
     },
     "common": {
         "save": "حفظ",
@@ -871,10 +874,50 @@
         "logo_light_desc": "شعار داكن يظهر على خلفيات الواجهة الفاتحة",
         "logo_dark_drag_or_browse": "انقر للاختيار أو اسحب شعار الوضع الداكن",
         "logo_light_drag_or_browse": "انقر للاختيار أو اسحب شعار الوضع الفاتح",
-        "logo_light_url_hint": "أدخل رابط HTTPS مباشر لصورة الشعار الداكن للوضع الفاتح."
+        "logo_light_url_hint": "أدخل رابط HTTPS مباشر لصورة الشعار الداكن للوضع الفاتح.",
+        "tab_features": "صفحة المميزات",
+        "features_badge_label": "إدارة صفحة المميزات",
+        "features_title": "تخصيص الصفحة الرئيسية وصفحة المميزات",
+        "features_desc": "إدارة العناوين والأوصاف وبطاقات الوحدات المعروضة على الموقع.",
+        "features_btn_reset": "إعادة التعيين للوضع الافتراضي",
+        "features_confirm_reset": "هل أنت متأكد من رغبتك في إعادة تعيين جميع المميزات إلى الإعدادات الافتراضية؟",
+        "features_page_badge": "شارة / عنوان فرعي علوي",
+        "features_page_title": "العنوان الرئيسي",
+        "features_page_subtitle": "العنوان الفرعي / الوصف",
+        "features_cards_title": "بطاقات المميزات",
+        "features_cards_desc": "أعد ترتيب البطاقات، أو فعّلها/عطّلها، أو أضف مميزات جديدة.",
+        "features_btn_add": "إضافة ميزة جديدة",
+        "features_empty": "لم يتم تكوين أي مميزات بعد.",
+        "features_published": "منشور",
+        "features_hidden": "مخفي",
+        "features_move_up": "تحريك لأعلى",
+        "features_move_down": "تحريك لأسفل",
+        "features_hide": "إخفاء",
+        "features_show": "إظهار",
+        "features_col_title": "عنوان الميزة",
+        "features_col_badge": "شارة صغيرة (اختياري)",
+        "features_col_icon": "الأيقونة",
+        "features_col_desc": "الوصف",
+        "features_col_color": "نسق اللون",
+        "features_btn_save": "حفظ المميزات والصفحة",
+        "features_saving": "جارٍ الحفظ...",
+        "features_preview_page": "معاينة صفحة /features"
     },
     "languages": {
         "select": "اختيار اللغة",
         "current": "اللغة الحالية"
+    },
+    "features": {
+        "page_title": "مميزات المنصة وهيكليتها",
+        "home_link": "الرئيسية",
+        "features_link": "المميزات",
+        "cta_start": "ابدأ الآن",
+        "cta_back_home": "العودة للرئيسية",
+        "active_badge": "ميزة مفعلة",
+        "conversion_title": "ابدأ بتحليل موقعك الإلكتروني اليوم",
+        "conversion_subtitle": "اكتشف جميع الأخطاء التقنية في ثوانٍ، وارفع نقاط السيو وتعاون مع فريقك.",
+        "conversion_register": "إنشاء حساب مجاني",
+        "conversion_login": "تسجيل الدخول",
+        "details": "التفاصيل"
     }
 }

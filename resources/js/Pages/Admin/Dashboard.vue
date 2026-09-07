@@ -416,7 +416,7 @@ const filteredAuditLogs = computed(() => {
                     :class="activeTab === 'features' ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30' : 'text-slate-400 hover:text-white bg-slate-900/60'"
                 >
                     <Sparkles class="w-3.5 h-3.5 text-pink-400" />
-                    <span>Özellikler Sayfası</span>
+                    <span>{{ $t('admin.tab_features', 'Özellikler Sayfası') }}</span>
                 </button>
             </div>
 

@@ -26,7 +26,10 @@
         "system_admin": "Sistem Yöneticisi",
         "active_plan": "Aktif Paket",
         "manage_subscription": "Aboneliği ve Kotaları Yönet",
-        "upgrade": "Yükselt"
+        "upgrade": "Yükselt",
+        "features": "Özellikler",
+        "tab_features": "Özellikler Sayfası",
+        "home": "Ana Sayfa"
     },
     "common": {
         "save": "Kaydet",
@@ -871,10 +874,50 @@
         "logo_light_desc": "Açık arayüz zemininde görüntülenecek koyu/renkli logo",
         "logo_dark_drag_or_browse": "Karanlık tema logosu seçmek için tıklayın veya dosyayı sürükleyin",
         "logo_light_drag_or_browse": "Aydınlık tema logosu seçmek için tıklayın veya dosyayı sürükleyin",
-        "logo_light_url_hint": "Aydınlık tema için doğrudan HTTPS erişilebilir koyu renkli logo görseli bağlantısı girin."
+        "logo_light_url_hint": "Aydınlık tema için doğrudan HTTPS erişilebilir koyu renkli logo görseli bağlantısı girin.",
+        "tab_features": "Özellikler Sayfası",
+        "features_badge_label": "Özellikler Sayfası Yönetimi",
+        "features_title": "Landing Page & Özellikler Sayfası Özelleştirme",
+        "features_desc": "Landing page ve /features sayfasındaki başlıkları, açıklamaları ve listelenen modül kartlarını yönetin.",
+        "features_btn_reset": "Varsayılana Sıfırla",
+        "features_confirm_reset": "Tüm özellikleri ve başlıkları fabrika ayarlarına sıfırlamak istediğinize emin misiniz?",
+        "features_page_badge": "Rozet / Üst Başlık (Badge)",
+        "features_page_title": "Ana Başlık (Title)",
+        "features_page_subtitle": "Açıklama / Alt Başlık (Subtitle)",
+        "features_cards_title": "Özellik Kartları",
+        "features_cards_desc": "Kartların sırasını değiştirebilir, aktif/pasif yapabilir veya yeni özellikler ekleyebilirsiniz.",
+        "features_btn_add": "Yeni Özellik Ekle",
+        "features_empty": "Henüz hiçbir özellik tanımlanmamış. 'Yeni Özellik Ekle' butonuna veya 'Varsayılana Sıfırla'ya tıklayın.",
+        "features_published": "Yayında",
+        "features_hidden": "Gizli",
+        "features_move_up": "Yukarı Taşı",
+        "features_move_down": "Aşağı Taşı",
+        "features_hide": "Gizle",
+        "features_show": "Göster",
+        "features_col_title": "Özellik Başlığı",
+        "features_col_badge": "Küçük Rozet (Opsiyonel)",
+        "features_col_icon": "İkon Seçimi",
+        "features_col_desc": "Açıklama",
+        "features_col_color": "Renk Teması",
+        "features_btn_save": "Özellikleri ve Sayfayı Kaydet",
+        "features_saving": "Kaydediliyor...",
+        "features_preview_page": "/features Sayfasını Önizle"
     },
     "languages": {
         "select": "Dil Seçin",
         "current": "Mevcut Dil"
+    },
+    "features": {
+        "page_title": "Platform Özellikleri & Mimarisi",
+        "home_link": "Ana Sayfa",
+        "features_link": "Özellikler",
+        "cta_start": "Hemen Başlayın",
+        "cta_back_home": "Ana Sayfaya Dön",
+        "active_badge": "Aktif Özellik",
+        "conversion_title": "Web sitenizi bugün analiz etmeye başlayın",
+        "conversion_subtitle": "Tüm teknik hataları saniyeler içinde tespit edin, SEO skorunuzu yükseltin ve ekibinizle tek platformda çalışın.",
+        "conversion_register": "Ücretsiz Hesap Oluştur",
+        "conversion_login": "Mevcut Hesaba Giriş",
+        "details": "Detaylar"
     }
 }

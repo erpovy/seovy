@@ -26,7 +26,10 @@
         "system_admin": "System-Admin",
         "active_plan": "Aktiver Plan",
         "manage_subscription": "Abonnement & Kontingente verwalten",
-        "upgrade": "Upgrade"
+        "upgrade": "Upgrade",
+        "features": "Funktionen",
+        "tab_features": "Funktionsseite",
+        "home": "Startseite"
     },
     "common": {
         "save": "Speichern",
@@ -871,10 +874,50 @@
         "logo_light_desc": "Dunkles Logo für helle Benutzeroberflächen",
         "logo_dark_drag_or_browse": "Klicken oder dunkles Theme-Logo hierher ziehen",
         "logo_light_drag_or_browse": "Klicken oder helles Theme-Logo hierher ziehen",
-        "logo_light_url_hint": "Direkten HTTPS-Link zu dunklem Logo für helles Theme eingeben."
+        "logo_light_url_hint": "Direkten HTTPS-Link zu dunklem Logo für helles Theme eingeben.",
+        "tab_features": "Funktionsseite",
+        "features_badge_label": "Verwaltung der Funktionsseite",
+        "features_title": "Landingpage- & Funktionsseiten-Anpassung",
+        "features_desc": "Verwalten Sie Überschriften, Beschreibungen und Funktionskarten.",
+        "features_btn_reset": "Auf Standard zurücksetzen",
+        "features_confirm_reset": "Möchten Sie wirklich alle Funktionen auf Werkseinstellungen zurücksetzen?",
+        "features_page_badge": "Badge / Vor-Überschrift",
+        "features_page_title": "Haupttitel",
+        "features_page_subtitle": "Untertitel / Beschreibung",
+        "features_cards_title": "Funktionskarten",
+        "features_cards_desc": "Karten sortieren, aktivieren/deaktivieren oder neue Funktionen hinzufügen.",
+        "features_btn_add": "Neue Funktion hinzufügen",
+        "features_empty": "Noch keine Funktionen definiert.",
+        "features_published": "Veröffentlicht",
+        "features_hidden": "Versteckt",
+        "features_move_up": "Nach oben",
+        "features_move_down": "Nach unten",
+        "features_hide": "Verstecken",
+        "features_show": "Anzeigen",
+        "features_col_title": "Funktionstitel",
+        "features_col_badge": "Mini-Badge (optional)",
+        "features_col_icon": "Symbol",
+        "features_col_desc": "Beschreibung",
+        "features_col_color": "Farbthema",
+        "features_btn_save": "Funktionen speichern",
+        "features_saving": "Wird gespeichert...",
+        "features_preview_page": "/features Vorschau"
     },
     "languages": {
         "select": "Sprache wählen",
         "current": "Aktuelle Sprache"
+    },
+    "features": {
+        "page_title": "Plattformfunktionen & Architektur",
+        "home_link": "Startseite",
+        "features_link": "Funktionen",
+        "cta_start": "Jetzt starten",
+        "cta_back_home": "Zurück zur Startseite",
+        "active_badge": "Aktive Funktion",
+        "conversion_title": "Beginnen Sie heute mit der Analyse Ihrer Website",
+        "conversion_subtitle": "Erkennen Sie alle technischen Fehler in Sekundenschnelle und steigern Sie Ihren SEO-Score.",
+        "conversion_register": "Kostenloses Konto erstellen",
+        "conversion_login": "Mit bestehendem Konto anmelden",
+        "details": "Details"
     }
 }

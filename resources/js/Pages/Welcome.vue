@@ -135,7 +135,7 @@ const getColorClass = (color?: string) => {
                         href="/features"
                         class="px-3 py-2 text-sm font-medium text-slate-300 hover:text-white transition-colors flex items-center space-x-1"
                     >
-                        <span>Özellikler</span>
+                        <span>{{ $t('nav.features', 'Özellikler') }}</span>
                     </Link>
 
                     <LanguageSelector placement="bottom" />
@@ -230,7 +230,7 @@ const getColorClass = (color?: string) => {
                             </div>
                             <div class="mt-4 pt-3 border-t border-slate-800/50 flex items-center justify-between">
                                 <Link href="/features" class="text-xs text-indigo-400 hover:text-indigo-300 flex items-center space-x-1 font-medium">
-                                    <span>Detaylar</span>
+                                    <span>{{ $t('features.details', 'Detaylar') }}</span>
                                     <ArrowRight class="w-3.5 h-3.5" />
                                 </Link>
                             </div>
