@@ -35,14 +35,14 @@ const submit = () => {
             <LanguageSelector placement="bottom" />
         </div>
 
-        <div class="sm:mx-auto sm:w-full sm:max-w-md text-center">
-            <Link href="/" class="inline-flex items-center space-x-3 mb-6 group">
+        <div class="sm:mx-auto sm:w-full sm:max-w-xl text-center px-4">
+            <Link href="/" class="inline-flex items-center justify-center space-x-3 mb-6 group max-w-full">
                 <template v-if="logoDark && !logoFailed">
                     <img
                         :key="logoDark"
                         :src="logoDark"
                         :alt="brandName"
-                        class="h-12 max-w-[200px] object-contain rounded-xl shadow-sm group-hover:scale-105 transition-transform"
+                        class="h-[120px] max-h-[140px] max-w-full object-contain rounded-2xl shadow-sm group-hover:scale-105 transition-transform"
                         @error="logoFailed = true"
                         @load="logoFailed = false"
                     />

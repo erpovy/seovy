@@ -32,14 +32,14 @@ const logoFailed = ref(false);
     <div class="min-h-screen bg-slate-950 text-slate-100 selection:bg-indigo-500 selection:text-white flex flex-col justify-between">
         <!-- Top Navigation -->
         <header class="border-b border-slate-800/80 bg-slate-900/40 backdrop-blur-md sticky top-0 z-50">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-                <Link href="/" class="flex items-center space-x-3 group">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-[76px] py-2 flex items-center justify-between">
+                <Link href="/" class="flex items-center space-x-3 group py-1">
                     <template v-if="logoDark && !logoFailed">
                         <img
                             :key="logoDark"
                             :src="logoDark"
                             :alt="brandName"
-                            class="h-9 max-w-[170px] object-contain object-left rounded-lg shadow-sm"
+                            class="h-[72px] max-w-[340px] object-contain object-left rounded-lg shadow-sm"
                             @error="logoFailed = true"
                             @load="logoFailed = false"
                         />
