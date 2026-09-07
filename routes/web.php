@@ -32,8 +32,26 @@ Route::get('/', function () {
         'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
+        'featuresBadge' => \App\Models\SystemSetting::get('features_page_badge', 'Platform Özellikleri & Mimarisi'),
+        'featuresTitle' => \App\Models\SystemSetting::get('features_page_title', 'Teknik SEO & Analiz Altyapısı'),
+        'featuresSubtitle' => \App\Models\SystemSetting::get('features_page_subtitle', 'Kendi sunucunuzda çalışan, çoklu çalışma alanları, SSRF korumalı crawler ve 25+ teknik analiz kuralı içeren kurumsal platform.'),
+        'featuresList' => \App\Models\SystemSetting::get('features_page_list', \App\Models\SystemSetting::getDefaultFeatures()),
     ]);
 })->name('home');
+
+// Dedicated Standalone Features Page
+Route::get('/features', function () {
+    return Inertia::render('Features', [
+        'canLogin' => Route::has('login'),
+        'canRegister' => Route::has('register'),
+        'laravelVersion' => Application::VERSION,
+        'phpVersion' => PHP_VERSION,
+        'featuresBadge' => \App\Models\SystemSetting::get('features_page_badge', 'Platform Özellikleri & Mimarisi'),
+        'featuresTitle' => \App\Models\SystemSetting::get('features_page_title', 'Teknik SEO & Analiz Altyapısı'),
+        'featuresSubtitle' => \App\Models\SystemSetting::get('features_page_subtitle', 'Kendi sunucunuzda çalışan, çoklu çalışma alanları, SSRF korumalı crawler ve 25+ teknik analiz kuralı içeren kurumsal platform.'),
+        'featuresList' => \App\Models\SystemSetting::get('features_page_list', \App\Models\SystemSetting::getDefaultFeatures()),
+    ]);
+})->name('features');
 
 // Shared Public Reports
 Route::get('/reports/shared/{token}', [ReportController::class, 'publicView'])->name('reports.shared');
@@ -163,6 +181,10 @@ Route::middleware('auth')->group(function () {
 
         // System Logo & Branding Settings
         Route::post('/settings/logo', [AdminController::class, 'updateLogo'])->name('settings.logo');
+
+        // Platform Features Page & Customization
+        Route::post('/settings/features', [AdminController::class, 'updateFeatures'])->name('settings.features');
+        Route::post('/settings/features/reset', [AdminController::class, 'resetFeatures'])->name('settings.features.reset');
     });
 });
 

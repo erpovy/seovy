@@ -176,6 +176,10 @@ class AdminController extends Controller
                 'logo_light' => SystemSetting::get('system_logo_light', null),
                 'favicon' => SystemSetting::get('system_favicon', null),
                 'brand_name' => SystemSetting::get('brand_name', 'Seovy'),
+                'features_badge' => SystemSetting::get('features_page_badge', 'Platform Özellikleri & Mimarisi'),
+                'features_title' => SystemSetting::get('features_page_title', 'Teknik SEO & Analiz Altyapısı'),
+                'features_subtitle' => SystemSetting::get('features_page_subtitle', 'Kendi sunucunuzda çalışan, çoklu çalışma alanları, SSRF korumalı crawler ve 25+ teknik analiz kuralı içeren kurumsal platform.'),
+                'features_list' => SystemSetting::get('features_page_list', SystemSetting::getDefaultFeatures()),
             ],
             'filters' => [
                 'search' => $request->search ?? '',
@@ -538,6 +542,76 @@ class AdminController extends Controller
         ]);
 
         return back()->with('success', 'Sistem logoları, favicon ve marka ayarları başarıyla güncellendi.');
+    }
+
+    /**
+     * Update landing and features page content and list of features.
+     */
+    public function updateFeatures(Request $request)
+    {
+        $this->authorizeAdmin($request);
+
+        $validated = $request->validate([
+            'features_badge' => ['nullable', 'string', 'max:150'],
+            'features_title' => ['nullable', 'string', 'max:255'],
+            'features_subtitle' => ['nullable', 'string', 'max:1000'],
+            'features_list' => ['nullable', 'array'],
+            'features_list.*.id' => ['nullable', 'string'],
+            'features_list.*.title' => ['required', 'string', 'max:200'],
+            'features_list.*.description' => ['required', 'string', 'max:1000'],
+            'features_list.*.icon' => ['nullable', 'string', 'max:50'],
+            'features_list.*.color' => ['nullable', 'string', 'max:50'],
+            'features_list.*.badge' => ['nullable', 'string', 'max:80'],
+            'features_list.*.is_active' => ['nullable', 'boolean'],
+        ]);
+
+        if (isset($validated['features_badge'])) {
+            SystemSetting::set('features_page_badge', trim($validated['features_badge']));
+        }
+        if (isset($validated['features_title'])) {
+            SystemSetting::set('features_page_title', trim($validated['features_title']));
+        }
+        if (isset($validated['features_subtitle'])) {
+            SystemSetting::set('features_page_subtitle', trim($validated['features_subtitle']));
+        }
+        if (isset($validated['features_list'])) {
+            $cleaned = array_map(function ($item) {
+                return [
+                    'id' => !empty($item['id']) ? $item['id'] : Str::random(8),
+                    'title' => trim($item['title']),
+                    'description' => trim($item['description']),
+                    'icon' => !empty($item['icon']) ? trim($item['icon']) : 'Activity',
+                    'color' => !empty($item['color']) ? trim($item['color']) : 'indigo',
+                    'badge' => !empty($item['badge']) ? trim($item['badge']) : null,
+                    'is_active' => isset($item['is_active']) ? (bool)$item['is_active'] : true,
+                ];
+            }, $validated['features_list']);
+
+            SystemSetting::set('features_page_list', array_values($cleaned));
+        }
+
+        AuditLog::log('system_settings.features_updated', 'SystemSetting', 0, [
+            'features_count' => count($validated['features_list'] ?? []),
+        ]);
+
+        return back()->with('success', 'Özellikler sayfası ve içerikleri başarıyla kaydedildi.');
+    }
+
+    /**
+     * Reset features to system defaults.
+     */
+    public function resetFeatures(Request $request)
+    {
+        $this->authorizeAdmin($request);
+
+        SystemSetting::set('features_page_badge', 'Platform Özellikleri & Mimarisi');
+        SystemSetting::set('features_page_title', 'Teknik SEO & Analiz Altyapısı');
+        SystemSetting::set('features_page_subtitle', 'Kendi sunucunuzda çalışan, çoklu çalışma alanları, SSRF korumalı crawler ve 25+ teknik analiz kuralı içeren kurumsal platform.');
+        SystemSetting::set('features_page_list', SystemSetting::getDefaultFeatures());
+
+        AuditLog::log('system_settings.features_reset', 'SystemSetting', 0);
+
+        return back()->with('success', 'Özellikler sayfası varsayılan ayarlara sıfırlandı.');
     }
 
     protected function authorizeAdmin(Request $request): void

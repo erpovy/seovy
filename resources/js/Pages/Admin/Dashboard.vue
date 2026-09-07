@@ -37,6 +37,7 @@ import PaymentsTab from '@/Pages/Admin/Partials/PaymentsTab.vue';
 import PlansTab from '@/Pages/Admin/Partials/PlansTab.vue';
 import SalesTab from '@/Pages/Admin/Partials/SalesTab.vue';
 import LogoSettingsCard from '@/Pages/Admin/Partials/LogoSettingsCard.vue';
+import FeaturesSettingsCard from '@/Pages/Admin/Partials/FeaturesSettingsCard.vue';
 
 const { t } = useI18n();
 
@@ -79,11 +80,15 @@ const props = defineProps<{
         logo_light?: string | null;
         favicon?: string | null;
         brand_name?: string | null;
+        features_badge?: string | null;
+        features_title?: string | null;
+        features_subtitle?: string | null;
+        features_list?: Array<any> | null;
     };
     filters: {
         search?: string;
         filter?: string;
-        tab?: 'users' | 'system' | 'logs' | 'payments' | 'plans' | 'sales';
+        tab?: 'users' | 'system' | 'logs' | 'payments' | 'plans' | 'sales' | 'features';
         sales_search?: string;
         sales_plan?: string;
         sales_mode?: string;
@@ -91,7 +96,7 @@ const props = defineProps<{
     };
 }>();
 
-const activeTab = ref<'users' | 'system' | 'logs' | 'payments' | 'plans' | 'sales'>(props.filters.tab || 'users');
+const activeTab = ref<'users' | 'system' | 'logs' | 'payments' | 'plans' | 'sales' | 'features'>(props.filters.tab || 'users');
 const searchQuery = ref(props.filters.search || '');
 const currentFilter = ref(props.filters.filter || 'all');
 const selectedUser = ref<any>(null);
@@ -134,7 +139,7 @@ const setFilter = (filterName: string) => {
     applyFilters(filterName);
 };
 
-const switchTab = (tabName: 'users' | 'system' | 'logs' | 'payments' | 'plans' | 'sales') => {
+const switchTab = (tabName: 'users' | 'system' | 'logs' | 'payments' | 'plans' | 'sales' | 'features') => {
     activeTab.value = tabName;
     router.get(
         '/admin',
@@ -404,6 +409,14 @@ const filteredAuditLogs = computed(() => {
                 >
                     <DollarSign class="w-3.5 h-3.5 text-amber-400" />
                     <span>{{ $t('admin.tab_sales') }} ({{ recentTransactions?.length || 0 }})</span>
+                </button>
+                <button
+                    @click="switchTab('features')"
+                    class="px-4 py-2 rounded-xl text-xs font-semibold transition-all flex items-center space-x-2"
+                    :class="activeTab === 'features' ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30' : 'text-slate-400 hover:text-white bg-slate-900/60'"
+                >
+                    <Sparkles class="w-3.5 h-3.5 text-pink-400" />
+                    <span>Özellikler Sayfası</span>
                 </button>
             </div>
 
@@ -919,6 +932,11 @@ const filteredAuditLogs = computed(() => {
                         sales_status: filters.sales_status,
                     }"
                 />
+            </div>
+
+            <!-- Tab 7: Features Page Customization -->
+            <div v-else-if="activeTab === 'features'" class="space-y-6">
+                <FeaturesSettingsCard :system-settings="systemSettings" />
             </div>
         </div>
 

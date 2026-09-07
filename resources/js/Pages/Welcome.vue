@@ -12,11 +12,25 @@ import {
 } from 'lucide-vue-next';
 import LanguageSelector from '@/Components/LanguageSelector.vue';
 
-defineProps<{
+interface FeatureItem {
+    id: string;
+    title: string;
+    description: string;
+    icon?: string;
+    color?: string;
+    badge?: string;
+    is_active?: boolean;
+}
+
+const props = defineProps<{
     canLogin?: boolean;
     canRegister?: boolean;
     laravelVersion?: string;
     phpVersion?: string;
+    featuresBadge?: string;
+    featuresTitle?: string;
+    featuresSubtitle?: string;
+    featuresList?: FeatureItem[];
 }>();
 
 const page = usePage();
@@ -24,6 +38,63 @@ const systemSettings = computed(() => ((page.props as any)?.system_settings) || 
 const logoDark = computed(() => systemSettings.value.logo_dark || systemSettings.value.logo || null);
 const brandName = computed(() => systemSettings.value.brand_name || 'Seovy');
 const logoFailed = ref(false);
+
+const activeFeatures = computed(() => {
+    const list = props.featuresList || [];
+    return list.filter((f) => f.is_active !== false);
+});
+
+const iconMap: Record<string, any> = {
+    Search,
+    ShieldCheck,
+    Layers,
+    BarChart3,
+    Sparkles,
+    CreditCard,
+    Zap,
+    Activity,
+};
+
+const getIconComponent = (name?: string) => {
+    if (!name || !iconMap[name]) return Activity;
+    return iconMap[name];
+};
+
+const getColorClass = (color?: string) => {
+    switch (color) {
+        case 'violet':
+            return {
+                bg: 'bg-violet-500/10 text-violet-400',
+                hover: 'hover:border-violet-500/40',
+            };
+        case 'cyan':
+            return {
+                bg: 'bg-cyan-500/10 text-cyan-400',
+                hover: 'hover:border-cyan-500/40',
+            };
+        case 'emerald':
+            return {
+                bg: 'bg-emerald-500/10 text-emerald-400',
+                hover: 'hover:border-emerald-500/40',
+            };
+        case 'amber':
+            return {
+                bg: 'bg-amber-500/10 text-amber-400',
+                hover: 'hover:border-amber-500/40',
+            };
+        case 'pink':
+            return {
+                bg: 'bg-pink-500/10 text-pink-400',
+                hover: 'hover:border-pink-500/40',
+            };
+        case 'indigo':
+        default:
+            return {
+                bg: 'bg-indigo-500/10 text-indigo-400',
+                hover: 'hover:border-indigo-500/40',
+            };
+    }
+};
 </script>
 
 <template>
@@ -58,6 +129,13 @@ const logoFailed = ref(false);
                 </Link>
 
                 <nav class="flex items-center space-x-3 sm:space-x-4">
+                    <Link
+                        href="/features"
+                        class="px-3 py-2 text-sm font-medium text-slate-300 hover:text-white transition-colors flex items-center space-x-1"
+                    >
+                        <span>Özellikler</span>
+                    </Link>
+
                     <LanguageSelector placement="bottom" />
 
                     <Link
@@ -91,7 +169,7 @@ const logoFailed = ref(false);
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
                 <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-semibold mb-6">
                     <Zap class="w-3.5 h-3.5" />
-                    <span>{{ $t('welcome.badge') }}</span>
+                    <span>{{ featuresBadge || $t('welcome.badge') }}</span>
                 </div>
 
                 <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight max-w-4xl mx-auto leading-tight sm:leading-tight">
@@ -102,7 +180,7 @@ const logoFailed = ref(false);
                 </h1>
 
                 <p class="mt-6 text-lg sm:text-xl text-slate-400 max-w-2xl mx-auto font-normal">
-                    {{ $t('welcome.description') }}
+                    {{ featuresSubtitle || $t('welcome.description') }}
                 </p>
 
                 <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -113,45 +191,80 @@ const logoFailed = ref(false);
                         <span>{{ $t('welcome.cta_start') }}</span>
                         <ArrowRight class="w-5 h-5" />
                     </Link>
-                    <a
-                        href="#features"
-                        class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-slate-900/80 hover:bg-slate-800 text-slate-300 hover:text-white font-medium border border-slate-800 transition-all"
+                    <Link
+                        href="/features"
+                        class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-slate-900/80 hover:bg-slate-800 text-slate-300 hover:text-white font-medium border border-slate-800 transition-all flex items-center justify-center space-x-1.5"
                     >
-                        {{ $t('welcome.cta_features') }}
-                    </a>
+                        <span>{{ $t('welcome.cta_features') }}</span>
+                        <ArrowRight class="w-4 h-4 text-slate-500" />
+                    </Link>
                 </div>
 
                 <!-- Feature Badges -->
                 <div id="features" class="mt-24 grid grid-cols-1 md:grid-cols-3 gap-6 text-left max-w-5xl mx-auto">
-                    <div class="p-6 rounded-2xl bg-slate-900/50 border border-slate-800/80 hover:border-slate-700 transition-all">
-                        <div class="w-12 h-12 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center mb-4">
-                            <Search class="w-6 h-6" />
+                    <template v-if="activeFeatures && activeFeatures.length > 0">
+                        <div
+                            v-for="feature in activeFeatures.slice(0, 6)"
+                            :key="feature.id"
+                            class="p-6 rounded-2xl bg-slate-900/50 border border-slate-800/80 hover:border-slate-700 transition-all group flex flex-col justify-between"
+                            :class="getColorClass(feature.color).hover"
+                        >
+                            <div>
+                                <div class="flex items-center justify-between mb-4">
+                                    <div
+                                        class="w-12 h-12 rounded-xl flex items-center justify-center transition-transform group-hover:scale-105"
+                                        :class="getColorClass(feature.color).bg"
+                                    >
+                                        <Component :is="getIconComponent(feature.icon)" class="w-6 h-6" />
+                                    </div>
+                                    <span v-if="feature.badge" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">
+                                        {{ feature.badge }}
+                                    </span>
+                                </div>
+                                <h3 class="text-lg font-bold text-white mb-2 group-hover:text-indigo-300 transition-colors">{{ feature.title }}</h3>
+                                <p class="text-sm text-slate-400 leading-relaxed">
+                                    {{ feature.description }}
+                                </p>
+                            </div>
+                            <div class="mt-4 pt-3 border-t border-slate-800/50 flex items-center justify-between">
+                                <Link href="/features" class="text-xs text-indigo-400 hover:text-indigo-300 flex items-center space-x-1 font-medium">
+                                    <span>Detaylar</span>
+                                    <ArrowRight class="w-3.5 h-3.5" />
+                                </Link>
+                            </div>
                         </div>
-                        <h3 class="text-lg font-bold text-white mb-2">{{ $t('welcome.feature1_title') }}</h3>
-                        <p class="text-sm text-slate-400 leading-relaxed">
-                            {{ $t('welcome.feature1_desc') }}
-                        </p>
-                    </div>
+                    </template>
+                    <template v-else>
+                        <div class="p-6 rounded-2xl bg-slate-900/50 border border-slate-800/80 hover:border-slate-700 transition-all">
+                            <div class="w-12 h-12 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center mb-4">
+                                <Search class="w-6 h-6" />
+                            </div>
+                            <h3 class="text-lg font-bold text-white mb-2">{{ $t('welcome.feature1_title') }}</h3>
+                            <p class="text-sm text-slate-400 leading-relaxed">
+                                {{ $t('welcome.feature1_desc') }}
+                            </p>
+                        </div>
 
-                    <div class="p-6 rounded-2xl bg-slate-900/50 border border-slate-800/80 hover:border-slate-700 transition-all">
-                        <div class="w-12 h-12 rounded-xl bg-violet-500/10 text-violet-400 flex items-center justify-center mb-4">
-                            <ShieldCheck class="w-6 h-6" />
+                        <div class="p-6 rounded-2xl bg-slate-900/50 border border-slate-800/80 hover:border-slate-700 transition-all">
+                            <div class="w-12 h-12 rounded-xl bg-violet-500/10 text-violet-400 flex items-center justify-center mb-4">
+                                <ShieldCheck class="w-6 h-6" />
+                            </div>
+                            <h3 class="text-lg font-bold text-white mb-2">{{ $t('welcome.feature2_title') }}</h3>
+                            <p class="text-sm text-slate-400 leading-relaxed">
+                                {{ $t('welcome.feature2_desc') }}
+                            </p>
                         </div>
-                        <h3 class="text-lg font-bold text-white mb-2">{{ $t('welcome.feature2_title') }}</h3>
-                        <p class="text-sm text-slate-400 leading-relaxed">
-                            {{ $t('welcome.feature2_desc') }}
-                        </p>
-                    </div>
 
-                    <div class="p-6 rounded-2xl bg-slate-900/50 border border-slate-800/80 hover:border-slate-700 transition-all">
-                        <div class="w-12 h-12 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center mb-4">
-                            <Layers class="w-6 h-6" />
+                        <div class="p-6 rounded-2xl bg-slate-900/50 border border-slate-800/80 hover:border-slate-700 transition-all">
+                            <div class="w-12 h-12 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center mb-4">
+                                <Layers class="w-6 h-6" />
+                            </div>
+                            <h3 class="text-lg font-bold text-white mb-2">{{ $t('welcome.feature3_title') }}</h3>
+                            <p class="text-sm text-slate-400 leading-relaxed">
+                                {{ $t('welcome.feature3_desc') }}
+                            </p>
                         </div>
-                        <h3 class="text-lg font-bold text-white mb-2">{{ $t('welcome.feature3_title') }}</h3>
-                        <p class="text-sm text-slate-400 leading-relaxed">
-                            {{ $t('welcome.feature3_desc') }}
-                        </p>
-                    </div>
+                    </template>
                 </div>
             </div>
         </main>

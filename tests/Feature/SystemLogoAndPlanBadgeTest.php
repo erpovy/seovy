@@ -249,4 +249,72 @@ class SystemLogoAndPlanBadgeTest extends TestCase
         $this->assertEquals('pro', $pageProps['auth']['current_workspace']['plan_code']);
         $this->assertEquals('Pro Plan', $pageProps['auth']['current_workspace']['plan_name']);
     }
+
+    public function test_features_page_is_accessible_publicly(): void
+    {
+        $response = $this->get('/features');
+        $response->assertOk();
+
+        $page = $response->original->getData()['page'];
+        $this->assertEquals('Features', $page['component']);
+        $this->assertNotEmpty($page['props']['featuresList']);
+    }
+
+    public function test_admin_can_update_features_settings(): void
+    {
+        $response = $this->actingAs($this->admin)->post('/admin/settings/features', [
+            'features_badge' => 'Yeni Nesil Mimari',
+            'features_title' => 'Gelişmiş SEO Suite',
+            'features_subtitle' => 'Özel tanıtım açıklaması.',
+            'features_list' => [
+                [
+                    'id' => 'custom_feat_1',
+                    'title' => 'Süper Hızlı Analizör',
+                    'description' => 'Saniyede yüzlerce sayfa tarar.',
+                    'icon' => 'Zap',
+                    'color' => 'amber',
+                    'badge' => 'Ultra',
+                    'is_active' => true,
+                ],
+            ],
+        ]);
+
+        $response->assertSessionHas('success');
+
+        $this->assertEquals('Yeni Nesil Mimari', SystemSetting::get('features_page_badge'));
+        $this->assertEquals('Gelişmiş SEO Suite', SystemSetting::get('features_page_title'));
+        $this->assertEquals('Özel tanıtım açıklaması.', SystemSetting::get('features_page_subtitle'));
+        $list = SystemSetting::get('features_page_list');
+        $this->assertCount(1, $list);
+        $this->assertEquals('Süper Hızlı Analizör', $list[0]['title']);
+
+        $this->assertDatabaseHas('audit_logs', [
+            'action' => 'system_settings.features_updated',
+        ]);
+    }
+
+    public function test_non_admin_cannot_update_features(): void
+    {
+        $response = $this->actingAs($this->regularUser)->post('/admin/settings/features', [
+            'features_title' => 'Hacked Title',
+        ]);
+
+        $response->assertForbidden();
+    }
+
+    public function test_admin_can_reset_features_to_defaults(): void
+    {
+        SystemSetting::set('features_page_title', 'Modified Title');
+        SystemSetting::set('features_page_list', []);
+
+        $response = $this->actingAs($this->admin)->post('/admin/settings/features/reset');
+        $response->assertSessionHas('success');
+
+        $this->assertEquals('Teknik SEO & Analiz Altyapısı', SystemSetting::get('features_page_title'));
+        $this->assertNotEmpty(SystemSetting::get('features_page_list'));
+        $this->assertDatabaseHas('audit_logs', [
+            'action' => 'system_settings.features_reset',
+        ]);
+    }
 }
+
