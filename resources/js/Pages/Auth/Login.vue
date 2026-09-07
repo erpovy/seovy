@@ -1,7 +1,14 @@
 <script setup lang="ts">
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { computed, ref } from 'vue';
+import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
 import { Activity, Lock, Mail, ArrowRight, AlertCircle } from 'lucide-vue-next';
 import LanguageSelector from '@/Components/LanguageSelector.vue';
+
+const page = usePage();
+const systemSettings = computed(() => ((page.props as any)?.system_settings) || {});
+const logoDark = computed(() => systemSettings.value.logo_dark || systemSettings.value.logo || null);
+const brandName = computed(() => systemSettings.value.brand_name || 'Seovy');
+const logoFailed = ref(false);
 
 const form = useForm({
     email: '',
@@ -29,12 +36,24 @@ const submit = () => {
 
         <div class="sm:mx-auto sm:w-full sm:max-w-md text-center">
             <Link href="/" class="inline-flex items-center space-x-3 mb-6 group">
-                <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform">
-                    <Activity class="w-6 h-6 text-white" />
-                </div>
-                <span class="text-2xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-slate-400">
-                    Seovy
-                </span>
+                <template v-if="logoDark && !logoFailed">
+                    <img
+                        :key="logoDark"
+                        :src="logoDark"
+                        :alt="brandName"
+                        class="h-12 max-w-[200px] object-contain rounded-xl shadow-sm group-hover:scale-105 transition-transform"
+                        @error="logoFailed = true"
+                        @load="logoFailed = false"
+                    />
+                </template>
+                <template v-else>
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform">
+                        <Activity class="w-6 h-6 text-white" />
+                    </div>
+                    <span class="text-2xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-slate-400">
+                        {{ brandName }}
+                    </span>
+                </template>
             </Link>
             <h2 class="text-2xl font-bold tracking-tight text-white">{{ $t('auth.login_title') }}</h2>
             <p class="mt-2 text-sm text-slate-400">

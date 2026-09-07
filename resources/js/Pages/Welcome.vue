@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
+import { computed, ref } from 'vue';
+import { Head, Link, usePage } from '@inertiajs/vue3';
 import { 
     Search, 
     ShieldCheck, 
@@ -17,6 +18,12 @@ defineProps<{
     laravelVersion?: string;
     phpVersion?: string;
 }>();
+
+const page = usePage();
+const systemSettings = computed(() => ((page.props as any)?.system_settings) || {});
+const logoDark = computed(() => systemSettings.value.logo_dark || systemSettings.value.logo || null);
+const brandName = computed(() => systemSettings.value.brand_name || 'Seovy');
+const logoFailed = ref(false);
 </script>
 
 <template>
@@ -26,17 +33,29 @@ defineProps<{
         <!-- Top Navigation -->
         <header class="border-b border-slate-800/80 bg-slate-900/40 backdrop-blur-md sticky top-0 z-50">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-                <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/20">
-                        <Activity class="w-5 h-5 text-white" />
-                    </div>
-                    <span class="text-xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-slate-400">
-                        Seovy
-                    </span>
+                <Link href="/" class="flex items-center space-x-3 group">
+                    <template v-if="logoDark && !logoFailed">
+                        <img
+                            :key="logoDark"
+                            :src="logoDark"
+                            :alt="brandName"
+                            class="h-9 max-w-[170px] object-contain object-left rounded-lg shadow-sm"
+                            @error="logoFailed = true"
+                            @load="logoFailed = false"
+                        />
+                    </template>
+                    <template v-else>
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform">
+                            <Activity class="w-5 h-5 text-white" />
+                        </div>
+                        <span class="text-xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-slate-400">
+                            {{ brandName }}
+                        </span>
+                    </template>
                     <span class="text-xs px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 font-medium">
                         v1.0
                     </span>
-                </div>
+                </Link>
 
                 <nav class="flex items-center space-x-3 sm:space-x-4">
                     <LanguageSelector placement="bottom" />
@@ -139,7 +158,7 @@ defineProps<{
 
         <!-- Footer -->
         <footer class="border-t border-slate-900 bg-slate-950/60 py-6 text-center text-xs text-slate-500">
-            <p>Laravel v{{ laravelVersion || '12.x' }} &bull; PHP v{{ phpVersion || '8.2' }} &bull; Seovy Platform</p>
+            <p>Laravel v{{ laravelVersion || '12.x' }} &bull; PHP v{{ phpVersion || '8.2' }} &bull; {{ brandName }} Platform</p>
         </footer>
     </div>
 </template>
