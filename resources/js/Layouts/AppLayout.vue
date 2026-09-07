@@ -96,20 +96,20 @@ const switchWorkspace = (workspaceId: number) => {
             <div class="space-y-6">
                 <!-- Brand / Logo & Plan Badge -->
                 <div class="px-2 space-y-2.5">
-                    <div class="flex items-center justify-between">
-                        <Link href="/dashboard" class="flex items-center space-x-3 group min-w-0">
+                    <div class="flex items-center justify-between gap-2">
+                        <Link href="/dashboard" class="flex items-center space-x-3 group min-w-0 flex-1">
                             <template v-if="activeLogo && !logoFailed">
                                 <img
                                     :key="activeLogo"
                                     :src="activeLogo"
                                     :alt="brandName"
-                                    class="h-9 max-w-[130px] object-contain rounded-lg shadow-sm"
+                                    class="h-[50px] max-w-[185px] object-contain object-left rounded-lg shadow-sm"
                                     @error="logoFailed = true"
                                     @load="logoFailed = false"
                                 />
                             </template>
                             <template v-else>
-                                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform shrink-0">
+                                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform shrink-0">
                                     <Activity class="w-5 h-5 text-white" />
                                 </div>
                                 <span class="text-xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-slate-400 dark:from-white dark:via-slate-200 dark:to-slate-400 light:from-slate-900 light:to-slate-700 truncate">
@@ -117,7 +117,7 @@ const switchWorkspace = (workspaceId: number) => {
                                 </span>
                             </template>
                         </Link>
-                        <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 shrink-0">
+                        <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 shrink-0 self-start mt-1">
                             {{ auth.current_workspace?.role ?? t('nav.member') }}
                         </span>
                     </div>
