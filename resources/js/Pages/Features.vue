@@ -4,44 +4,27 @@ import { Head, Link, usePage } from '@inertiajs/vue3';
 import {
     Search,
     ShieldCheck,
-    Layers,
     BarChart3,
+    Layers,
+    FileText,
     Sparkles,
     CreditCard,
+    Zap,
+    Lock,
     ArrowRight,
     Activity,
-    CheckCircle2,
-    Zap,
-    Globe,
-    Cpu,
-    FileText,
-    Lock,
-    ExternalLink
+    CheckCircle2
 } from 'lucide-vue-next';
 import LanguageSelector from '@/Components/LanguageSelector.vue';
 import { useI18n } from '@/i18n';
 
 const { t } = useI18n();
 
-interface FeatureItem {
-    id: string;
-    title: string;
-    description: string;
-    icon?: string;
-    color?: string;
-    badge?: string;
-    is_active?: boolean;
-}
-
-const props = defineProps<{
+defineProps<{
     canLogin?: boolean;
     canRegister?: boolean;
     laravelVersion?: string;
     phpVersion?: string;
-    featuresBadge?: string;
-    featuresTitle?: string;
-    featuresSubtitle?: string;
-    featuresList?: FeatureItem[];
 }>();
 
 const page = usePage();
@@ -50,77 +33,111 @@ const logoDark = computed(() => systemSettings.value.logo_dark || systemSettings
 const brandName = computed(() => systemSettings.value.brand_name || 'Seovy');
 const logoFailed = ref(false);
 
-const activeFeatures = computed(() => {
-    const list = props.featuresList || [];
-    return list.filter((f) => f.is_active !== false);
-});
-
-// Icon component lookup map
-const iconMap: Record<string, any> = {
-    Search,
-    ShieldCheck,
-    Layers,
-    BarChart3,
-    Sparkles,
-    CreditCard,
-    Zap,
-    Globe,
-    Cpu,
-    FileText,
-    Lock,
-    Activity,
-};
-
-const getIconComponent = (name?: string) => {
-    if (!name || !iconMap[name]) return Activity;
-    return iconMap[name];
-};
-
-const getColorClass = (color?: string) => {
-    switch (color) {
-        case 'violet':
-            return {
-                bg: 'bg-violet-500/10 text-violet-400 border-violet-500/20',
-                borderHover: 'hover:border-violet-500/40',
-                badge: 'bg-violet-500/10 text-violet-300 border-violet-500/20',
-            };
-        case 'cyan':
-            return {
-                bg: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20',
-                borderHover: 'hover:border-cyan-500/40',
-                badge: 'bg-cyan-500/10 text-cyan-300 border-cyan-500/20',
-            };
-        case 'emerald':
-            return {
-                bg: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-                borderHover: 'hover:border-emerald-500/40',
-                badge: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/20',
-            };
-        case 'amber':
-            return {
-                bg: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
-                borderHover: 'hover:border-amber-500/40',
-                badge: 'bg-amber-500/10 text-amber-300 border-amber-500/20',
-            };
-        case 'pink':
-            return {
-                bg: 'bg-pink-500/10 text-pink-400 border-pink-500/20',
-                borderHover: 'hover:border-pink-500/40',
-                badge: 'bg-pink-500/10 text-pink-300 border-pink-500/20',
-            };
-        case 'indigo':
-        default:
-            return {
-                bg: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20',
-                borderHover: 'hover:border-indigo-500/40',
-                badge: 'bg-indigo-500/10 text-indigo-300 border-indigo-500/20',
-            };
-    }
-};
+const staticFeatures = computed(() => [
+    {
+        key: 'crawler',
+        icon: Search,
+        color: 'indigo',
+        badge: t('features.crawler_badge', 'Motor v2.0'),
+        title: t('features.crawler_title', 'SSRF Korumalı Asenkron Crawler'),
+        description: t('features.crawler_desc', 'AWS metadata, localhost ve yerel IP bloklaması ile güvenli, saniyede onlarca sayfa tarayabilen asenkron crawler altyapısı.'),
+        bg: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20',
+        badgeClass: 'bg-indigo-500/10 text-indigo-300 border-indigo-500/20',
+        borderHover: 'hover:border-indigo-500/50',
+    },
+    {
+        key: 'audit',
+        icon: ShieldCheck,
+        color: 'emerald',
+        badge: t('features.audit_badge', '25+ Kural'),
+        title: t('features.audit_title', 'Teknik SEO & Sayfa İçi Denetim'),
+        description: t('features.audit_desc', 'Kırık linkler, HTTP durum kodları, başlık hiyerarşisi, canonical etiketler, OpenGraph ve meta robots otomatik denetimi.'),
+        bg: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+        badgeClass: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/20',
+        borderHover: 'hover:border-emerald-500/50',
+    },
+    {
+        key: 'rank_tracking',
+        icon: BarChart3,
+        color: 'cyan',
+        badge: t('features.rank_badge', 'Canlı SERP'),
+        title: t('features.rank_title', 'Canlı Google SERP Takibi'),
+        description: t('features.rank_desc', 'Akıllı motor ve API destekli anahtar kelime sıralamaları, günlük değişim analizleri ve pozisyon geçmişi grafikleri.'),
+        bg: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20',
+        badgeClass: 'bg-cyan-500/10 text-cyan-300 border-cyan-500/20',
+        borderHover: 'hover:border-cyan-500/50',
+    },
+    {
+        key: 'workspaces',
+        icon: Layers,
+        color: 'violet',
+        badge: t('features.workspaces_badge', 'İşbirliği'),
+        title: t('features.workspaces_title', 'Çoklu Çalışma Alanı & Ekip Rolleri'),
+        description: t('features.workspaces_desc', 'Müşterileriniz ve projeleriniz için izole çalışma alanları. Yönetici, editör ve görüntüleyici rol bazlı izin matrisi.'),
+        bg: 'bg-violet-500/10 text-violet-400 border-violet-500/20',
+        badgeClass: 'bg-violet-500/10 text-violet-300 border-violet-500/20',
+        borderHover: 'hover:border-violet-500/50',
+    },
+    {
+        key: 'reports',
+        icon: FileText,
+        color: 'amber',
+        badge: t('features.reports_badge', 'White-Label'),
+        title: t('features.reports_title', 'Özelleştirilebilir PDF & CSV Raporları'),
+        description: t('features.reports_desc', 'Kendi şirket logonuz ve marka kimliğinizle tek tıkla profesyonel denetim raporları oluşturun ve paylaşın.'),
+        bg: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+        badgeClass: 'bg-amber-500/10 text-amber-300 border-amber-500/20',
+        borderHover: 'hover:border-amber-500/50',
+    },
+    {
+        key: 'ai_insights',
+        icon: Sparkles,
+        color: 'pink',
+        badge: t('features.ai_badge', 'Yapay Zeka'),
+        title: t('features.ai_title', 'Yapay Zeka Destekli SEO Önerileri'),
+        description: t('features.ai_desc', 'İçerik optimizasyonu, meta etiket üretimi ve teknik hataların düzeltilmesi için yapay zeka destekli akıllı öneriler.'),
+        bg: 'bg-pink-500/10 text-pink-400 border-pink-500/20',
+        badgeClass: 'bg-pink-500/10 text-pink-300 border-pink-500/20',
+        borderHover: 'hover:border-pink-500/50',
+    },
+    {
+        key: 'billing',
+        icon: CreditCard,
+        color: 'indigo',
+        badge: t('features.billing_badge', 'Entegrasyon'),
+        title: t('features.billing_title', 'Çoklu Sanal POS & Abonelik Yönetimi'),
+        description: t('features.billing_desc', 'Stripe, PayTR, Iyzico, Paddle ve 10+ ödeme altyapısı ile tam uyumlu otomatik faturalandırma ve kota sistemi.'),
+        bg: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20',
+        badgeClass: 'bg-indigo-500/10 text-indigo-300 border-indigo-500/20',
+        borderHover: 'hover:border-indigo-500/50',
+    },
+    {
+        key: 'branding',
+        icon: Zap,
+        color: 'amber',
+        badge: t('features.branding_badge', 'Kişiselleştirme'),
+        title: t('features.branding_title', 'Özel Markalama & Çift Tema'),
+        description: t('features.branding_desc', 'Karanlık ve aydınlık tema desteği, özel logo yükleme, dinamik favicon ve tam beyaz etiket (white-label) görünüm.'),
+        bg: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+        badgeClass: 'bg-amber-500/10 text-amber-300 border-amber-500/20',
+        borderHover: 'hover:border-amber-500/50',
+    },
+    {
+        key: 'security',
+        icon: Lock,
+        color: 'emerald',
+        badge: t('features.security_badge', 'Gizlilik'),
+        title: t('features.security_title', 'Tam Veri Gizliliği & Güvenlik'),
+        description: t('features.security_desc', 'Kendi sunucunuzda çalışan, verilerinizin 3. taraflarla paylaşılmadığı, tam şifrelemeli bağımsız SaaS mimarisi.'),
+        bg: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+        badgeClass: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/20',
+        borderHover: 'hover:border-emerald-500/50',
+    },
+]);
 </script>
 
 <template>
-    <Head :title="`${featuresTitle || $t('features.page_title', 'Platform Özellikleri')} - ${brandName}`" />
+    <Head :title="`${$t('features.page_title', 'Platform Özellikleri')} - ${brandName}`" />
 
     <div class="min-h-screen bg-slate-950 text-slate-100 selection:bg-indigo-500 selection:text-white flex flex-col justify-between">
         <!-- Top Navigation -->
@@ -198,15 +215,15 @@ const getColorClass = (color?: string) => {
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 text-center">
                 <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-semibold mb-6">
                     <Zap class="w-3.5 h-3.5" />
-                    <span>{{ featuresBadge || $t('features.page_title', 'Platform Özellikleri & Mimarisi') }}</span>
+                    <span>{{ $t('features.page_badge', 'Platform Mimarisi & Yetenekleri') }}</span>
                 </div>
 
                 <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight max-w-4xl mx-auto leading-tight sm:leading-tight">
-                    {{ featuresTitle || $t('welcome.headline_1', 'Gelişmiş Teknik SEO & Tarama Altyapısı') }}
+                    {{ $t('features.hero_title', 'Kurumsal Düzeyde Teknik SEO & Tarama Altyapısı') }}
                 </h1>
 
                 <p class="mt-6 text-base sm:text-lg text-slate-400 max-w-2xl mx-auto font-normal leading-relaxed">
-                    {{ featuresSubtitle || $t('welcome.description', 'Kendi sunucunuzda çalışan, çoklu çalışma alanları, SSRF korumalı crawler ve 25+ teknik analiz kuralı içeren kurumsal platform.') }}
+                    {{ $t('features.hero_subtitle', 'Kendi sunucunuzda çalışan, çoklu çalışma alanları, SSRF korumalı asenkron crawler ve 25+ teknik analiz kuralı içeren hepsi bir arada SEO platformu.') }}
                 </p>
 
                 <!-- Action CTA -->
@@ -229,26 +246,25 @@ const getColorClass = (color?: string) => {
                 <!-- Features Grid -->
                 <div class="mt-16 sm:mt-20 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-left max-w-6xl mx-auto">
                     <div
-                        v-for="feature in activeFeatures"
-                        :key="feature.id"
+                        v-for="feature in staticFeatures"
+                        :key="feature.key"
                         class="p-7 rounded-3xl bg-slate-900/40 border border-slate-800/80 hover:border-slate-700 backdrop-blur-sm transition-all duration-200 flex flex-col justify-between group hover:-translate-y-1 hover:shadow-xl hover:shadow-indigo-500/5"
-                        :class="getColorClass(feature.color).borderHover"
+                        :class="feature.borderHover"
                     >
                         <div>
                             <div class="flex items-center justify-between mb-5">
                                 <div
                                     class="w-13 h-13 rounded-2xl flex items-center justify-center p-3.5 border transition-transform group-hover:scale-110"
-                                    :class="getColorClass(feature.color).bg"
+                                    :class="feature.bg"
                                 >
                                     <Component
-                                        :is="getIconComponent(feature.icon)"
+                                        :is="feature.icon"
                                         class="w-6 h-6"
                                     />
                                 </div>
                                 <span
-                                    v-if="feature.badge"
                                     class="text-[11px] font-bold px-2.5 py-0.5 rounded-full border"
-                                    :class="getColorClass(feature.color).badge"
+                                    :class="feature.badgeClass"
                                 >
                                     {{ feature.badge }}
                                 </span>
@@ -269,7 +285,7 @@ const getColorClass = (color?: string) => {
                                 <span>{{ $t('features.active_badge', 'Aktif Özellik') }}</span>
                             </span>
                             <span class="font-mono text-[10px] text-slate-600 uppercase tracking-wider">
-                                {{ feature.color || 'core' }}
+                                {{ feature.color }}
                             </span>
                         </div>
                     </div>

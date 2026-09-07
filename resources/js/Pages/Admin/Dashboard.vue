@@ -37,7 +37,6 @@ import PaymentsTab from '@/Pages/Admin/Partials/PaymentsTab.vue';
 import PlansTab from '@/Pages/Admin/Partials/PlansTab.vue';
 import SalesTab from '@/Pages/Admin/Partials/SalesTab.vue';
 import LogoSettingsCard from '@/Pages/Admin/Partials/LogoSettingsCard.vue';
-import FeaturesSettingsCard from '@/Pages/Admin/Partials/FeaturesSettingsCard.vue';
 
 const { t } = useI18n();
 
@@ -409,14 +408,6 @@ const filteredAuditLogs = computed(() => {
                 >
                     <DollarSign class="w-3.5 h-3.5 text-amber-400" />
                     <span>{{ $t('admin.tab_sales') }} ({{ recentTransactions?.length || 0 }})</span>
-                </button>
-                <button
-                    @click="switchTab('features')"
-                    class="px-4 py-2 rounded-xl text-xs font-semibold transition-all flex items-center space-x-2"
-                    :class="activeTab === 'features' ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30' : 'text-slate-400 hover:text-white bg-slate-900/60'"
-                >
-                    <Sparkles class="w-3.5 h-3.5 text-pink-400" />
-                    <span>{{ $t('admin.tab_features', 'Özellikler Sayfası') }}</span>
                 </button>
             </div>
 
@@ -932,11 +923,6 @@ const filteredAuditLogs = computed(() => {
                         sales_status: filters.sales_status,
                     }"
                 />
-            </div>
-
-            <!-- Tab 7: Features Page Customization -->
-            <div v-else-if="activeTab === 'features'" class="space-y-6">
-                <FeaturesSettingsCard :system-settings="systemSettings" />
             </div>
         </div>
 
