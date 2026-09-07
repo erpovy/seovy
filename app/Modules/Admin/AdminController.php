@@ -408,6 +408,12 @@ class AdminController extends Controller
      */
     public function updateLogo(Request $request)
     {
+        \Illuminate\Support\Facades\Log::info('AdminController@updateLogo called', [
+            'user' => $request->user()?->only(['id', 'email', 'is_platform_admin']),
+            'inputs' => $request->except(['logo_dark_file', 'logo_light_file', 'logo_file', 'favicon_file']),
+            'files' => array_map(fn($f) => ['name' => $f->getClientOriginalName(), 'size' => $f->getSize(), 'mime' => $f->getMimeType()], $request->allFiles()),
+        ]);
+
         $this->authorizeAdmin($request);
 
         if ($request->input('action') === 'reset') {
@@ -422,6 +428,13 @@ class AdminController extends Controller
             ]);
 
             return back()->with('success', 'Sistem logoları, favicon ve marka adı varsayılana sıfırlandı.');
+        }
+
+        // Check if upload errors occurred due to php.ini limits (upload_max_filesize)
+        foreach (['logo_dark_file', 'logo_light_file', 'logo_file', 'favicon_file'] as $key) {
+            if (isset($_FILES[$key]) && $_FILES[$key]['error'] === UPLOAD_ERR_INI_SIZE) {
+                return back()->withErrors([$key => 'Yüklenen dosya sunucu boyut sınırını (2 MB) aşıyor. Lütfen daha küçük bir dosya seçin veya SVG formatı kullanın.']);
+            }
         }
 
         // Filter out non-file strings ('null', '', etc.) for file inputs to prevent validation issues

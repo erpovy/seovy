@@ -213,3 +213,25 @@ Route::get('/build/manifest.json', function () {
     abort(404);
 });
 
+// Uploaded Branding and Static File Serving Fallback
+Route::get('/uploads/{path}', function ($path) {
+    $fullPath = public_path('uploads/' . $path);
+    if (file_exists($fullPath) && is_file($fullPath)) {
+        $ext = strtolower(pathinfo($fullPath, PATHINFO_EXTENSION));
+        $mimes = [
+            'svg' => 'image/svg+xml',
+            'png' => 'image/png',
+            'jpg' => 'image/jpeg',
+            'jpeg' => 'image/jpeg',
+            'webp' => 'image/webp',
+            'ico' => 'image/x-icon',
+        ];
+        $mime = $mimes[$ext] ?? (mime_content_type($fullPath) ?: 'application/octet-stream');
+        return response()->file($fullPath, [
+            'Content-Type' => $mime,
+            'Cache-Control' => 'public, max-age=86400',
+        ]);
+    }
+    abort(404);
+})->where('path', '.*');
+
