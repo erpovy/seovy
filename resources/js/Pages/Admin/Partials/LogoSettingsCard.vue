@@ -12,12 +12,16 @@ import {
     Sparkles,
     Eye,
     Globe,
-    Type
+    Type,
+    Moon,
+    Sun
 } from 'lucide-vue-next';
 
 const props = defineProps<{
     systemSettings?: {
         logo?: string | null;
+        logo_dark?: string | null;
+        logo_light?: string | null;
         favicon?: string | null;
         brand_name?: string | null;
     };
@@ -26,8 +30,12 @@ const props = defineProps<{
 const { t } = useI18n();
 const page = usePage();
 
-const currentLogo = computed(() => {
-    return props.systemSettings?.logo || (page.props as any).system_settings?.logo || null;
+const currentDarkLogo = computed(() => {
+    return props.systemSettings?.logo_dark || props.systemSettings?.logo || (page.props as any).system_settings?.logo_dark || (page.props as any).system_settings?.logo || null;
+});
+
+const currentLightLogo = computed(() => {
+    return props.systemSettings?.logo_light || (page.props as any).system_settings?.logo_light || null;
 });
 
 const currentFavicon = computed(() => {
@@ -38,18 +46,29 @@ const currentBrandName = computed(() => {
     return props.systemSettings?.brand_name || (page.props as any).system_settings?.brand_name || 'Seovy';
 });
 
-const fileInputRef = ref<HTMLInputElement | null>(null);
+// File input refs
+const darkFileInputRef = ref<HTMLInputElement | null>(null);
+const lightFileInputRef = ref<HTMLInputElement | null>(null);
 const faviconInputRef = ref<HTMLInputElement | null>(null);
 
-const previewUrl = ref<string | null>(null);
+// Local file preview object URLs
+const darkPreviewUrl = ref<string | null>(null);
+const lightPreviewUrl = ref<string | null>(null);
 const faviconPreviewUrl = ref<string | null>(null);
 
-const uploadMode = ref<'file' | 'url'>('file');
+// Active Tab in logo card: 'dark' | 'light'
+const activeLogoTab = ref<'dark' | 'light'>('dark');
+
+// Upload modes: 'file' | 'url'
+const darkUploadMode = ref<'file' | 'url'>('file');
+const lightUploadMode = ref<'file' | 'url'>('file');
 const faviconUploadMode = ref<'file' | 'url'>('file');
 
 const form = useForm({
-    logo_file: null as File | null,
-    logo_url: currentLogo.value || '',
+    logo_dark_file: null as File | null,
+    logo_dark_url: currentDarkLogo.value || '',
+    logo_light_file: null as File | null,
+    logo_light_url: currentLightLogo.value || '',
     favicon_file: null as File | null,
     favicon_url: currentFavicon.value || '',
     brand_name: currentBrandName.value,
@@ -57,12 +76,21 @@ const form = useForm({
 
 const isResetting = ref(false);
 
-const onFileChange = (e: Event) => {
+const onDarkFileChange = (e: Event) => {
     const target = e.target as HTMLInputElement;
     if (target.files && target.files[0]) {
         const file = target.files[0];
-        form.logo_file = file;
-        previewUrl.value = URL.createObjectURL(file);
+        form.logo_dark_file = file;
+        darkPreviewUrl.value = URL.createObjectURL(file);
+    }
+};
+
+const onLightFileChange = (e: Event) => {
+    const target = e.target as HTMLInputElement;
+    if (target.files && target.files[0]) {
+        const file = target.files[0];
+        form.logo_light_file = file;
+        lightPreviewUrl.value = URL.createObjectURL(file);
     }
 };
 
@@ -75,19 +103,31 @@ const onFaviconChange = (e: Event) => {
     }
 };
 
-const triggerFileInput = () => {
-    fileInputRef.value?.click();
+const triggerDarkFileInput = () => {
+    darkFileInputRef.value?.click();
+};
+
+const triggerLightFileInput = () => {
+    lightFileInputRef.value?.click();
 };
 
 const triggerFaviconInput = () => {
     faviconInputRef.value?.click();
 };
 
-const clearSelectedFile = () => {
-    form.logo_file = null;
-    previewUrl.value = null;
-    if (fileInputRef.value) {
-        fileInputRef.value.value = '';
+const clearSelectedDarkFile = () => {
+    form.logo_dark_file = null;
+    darkPreviewUrl.value = null;
+    if (darkFileInputRef.value) {
+        darkFileInputRef.value.value = '';
+    }
+};
+
+const clearSelectedLightFile = () => {
+    form.logo_light_file = null;
+    lightPreviewUrl.value = null;
+    if (lightFileInputRef.value) {
+        lightFileInputRef.value.value = '';
     }
 };
 
@@ -104,39 +144,48 @@ const submitForm = () => {
         forceFormData: true,
         preserveScroll: true,
         onSuccess: () => {
-            clearSelectedFile();
+            clearSelectedDarkFile();
+            clearSelectedLightFile();
             clearSelectedFavicon();
         },
     });
 };
 
 const resetToDefault = () => {
-    if (confirm(t('admin.logo_confirm_reset', 'Sistem logosunu varsayılana sıfırlamak istediğinize emin misiniz?'))) {
+    if (confirm(t('admin.logo_confirm_reset', 'Sistem logolarını ve faviconu varsayılana sıfırlamak istediğinize emin misiniz?'))) {
         isResetting.value = true;
         router.post('/admin/settings/logo', { action: 'reset' }, {
             preserveScroll: true,
             onFinish: () => {
                 isResetting.value = false;
-                clearSelectedFile();
+                clearSelectedDarkFile();
+                clearSelectedLightFile();
                 clearSelectedFavicon();
                 form.brand_name = 'Seovy';
-                form.logo_url = '';
+                form.logo_dark_url = '';
+                form.logo_light_url = '';
                 form.favicon_url = '';
             },
         });
     }
 };
 
-const activePreview = computed(() => {
-    if (previewUrl.value) return previewUrl.value;
-    if (uploadMode.value === 'url' && form.logo_url.trim()) return form.logo_url.trim();
-    return currentLogo.value;
+const activeDarkPreview = computed(() => {
+    if (darkPreviewUrl.value) return darkPreviewUrl.value;
+    if (darkUploadMode.value === 'url' && form.logo_dark_url.trim()) return form.logo_dark_url.trim();
+    return currentDarkLogo.value;
+});
+
+const activeLightPreview = computed(() => {
+    if (lightPreviewUrl.value) return lightPreviewUrl.value;
+    if (lightUploadMode.value === 'url' && form.logo_light_url.trim()) return form.logo_light_url.trim();
+    return currentLightLogo.value || activeDarkPreview.value;
 });
 
 const activeFaviconPreview = computed(() => {
     if (faviconPreviewUrl.value) return faviconPreviewUrl.value;
     if (faviconUploadMode.value === 'url' && form.favicon_url.trim()) return form.favicon_url.trim();
-    return currentFavicon.value || activePreview.value;
+    return currentFavicon.value || activeDarkPreview.value || activeLightPreview.value;
 });
 </script>
 
@@ -150,8 +199,8 @@ const activeFaviconPreview = computed(() => {
                 </div>
                 <div>
                     <h3 class="text-base font-bold text-white flex items-center space-x-2">
-                        <span>{{ t('admin.logo_card_title', 'Sistem Logosu & Marka Ayarları') }}</span>
-                        <span v-if="currentLogo" class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                        <span>{{ t('admin.logo_card_title', 'Sistem Logoları & Marka Ayarları') }}</span>
+                        <span v-if="currentDarkLogo || currentLightLogo" class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                             {{ t('admin.logo_custom_active', 'Özel Logo Aktif') }}
                         </span>
                         <span v-else class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-800 text-slate-400 border border-slate-700">
@@ -159,12 +208,12 @@ const activeFaviconPreview = computed(() => {
                         </span>
                     </h3>
                     <p class="text-xs text-slate-400 mt-0.5">
-                        {{ t('admin.logo_card_desc', 'Platformun tüm kullanıcı sayfalarında ve sol menüde (sidebar) görüntülenecek logonuzu ve marka adınızı özelleştirin.') }}
+                        {{ t('admin.logo_card_desc', 'Platformun aydınlık ve karanlık temalarında görüntülenecek logolarınızı, favicon ve marka adınızı özelleştirin.') }}
                     </p>
                 </div>
             </div>
 
-            <div v-if="currentLogo" class="flex items-center space-x-2">
+            <div v-if="currentDarkLogo || currentLightLogo || currentFavicon" class="flex items-center space-x-2">
                 <button
                     type="button"
                     @click="resetToDefault"
@@ -179,8 +228,8 @@ const activeFaviconPreview = computed(() => {
 
         <form @submit.prevent="submitForm" class="space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <!-- Left: Logo Upload & Inputs (7 cols) -->
-                <div class="lg:col-span-7 space-y-4">
+                <!-- Left: Inputs (7 cols) -->
+                <div class="lg:col-span-7 space-y-6">
                     <!-- Brand Name Input -->
                     <div>
                         <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2 flex items-center space-x-1.5">
@@ -198,92 +247,198 @@ const activeFaviconPreview = computed(() => {
                         </p>
                     </div>
 
-                    <!-- Upload Type Switcher -->
-                    <div class="flex items-center space-x-2 bg-slate-950/60 p-1 rounded-xl border border-slate-800 text-xs font-medium w-fit">
-                        <button
-                            type="button"
-                            @click="uploadMode = 'file'"
-                            class="px-3 py-1.5 rounded-lg transition-all flex items-center space-x-1.5"
-                            :class="uploadMode === 'file' ? 'bg-indigo-600 text-white font-semibold shadow-sm' : 'text-slate-400 hover:text-white'"
-                        >
-                            <Upload class="w-3.5 h-3.5" />
-                            <span>{{ t('admin.logo_mode_file', 'Görsel Yükle (Dosya)') }}</span>
-                        </button>
-                        <button
-                            type="button"
-                            @click="uploadMode = 'url'"
-                            class="px-3 py-1.5 rounded-lg transition-all flex items-center space-x-1.5"
-                            :class="uploadMode === 'url' ? 'bg-indigo-600 text-white font-semibold shadow-sm' : 'text-slate-400 hover:text-white'"
-                        >
-                            <Globe class="w-3.5 h-3.5" />
-                            <span>{{ t('admin.logo_mode_url', 'Logo URL Adresi') }}</span>
-                        </button>
-                    </div>
-
-                    <!-- File Upload Mode -->
-                    <div v-if="uploadMode === 'file'" class="space-y-2">
-                        <input
-                            ref="fileInputRef"
-                            type="file"
-                            accept=".svg, image/svg+xml, .png, image/png, .jpg, .jpeg, image/jpeg, .webp, image/webp"
-                            class="hidden"
-                            @change="onFileChange"
-                        />
-
-                        <div
-                            @click="triggerFileInput"
-                            class="border-2 border-dashed border-slate-700/80 hover:border-indigo-500/80 rounded-2xl p-6 flex flex-col items-center justify-center text-center cursor-pointer transition-all bg-slate-950/40 hover:bg-slate-950/70 group"
-                        >
-                            <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 flex items-center justify-center group-hover:scale-110 transition-transform mb-3">
-                                <Upload class="w-6 h-6" />
+                    <!-- Logo Tabs: Dark Theme Logo vs Light Theme Logo -->
+                    <div class="p-4 rounded-2xl bg-slate-950/70 border border-slate-800/80 space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+                            <div class="flex items-center space-x-2">
+                                <button
+                                    type="button"
+                                    @click="activeLogoTab = 'dark'"
+                                    class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center space-x-2"
+                                    :class="activeLogoTab === 'dark' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/30' : 'text-slate-400 hover:text-white bg-slate-900 border border-slate-800'"
+                                >
+                                    <Moon class="w-3.5 h-3.5" />
+                                    <span>{{ t('admin.logo_tab_dark', 'Karanlık Tema Logosu') }}</span>
+                                    <span v-if="currentDarkLogo" class="w-1.5 h-1.5 rounded-full bg-emerald-400 ml-1"></span>
+                                </button>
+                                <button
+                                    type="button"
+                                    @click="activeLogoTab = 'light'"
+                                    class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center space-x-2"
+                                    :class="activeLogoTab === 'light' ? 'bg-amber-500 text-slate-950 shadow-lg shadow-amber-500/30' : 'text-slate-400 hover:text-white bg-slate-900 border border-slate-800'"
+                                >
+                                    <Sun class="w-3.5 h-3.5" />
+                                    <span>{{ t('admin.logo_tab_light', 'Aydınlık Tema Logosu') }}</span>
+                                    <span v-if="currentLightLogo" class="w-1.5 h-1.5 rounded-full bg-emerald-400 ml-1"></span>
+                                </button>
                             </div>
-                            <span class="text-xs font-semibold text-white group-hover:text-indigo-300 transition-colors">
-                                {{ form.logo_file ? form.logo_file.name : t('admin.logo_drag_or_browse', 'Yeni logo seçmek için tıklayın veya dosyayı sürükleyin') }}
-                            </span>
-                            <span class="text-[11px] text-slate-500 mt-1">
-                                {{ t('admin.logo_supported_formats', 'PNG, SVG, JPG veya WebP (Önerilen: Şeffaf arka plan, Maksimum 2 MB)') }}
+                            <span class="text-[11px] text-slate-500 hidden sm:inline">
+                                {{ activeLogoTab === 'dark' ? t('admin.logo_dark_desc', 'Koyu arayüz zemininde görüntülenecek açık renkli logo') : t('admin.logo_light_desc', 'Açık arayüz zemininde görüntülenecek koyu/renkli logo') }}
                             </span>
                         </div>
 
-                        <div v-if="form.logo_file" class="flex items-center justify-between text-xs text-indigo-300 bg-indigo-950/30 border border-indigo-500/30 p-2.5 rounded-xl">
-                            <span class="truncate">{{ form.logo_file.name }} ({{ Math.round(form.logo_file.size / 1024) }} KB)</span>
-                            <button
-                                type="button"
-                                @click="clearSelectedFile"
-                                class="text-slate-400 hover:text-rose-400 ml-2 shrink-0"
-                            >
-                                {{ t('admin.logo_cancel', 'Vazgeç') }}
-                            </button>
+                        <!-- Dark Theme Logo Form Fields -->
+                        <div v-if="activeLogoTab === 'dark'" class="space-y-3">
+                            <div class="flex items-center space-x-2 bg-slate-900 p-1 rounded-xl border border-slate-800 text-xs font-medium w-fit">
+                                <button
+                                    type="button"
+                                    @click="darkUploadMode = 'file'"
+                                    class="px-3 py-1.5 rounded-lg transition-all flex items-center space-x-1.5"
+                                    :class="darkUploadMode === 'file' ? 'bg-indigo-600 text-white font-semibold shadow-sm' : 'text-slate-400 hover:text-white'"
+                                >
+                                    <Upload class="w-3.5 h-3.5" />
+                                    <span>{{ t('admin.logo_mode_file', 'Görsel Yükle (Dosya)') }}</span>
+                                </button>
+                                <button
+                                    type="button"
+                                    @click="darkUploadMode = 'url'"
+                                    class="px-3 py-1.5 rounded-lg transition-all flex items-center space-x-1.5"
+                                    :class="darkUploadMode === 'url' ? 'bg-indigo-600 text-white font-semibold shadow-sm' : 'text-slate-400 hover:text-white'"
+                                >
+                                    <Globe class="w-3.5 h-3.5" />
+                                    <span>{{ t('admin.logo_mode_url', 'Logo URL Adresi') }}</span>
+                                </button>
+                            </div>
+
+                            <div v-if="darkUploadMode === 'file'" class="space-y-2">
+                                <input
+                                    ref="darkFileInputRef"
+                                    type="file"
+                                    accept=".svg, image/svg+xml, .png, image/png, .jpg, .jpeg, image/jpeg, .webp, image/webp"
+                                    class="hidden"
+                                    @change="onDarkFileChange"
+                                />
+
+                                <div
+                                    @click="triggerDarkFileInput"
+                                    class="border-2 border-dashed border-slate-700/80 hover:border-indigo-500/80 rounded-2xl p-5 flex flex-col items-center justify-center text-center cursor-pointer transition-all bg-slate-900/50 hover:bg-slate-900/80 group"
+                                >
+                                    <div class="w-10 h-10 rounded-2xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 flex items-center justify-center group-hover:scale-110 transition-transform mb-2">
+                                        <Moon class="w-5 h-5" />
+                                    </div>
+                                    <span class="text-xs font-semibold text-white group-hover:text-indigo-300 transition-colors">
+                                        {{ form.logo_dark_file ? form.logo_dark_file.name : t('admin.logo_dark_drag_or_browse', 'Karanlık tema logosu seçmek için tıklayın veya dosyayı sürükleyin') }}
+                                    </span>
+                                    <span class="text-[11px] text-slate-500 mt-1">
+                                        {{ t('admin.logo_supported_formats', 'PNG, SVG, JPG veya WebP (Önerilen: Şeffaf arka plan, Maksimum 2 MB)') }}
+                                    </span>
+                                </div>
+
+                                <div v-if="form.logo_dark_file" class="flex items-center justify-between text-xs text-indigo-300 bg-indigo-950/30 border border-indigo-500/30 p-2.5 rounded-xl">
+                                    <span class="truncate">{{ form.logo_dark_file.name }} ({{ Math.round(form.logo_dark_file.size / 1024) }} KB)</span>
+                                    <button
+                                        type="button"
+                                        @click="clearSelectedDarkFile"
+                                        class="text-slate-400 hover:text-rose-400 ml-2 shrink-0"
+                                    >
+                                        {{ t('admin.logo_cancel', 'Vazgeç') }}
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div v-else class="space-y-2">
+                                <input
+                                    v-model="form.logo_dark_url"
+                                    type="url"
+                                    placeholder="https://example.com/logo-white.svg"
+                                    class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                                />
+                                <p class="text-[11px] text-slate-500">
+                                    {{ t('admin.logo_url_hint', 'Doğrudan HTTPS erişilebilir şeffaf logo görseli bağlantısı girin.') }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Light Theme Logo Form Fields -->
+                        <div v-if="activeLogoTab === 'light'" class="space-y-3">
+                            <div class="flex items-center space-x-2 bg-slate-900 p-1 rounded-xl border border-slate-800 text-xs font-medium w-fit">
+                                <button
+                                    type="button"
+                                    @click="lightUploadMode = 'file'"
+                                    class="px-3 py-1.5 rounded-lg transition-all flex items-center space-x-1.5"
+                                    :class="lightUploadMode === 'file' ? 'bg-amber-500 text-slate-950 font-bold shadow-sm' : 'text-slate-400 hover:text-white'"
+                                >
+                                    <Upload class="w-3.5 h-3.5" />
+                                    <span>{{ t('admin.logo_mode_file', 'Görsel Yükle (Dosya)') }}</span>
+                                </button>
+                                <button
+                                    type="button"
+                                    @click="lightUploadMode = 'url'"
+                                    class="px-3 py-1.5 rounded-lg transition-all flex items-center space-x-1.5"
+                                    :class="lightUploadMode === 'url' ? 'bg-amber-500 text-slate-950 font-bold shadow-sm' : 'text-slate-400 hover:text-white'"
+                                >
+                                    <Globe class="w-3.5 h-3.5" />
+                                    <span>{{ t('admin.logo_mode_url', 'Logo URL Adresi') }}</span>
+                                </button>
+                            </div>
+
+                            <div v-if="lightUploadMode === 'file'" class="space-y-2">
+                                <input
+                                    ref="lightFileInputRef"
+                                    type="file"
+                                    accept=".svg, image/svg+xml, .png, image/png, .jpg, .jpeg, image/jpeg, .webp, image/webp"
+                                    class="hidden"
+                                    @change="onLightFileChange"
+                                />
+
+                                <div
+                                    @click="triggerLightFileInput"
+                                    class="border-2 border-dashed border-slate-700/80 hover:border-amber-500/80 rounded-2xl p-5 flex flex-col items-center justify-center text-center cursor-pointer transition-all bg-slate-900/50 hover:bg-slate-900/80 group"
+                                >
+                                    <div class="w-10 h-10 rounded-2xl bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center group-hover:scale-110 transition-transform mb-2">
+                                        <Sun class="w-5 h-5" />
+                                    </div>
+                                    <span class="text-xs font-semibold text-white group-hover:text-amber-300 transition-colors">
+                                        {{ form.logo_light_file ? form.logo_light_file.name : t('admin.logo_light_drag_or_browse', 'Aydınlık tema logosu seçmek için tıklayın veya dosyayı sürükleyin') }}
+                                    </span>
+                                    <span class="text-[11px] text-slate-500 mt-1">
+                                        {{ t('admin.logo_supported_formats', 'PNG, SVG, JPG veya WebP (Önerilen: Şeffaf arka plan, koyu veya renkli logo)') }}
+                                    </span>
+                                </div>
+
+                                <div v-if="form.logo_light_file" class="flex items-center justify-between text-xs text-amber-300 bg-amber-950/30 border border-amber-500/30 p-2.5 rounded-xl">
+                                    <span class="truncate">{{ form.logo_light_file.name }} ({{ Math.round(form.logo_light_file.size / 1024) }} KB)</span>
+                                    <button
+                                        type="button"
+                                        @click="clearSelectedLightFile"
+                                        class="text-slate-400 hover:text-rose-400 ml-2 shrink-0"
+                                    >
+                                        {{ t('admin.logo_cancel', 'Vazgeç') }}
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div v-else class="space-y-2">
+                                <input
+                                    v-model="form.logo_light_url"
+                                    type="url"
+                                    placeholder="https://example.com/logo-dark.svg"
+                                    class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500"
+                                />
+                                <p class="text-[11px] text-slate-500">
+                                    {{ t('admin.logo_light_url_hint', 'Aydınlık tema için doğrudan HTTPS erişilebilir koyu renkli logo görseli bağlantısı girin.') }}
+                                </p>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Direct URL Mode -->
-                    <div v-else class="space-y-2">
-                        <input
-                            v-model="form.logo_url"
-                            type="url"
-                            placeholder="https://example.com/assets/my-logo.png"
-                            class="w-full px-4 py-2.5 rounded-xl bg-slate-950/80 border border-slate-800 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
-                        />
-                        <p class="text-[11px] text-slate-500">
-                            {{ t('admin.logo_url_hint', 'Doğrudan HTTPS erişilebilir şeffaf logo görseli bağlantısı girin.') }}
-                        </p>
-                    </div>
-
-                    <!-- Favicon Settings Section -->
-                    <div class="pt-4 border-t border-slate-800/80 space-y-4">
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1 flex items-center space-x-1.5">
+                    <!-- Favicon Section -->
+                    <div class="p-4 rounded-2xl bg-slate-950/70 border border-slate-800/80 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <label class="text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center space-x-1.5">
                                 <Sparkles class="w-3.5 h-3.5 text-amber-400" />
                                 <span>{{ t('admin.logo_favicon_title', 'Favicon (Tarayıcı Sekme Simgesi)') }}</span>
                             </label>
-                            <p class="text-[11px] text-slate-500">
-                                {{ t('admin.logo_favicon_hint', 'Tarayıcı sekmelerinde ve yer imlerinde görüntülenecek simge (.ico, .png, .svg).') }}
-                            </p>
+                            <span v-if="currentFavicon" class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                                {{ t('admin.logo_custom_active', 'Özel Aktif') }}
+                            </span>
                         </div>
+                        <p class="text-[11px] text-slate-400">
+                            {{ t('admin.logo_favicon_hint', 'Tarayıcı sekmelerinde ve yer imlerinde görüntülenecek 16x16 / 32x32 piksel simge (.ico, .png, .svg).') }}
+                        </p>
 
-                        <!-- Favicon Upload Type Switcher -->
-                        <div class="flex items-center space-x-2 bg-slate-950/60 p-1 rounded-xl border border-slate-800 text-xs font-medium w-fit">
+                        <!-- Favicon Upload Mode Switcher -->
+                        <div class="flex items-center space-x-2 bg-slate-900 p-1 rounded-xl border border-slate-800 text-xs font-medium w-fit">
                             <button
                                 type="button"
                                 @click="faviconUploadMode = 'file'"
@@ -291,7 +446,7 @@ const activeFaviconPreview = computed(() => {
                                 :class="faviconUploadMode === 'file' ? 'bg-indigo-600 text-white font-semibold shadow-sm' : 'text-slate-400 hover:text-white'"
                             >
                                 <Upload class="w-3.5 h-3.5" />
-                                <span>{{ t('admin.logo_favicon_mode_file', 'Favicon Yükle (Dosya)') }}</span>
+                                <span>{{ t('admin.logo_favicon_mode_file', 'Favicon Dosyası Yükle') }}</span>
                             </button>
                             <button
                                 type="button"
@@ -316,7 +471,7 @@ const activeFaviconPreview = computed(() => {
 
                             <div
                                 @click="triggerFaviconInput"
-                                class="border-2 border-dashed border-slate-700/80 hover:border-amber-500/80 rounded-2xl p-5 flex flex-col items-center justify-center text-center cursor-pointer transition-all bg-slate-950/40 hover:bg-slate-950/70 group"
+                                class="border-2 border-dashed border-slate-700/80 hover:border-amber-500/80 rounded-2xl p-5 flex flex-col items-center justify-center text-center cursor-pointer transition-all bg-slate-900/50 hover:bg-slate-900/80 group"
                             >
                                 <div class="w-10 h-10 rounded-2xl bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center group-hover:scale-110 transition-transform mb-2">
                                     <Sparkles class="w-5 h-5" />
@@ -347,7 +502,7 @@ const activeFaviconPreview = computed(() => {
                                 v-model="form.favicon_url"
                                 type="url"
                                 placeholder="https://example.com/favicon.ico"
-                                class="w-full px-4 py-2.5 rounded-xl bg-slate-950/80 border border-slate-800 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                                class="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
                             />
                             <p class="text-[11px] text-slate-500">
                                 {{ t('admin.logo_url_hint', 'Doğrudan HTTPS erişilebilir favicon bağlantısı girin.') }}
@@ -356,9 +511,9 @@ const activeFaviconPreview = computed(() => {
                     </div>
 
                     <!-- Errors -->
-                    <div v-if="form.errors.logo_file || form.errors.logo_url || form.errors.favicon_file || form.errors.favicon_url" class="text-xs text-rose-400 bg-rose-950/30 border border-rose-500/30 p-3 rounded-xl flex items-center space-x-2">
+                    <div v-if="form.errors.logo_dark_file || form.errors.logo_dark_url || form.errors.logo_light_file || form.errors.logo_light_url || form.errors.favicon_file || form.errors.favicon_url" class="text-xs text-rose-400 bg-rose-950/30 border border-rose-500/30 p-3 rounded-xl flex items-center space-x-2">
                         <AlertCircle class="w-4 h-4 shrink-0" />
-                        <span>{{ form.errors.logo_file || form.errors.logo_url || form.errors.favicon_file || form.errors.favicon_url }}</span>
+                        <span>{{ form.errors.logo_dark_file || form.errors.logo_dark_url || form.errors.logo_light_file || form.errors.logo_light_url || form.errors.favicon_file || form.errors.favicon_url }}</span>
                     </div>
 
                     <!-- Submit Button -->
@@ -369,7 +524,7 @@ const activeFaviconPreview = computed(() => {
                             class="px-5 py-2.5 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/30 transition-all flex items-center space-x-2 disabled:opacity-50"
                         >
                             <Check class="w-4 h-4" />
-                            <span>{{ form.processing ? t('admin.logo_saving', 'Kaydediliyor...') : t('admin.logo_save_btn', 'Logoyu & Markayı Kaydet') }}</span>
+                            <span>{{ form.processing ? t('admin.logo_saving', 'Kaydediliyor...') : t('admin.logo_save_btn', 'Logoları & Markayı Kaydet') }}</span>
                         </button>
                     </div>
                 </div>
@@ -378,20 +533,26 @@ const activeFaviconPreview = computed(() => {
                 <div class="lg:col-span-5 space-y-4">
                     <span class="block text-xs font-semibold text-slate-300 uppercase tracking-wider flex items-center space-x-1.5">
                         <Eye class="w-3.5 h-3.5 text-indigo-400" />
-                        <span>{{ t('admin.logo_live_preview', 'Canlı Önizleme') }}</span>
+                        <span>{{ t('admin.logo_live_preview', 'Canlı Önizlemeler') }}</span>
                     </span>
 
                     <!-- Dark Sidebar Simulation Box -->
                     <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800/90 space-y-2">
-                        <span class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block">
-                            {{ t('admin.logo_preview_sidebar', 'Koyu Zemin & Sol Menü Önizlemesi') }}
-                        </span>
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider flex items-center space-x-1">
+                                <Moon class="w-3 h-3 text-indigo-400" />
+                                <span>{{ t('admin.logo_preview_sidebar', 'Karanlık Tema Önizlemesi') }}</span>
+                            </span>
+                            <span class="text-[9px] px-1.5 py-0.5 rounded bg-slate-900 text-slate-400 border border-slate-800">
+                                Dark Mode
+                            </span>
+                        </div>
                         <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-between">
                             <div class="flex items-center space-x-3 min-w-0">
-                                <template v-if="activePreview">
+                                <template v-if="activeDarkPreview">
                                     <img
-                                        :src="activePreview"
-                                        alt="Logo Preview"
+                                        :src="activeDarkPreview"
+                                        alt="Dark Logo Preview"
                                         class="h-9 max-w-[130px] object-contain rounded-lg"
                                         @error="($event.target as HTMLElement).style.display = 'none'"
                                     />
@@ -434,6 +595,65 @@ const activeFaviconPreview = computed(() => {
                         </div>
                     </div>
 
+                    <!-- Light Sidebar / Surface Simulation Box -->
+                    <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800/90 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] font-semibold text-amber-400 uppercase tracking-wider flex items-center space-x-1">
+                                <Sun class="w-3 h-3 text-amber-400" />
+                                <span>{{ t('admin.logo_preview_light', 'Aydınlık Tema Önizlemesi') }}</span>
+                            </span>
+                            <span class="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                                Light Mode
+                            </span>
+                        </div>
+                        <div class="p-3 rounded-xl bg-white border border-slate-200 flex items-center justify-between shadow-sm">
+                            <div class="flex items-center space-x-3 min-w-0">
+                                <template v-if="activeLightPreview">
+                                    <img
+                                        :src="activeLightPreview"
+                                        alt="Light Logo Preview"
+                                        class="h-9 max-w-[130px] object-contain rounded-lg"
+                                        @error="($event.target as HTMLElement).style.display = 'none'"
+                                    />
+                                </template>
+                                <template v-else>
+                                    <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center shadow-md shrink-0">
+                                        <Activity class="w-5 h-5 text-white" />
+                                    </div>
+                                    <span class="text-xl font-bold tracking-tight text-slate-900 truncate">
+                                        {{ form.brand_name || 'Seovy' }}
+                                    </span>
+                                </template>
+                            </div>
+                            <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 shrink-0">
+                                Owner
+                            </span>
+                        </div>
+
+                        <!-- Simulated Light Plan Badge -->
+                        <div class="px-1 pt-1">
+                            <div class="flex items-center justify-between px-2.5 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-xs">
+                                <div class="flex items-center space-x-2">
+                                    <span class="relative flex h-2 w-2">
+                                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                        <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-600"></span>
+                                    </span>
+                                    <div class="flex flex-col">
+                                        <span class="text-[9px] uppercase tracking-wider font-semibold text-slate-500 leading-tight">
+                                            {{ t('nav.active_plan', 'Aktif Paket') }}
+                                        </span>
+                                        <span class="text-xs font-bold text-slate-800 truncate">
+                                            Pro Plan
+                                        </span>
+                                    </div>
+                                </div>
+                                <span class="text-[10px] text-indigo-600 font-medium">
+                                    {{ t('nav.upgrade', 'Yükselt') }} &rarr;
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Browser Tab Simulation (Favicon Preview) -->
                     <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800/90 space-y-2">
                         <span class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block">
@@ -453,32 +673,6 @@ const activeFaviconPreview = computed(() => {
                             <span class="text-xs font-medium text-slate-200 truncate">
                                 {{ form.brand_name || 'Seovy' }} — SEO & Technical Crawler
                             </span>
-                        </div>
-                    </div>
-
-                    <!-- Light Container Contrast Check -->
-                    <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800/90 space-y-2">
-                        <span class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block">
-                            {{ t('admin.logo_preview_light', 'Açık Zemin Kontrast Testi') }}
-                        </span>
-                        <div class="p-3 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center min-h-[54px]">
-                            <template v-if="activePreview">
-                                <img
-                                    :src="activePreview"
-                                    alt="Logo Contrast Check"
-                                    class="h-8 max-w-[150px] object-contain"
-                                />
-                            </template>
-                            <template v-else>
-                                <div class="flex items-center space-x-2">
-                                    <div class="w-7 h-7 rounded-lg bg-indigo-600 flex items-center justify-center text-white">
-                                        <Activity class="w-4 h-4" />
-                                    </div>
-                                    <span class="text-base font-bold text-slate-900">
-                                        {{ form.brand_name || 'Seovy' }}
-                                    </span>
-                                </div>
-                            </template>
                         </div>
                     </div>
                 </div>

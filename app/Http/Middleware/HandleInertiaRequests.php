@@ -71,7 +71,9 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'system_settings' => [
-                'logo' => \App\Models\SystemSetting::get('system_logo', null),
+                'logo' => \App\Models\SystemSetting::get('system_logo_dark') ?: \App\Models\SystemSetting::get('system_logo', null),
+                'logo_dark' => \App\Models\SystemSetting::get('system_logo_dark') ?: \App\Models\SystemSetting::get('system_logo', null),
+                'logo_light' => \App\Models\SystemSetting::get('system_logo_light', null),
                 'favicon' => \App\Models\SystemSetting::get('system_favicon', null),
                 'brand_name' => \App\Models\SystemSetting::get('brand_name', 'Seovy'),
             ],

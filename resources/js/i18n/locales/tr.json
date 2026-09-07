@@ -864,7 +864,14 @@
         "logo_favicon_mode_url": "Favicon URL Adresi",
         "logo_favicon_drag_or_browse": "Favicon seçmek için tıklayın veya dosyayı sürükleyin",
         "logo_favicon_supported_formats": "ICO, SVG, PNG, WebP (Önerilen: 32x32 piksel, Maks 1 MB)",
-        "logo_preview_browser_tab": "Tarayıcı Sekmesi Önizlemesi"
+        "logo_preview_browser_tab": "Tarayıcı Sekmesi Önizlemesi",
+        "logo_tab_dark": "Karanlık Tema Logosu",
+        "logo_tab_light": "Aydınlık Tema Logosu",
+        "logo_dark_desc": "Koyu arayüz zemininde görüntülenecek açık renkli logo",
+        "logo_light_desc": "Açık arayüz zemininde görüntülenecek koyu/renkli logo",
+        "logo_dark_drag_or_browse": "Karanlık tema logosu seçmek için tıklayın veya dosyayı sürükleyin",
+        "logo_light_drag_or_browse": "Aydınlık tema logosu seçmek için tıklayın veya dosyayı sürükleyin",
+        "logo_light_url_hint": "Aydınlık tema için doğrudan HTTPS erişilebilir koyu renkli logo görseli bağlantısı girin."
     },
     "languages": {
         "select": "Dil Seçin",

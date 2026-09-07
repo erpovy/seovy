@@ -9,7 +9,10 @@
 
     <!-- Dynamic Favicon -->
     @php
-        $systemFavicon = \App\Models\SystemSetting::get('system_favicon', null) ?: \App\Models\SystemSetting::get('system_logo', null);
+        $systemFavicon = \App\Models\SystemSetting::get('system_favicon', null)
+            ?: \App\Models\SystemSetting::get('system_logo_dark', null)
+            ?: \App\Models\SystemSetting::get('system_logo_light', null)
+            ?: \App\Models\SystemSetting::get('system_logo', null);
     @endphp
     @if ($systemFavicon)
         <link rel="icon" href="{{ $systemFavicon }}" id="app-favicon">

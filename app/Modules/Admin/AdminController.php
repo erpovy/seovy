@@ -171,7 +171,9 @@ class AdminController extends Controller
             'recentTransactions' => $recentTransactions,
             'workspacesList' => $workspacesList,
             'systemSettings' => [
-                'logo' => SystemSetting::get('system_logo', null),
+                'logo' => SystemSetting::get('system_logo_dark') ?: SystemSetting::get('system_logo', null),
+                'logo_dark' => SystemSetting::get('system_logo_dark') ?: SystemSetting::get('system_logo', null),
+                'logo_light' => SystemSetting::get('system_logo_light', null),
                 'favicon' => SystemSetting::get('system_favicon', null),
                 'brand_name' => SystemSetting::get('brand_name', 'Seovy'),
             ],
@@ -410,6 +412,8 @@ class AdminController extends Controller
 
         if ($request->input('action') === 'reset') {
             SystemSetting::set('system_logo', null);
+            SystemSetting::set('system_logo_dark', null);
+            SystemSetting::set('system_logo_light', null);
             SystemSetting::set('system_favicon', null);
             SystemSetting::set('brand_name', 'Seovy');
 
@@ -417,10 +421,15 @@ class AdminController extends Controller
                 'action' => 'reset_to_default',
             ]);
 
-            return back()->with('success', 'Sistem logosu, favicon ve marka adı varsayılana sıfırlandı.');
+            return back()->with('success', 'Sistem logoları, favicon ve marka adı varsayılana sıfırlandı.');
         }
 
         $validated = $request->validate([
+            'logo_dark_file' => ['nullable', 'file', 'mimes:png,jpg,jpeg,svg,webp', 'max:2048'],
+            'logo_dark_url' => ['nullable', 'string', 'max:500'],
+            'logo_light_file' => ['nullable', 'file', 'mimes:png,jpg,jpeg,svg,webp', 'max:2048'],
+            'logo_light_url' => ['nullable', 'string', 'max:500'],
+            // Backward-compatible generic logo input
             'logo_file' => ['nullable', 'file', 'mimes:png,jpg,jpeg,svg,webp', 'max:2048'],
             'logo_url' => ['nullable', 'string', 'max:500'],
             'favicon_file' => ['nullable', 'file', 'mimes:ico,png,svg,webp,jpg,jpeg', 'max:1024'],
@@ -433,16 +442,41 @@ class AdminController extends Controller
             mkdir($destinationPath, 0755, true);
         }
 
-        if ($request->hasFile('logo_file')) {
+        // Dark theme logo handling
+        if ($request->hasFile('logo_dark_file')) {
+            $file = $request->file('logo_dark_file');
+            $filename = 'logo_dark_' . time() . '_' . Str::random(6) . '.' . $file->getClientOriginalExtension();
+            $file->move($destinationPath, $filename);
+            $logoPath = '/uploads/branding/' . $filename;
+            SystemSetting::set('system_logo_dark', $logoPath);
+            SystemSetting::set('system_logo', $logoPath);
+        } elseif ($request->filled('logo_dark_url')) {
+            SystemSetting::set('system_logo_dark', $validated['logo_dark_url']);
+            SystemSetting::set('system_logo', $validated['logo_dark_url']);
+        } elseif ($request->hasFile('logo_file')) {
             $file = $request->file('logo_file');
             $filename = 'logo_' . time() . '_' . Str::random(6) . '.' . $file->getClientOriginalExtension();
             $file->move($destinationPath, $filename);
             $logoPath = '/uploads/branding/' . $filename;
+            SystemSetting::set('system_logo_dark', $logoPath);
             SystemSetting::set('system_logo', $logoPath);
         } elseif ($request->filled('logo_url')) {
+            SystemSetting::set('system_logo_dark', $validated['logo_url']);
             SystemSetting::set('system_logo', $validated['logo_url']);
         }
 
+        // Light theme logo handling
+        if ($request->hasFile('logo_light_file')) {
+            $file = $request->file('logo_light_file');
+            $filename = 'logo_light_' . time() . '_' . Str::random(6) . '.' . $file->getClientOriginalExtension();
+            $file->move($destinationPath, $filename);
+            $logoLightPath = '/uploads/branding/' . $filename;
+            SystemSetting::set('system_logo_light', $logoLightPath);
+        } elseif ($request->filled('logo_light_url')) {
+            SystemSetting::set('system_logo_light', $validated['logo_light_url']);
+        }
+
+        // Favicon handling
         if ($request->hasFile('favicon_file')) {
             $file = $request->file('favicon_file');
             $filename = 'favicon_' . time() . '_' . Str::random(6) . '.' . $file->getClientOriginalExtension();
@@ -458,12 +492,13 @@ class AdminController extends Controller
         }
 
         AuditLog::log('system_settings.logo_updated', 'SystemSetting', 0, [
-            'logo' => SystemSetting::get('system_logo'),
+            'logo_dark' => SystemSetting::get('system_logo_dark') ?: SystemSetting::get('system_logo'),
+            'logo_light' => SystemSetting::get('system_logo_light'),
             'favicon' => SystemSetting::get('system_favicon'),
             'brand_name' => SystemSetting::get('brand_name'),
         ]);
 
-        return back()->with('success', 'Sistem logosu, favicon ve marka ayarları başarıyla güncellendi.');
+        return back()->with('success', 'Sistem logoları, favicon ve marka ayarları başarıyla güncellendi.');
     }
 
     protected function authorizeAdmin(Request $request): void

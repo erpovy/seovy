@@ -151,9 +151,56 @@ class SystemLogoAndPlanBadgeTest extends TestCase
         }
     }
 
+    public function test_admin_can_upload_dark_and_light_logos(): void
+    {
+        $darkFile = UploadedFile::fake()->create('logo_white.png', 50, 'image/png');
+        $lightFile = UploadedFile::fake()->create('logo_black.png', 50, 'image/png');
+
+        $response = $this->actingAs($this->admin)->post('/admin/settings/logo', [
+            'logo_dark_file' => $darkFile,
+            'logo_light_file' => $lightFile,
+            'brand_name' => 'DualTheme Brand',
+        ]);
+
+        $response->assertSessionHas('success');
+
+        $darkPath = SystemSetting::get('system_logo_dark');
+        $lightPath = SystemSetting::get('system_logo_light');
+
+        $this->assertNotNull($darkPath);
+        $this->assertNotNull($lightPath);
+        $this->assertStringStartsWith('/uploads/branding/logo_dark_', $darkPath);
+        $this->assertStringStartsWith('/uploads/branding/logo_light_', $lightPath);
+
+        // Verify physical files were created
+        $this->assertTrue(File::exists(public_path($darkPath)));
+        $this->assertTrue(File::exists(public_path($lightPath)));
+
+        // Clean up created test files
+        if (File::exists(public_path($darkPath))) File::delete(public_path($darkPath));
+        if (File::exists(public_path($lightPath))) File::delete(public_path($lightPath));
+    }
+
+    public function test_admin_can_set_dark_and_light_logo_urls(): void
+    {
+        $response = $this->actingAs($this->admin)->post('/admin/settings/logo', [
+            'logo_dark_url' => 'https://cdn.example.com/logo-dark-theme.svg',
+            'logo_light_url' => 'https://cdn.example.com/logo-light-theme.svg',
+            'brand_name' => 'DualURL Brand',
+        ]);
+
+        $response->assertSessionHas('success');
+
+        $this->assertEquals('https://cdn.example.com/logo-dark-theme.svg', SystemSetting::get('system_logo_dark'));
+        $this->assertEquals('https://cdn.example.com/logo-light-theme.svg', SystemSetting::get('system_logo_light'));
+    }
+
     public function test_admin_can_reset_logo_to_default(): void
     {
         SystemSetting::set('system_logo', '/uploads/branding/old_logo.png');
+        SystemSetting::set('system_logo_dark', '/uploads/branding/old_dark.png');
+        SystemSetting::set('system_logo_light', '/uploads/branding/old_light.png');
+        SystemSetting::set('system_favicon', '/uploads/branding/old_favicon.ico');
         SystemSetting::set('brand_name', 'OldBrand');
 
         $response = $this->actingAs($this->admin)->post('/admin/settings/logo', [
@@ -163,6 +210,9 @@ class SystemLogoAndPlanBadgeTest extends TestCase
         $response->assertSessionHas('success');
 
         $this->assertNull(SystemSetting::get('system_logo'));
+        $this->assertNull(SystemSetting::get('system_logo_dark'));
+        $this->assertNull(SystemSetting::get('system_logo_light'));
+        $this->assertNull(SystemSetting::get('system_favicon'));
         $this->assertEquals('Seovy', SystemSetting::get('brand_name'));
 
         $this->assertDatabaseHas('audit_logs', [

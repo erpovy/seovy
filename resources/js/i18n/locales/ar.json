@@ -864,7 +864,14 @@
         "logo_favicon_mode_url": "عنوان URL لـ Favicon",
         "logo_favicon_drag_or_browse": "انقر للتصفح أو اسحب ملف Favicon هنا",
         "logo_favicon_supported_formats": "ICO, SVG, PNG, WebP (موصى به: 32x32 بكسل، بحد أقصى 1 ميغابايت)",
-        "logo_preview_browser_tab": "معاينة علامة تبويب المتصفح"
+        "logo_preview_browser_tab": "معاينة علامة تبويب المتصفح",
+        "logo_tab_dark": "شعار الوضع الداكن",
+        "logo_tab_light": "شعار الوضع الفاتح",
+        "logo_dark_desc": "شعار فاتح يظهر على خلفيات الواجهة الداكنة",
+        "logo_light_desc": "شعار داكن يظهر على خلفيات الواجهة الفاتحة",
+        "logo_dark_drag_or_browse": "انقر للاختيار أو اسحب شعار الوضع الداكن",
+        "logo_light_drag_or_browse": "انقر للاختيار أو اسحب شعار الوضع الفاتح",
+        "logo_light_url_hint": "أدخل رابط HTTPS مباشر لصورة الشعار الداكن للوضع الفاتح."
     },
     "languages": {
         "select": "اختيار اللغة",

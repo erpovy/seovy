@@ -864,7 +864,14 @@
         "logo_favicon_mode_url": "Favicon URL Address",
         "logo_favicon_drag_or_browse": "Click to browse or drag and drop favicon file",
         "logo_favicon_supported_formats": "ICO, SVG, PNG, WebP (Recommended: 32x32 pixels, Max 1 MB)",
-        "logo_preview_browser_tab": "Browser Tab Preview"
+        "logo_preview_browser_tab": "Browser Tab Preview",
+        "logo_tab_dark": "Dark Theme Logo",
+        "logo_tab_light": "Light Theme Logo",
+        "logo_dark_desc": "Light-colored logo displayed on dark theme backgrounds",
+        "logo_light_desc": "Dark/colored logo displayed on light theme backgrounds",
+        "logo_dark_drag_or_browse": "Click or drag to select dark theme logo",
+        "logo_light_drag_or_browse": "Click or drag to select light theme logo",
+        "logo_light_url_hint": "Enter direct HTTPS link to dark-colored logo for light mode."
     },
     "languages": {
         "select": "Select Language",

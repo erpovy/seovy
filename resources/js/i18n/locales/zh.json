@@ -864,7 +864,14 @@
         "logo_favicon_mode_url": "Favicon URL 地址",
         "logo_favicon_drag_or_browse": "点击浏览或拖拽上传 Favicon 文件",
         "logo_favicon_supported_formats": "ICO, SVG, PNG, WebP (建议: 32x32 像素, 最大 1 MB)",
-        "logo_preview_browser_tab": "浏览器标签预览"
+        "logo_preview_browser_tab": "浏览器标签预览",
+        "logo_tab_dark": "深色主题标志",
+        "logo_tab_light": "浅色主题标志",
+        "logo_dark_desc": "在深色界面背景上显示的浅色标志",
+        "logo_light_desc": "在浅色界面背景上显示的深色标志",
+        "logo_dark_drag_or_browse": "点击或拖拽选择深色主题标志",
+        "logo_light_drag_or_browse": "点击或拖拽选择浅色主题标志",
+        "logo_light_url_hint": "输入浅色主题下深色标志的直接 HTTPS 链接。"
     },
     "languages": {
         "select": "选择语言",

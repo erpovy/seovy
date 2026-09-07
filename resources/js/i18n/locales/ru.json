@@ -864,7 +864,14 @@
         "logo_favicon_mode_url": "URL-адрес фавикона",
         "logo_favicon_drag_or_browse": "Нажмите для выбора или перетащите файл фавикона",
         "logo_favicon_supported_formats": "ICO, SVG, PNG, WebP (Рекомендуется: 32x32 пикселей, до 1 МБ)",
-        "logo_preview_browser_tab": "Предпросмотр вкладки браузера"
+        "logo_preview_browser_tab": "Предпросмотр вкладки браузера",
+        "logo_tab_dark": "Логотип темной темы",
+        "logo_tab_light": "Логотип светлой темы",
+        "logo_dark_desc": "Светлый логотип для отображения на темном фоне",
+        "logo_light_desc": "Темный логотип для отображения на светлом фоне",
+        "logo_dark_drag_or_browse": "Нажмите или перетащите файл логотипа темной темы",
+        "logo_light_drag_or_browse": "Нажмите или перетащите файл логотипа светлой темы",
+        "logo_light_url_hint": "Прямая ссылка HTTPS на темный логотип для светлой темы."
     },
     "languages": {
         "select": "Выбрать язык",

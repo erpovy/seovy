@@ -26,6 +26,7 @@ import {
 } from 'lucide-vue-next';
 import LanguageSelector from '@/Components/LanguageSelector.vue';
 import ThemeToggle from '@/Components/ThemeToggle.vue';
+import { useTheme } from '@/composables/useTheme';
 import { useI18n } from '@/i18n';
 
 defineProps<{
@@ -37,10 +38,14 @@ const auth = computed(() => ((page.props as any)?.auth) || {});
 const flash = computed(() => ((page.props as any)?.flash) || {});
 const errors = computed(() => ((page.props as any)?.errors) || {});
 const { t } = useI18n();
+const { isDark } = useTheme();
 
 const systemSettings = computed(() => ((page.props as any)?.system_settings) || {});
-const systemLogo = computed(() => systemSettings.value.logo || null);
+const systemLogoDark = computed(() => systemSettings.value.logo_dark || systemSettings.value.logo || null);
+const systemLogoLight = computed(() => systemSettings.value.logo_light || systemSettings.value.logo || null);
+const activeLogo = computed(() => (isDark.value ? systemLogoDark.value : (systemLogoLight.value || systemLogoDark.value)));
 const brandName = computed(() => systemSettings.value.brand_name || 'Seovy');
+const logoFailed = ref(false);
 
 const currentPlanName = computed(() => {
     if (auth.value.current_workspace?.plan_name) {
@@ -76,19 +81,21 @@ const switchWorkspace = (workspaceId: number) => {
                 <div class="px-2 space-y-2.5">
                     <div class="flex items-center justify-between">
                         <Link href="/dashboard" class="flex items-center space-x-3 group min-w-0">
-                            <template v-if="systemLogo">
+                            <template v-if="activeLogo && !logoFailed">
                                 <img
-                                    :src="systemLogo"
+                                    :key="activeLogo"
+                                    :src="activeLogo"
                                     :alt="brandName"
                                     class="h-9 max-w-[130px] object-contain rounded-lg shadow-sm"
-                                    @error="($event.target as HTMLElement).style.display = 'none'"
+                                    @error="logoFailed = true"
+                                    @load="logoFailed = false"
                                 />
                             </template>
                             <template v-else>
                                 <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/20 group-hover:scale-105 transition-transform shrink-0">
                                     <Activity class="w-5 h-5 text-white" />
                                 </div>
-                                <span class="text-xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-slate-400 truncate">
+                                <span class="text-xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-slate-400 dark:from-white dark:via-slate-200 dark:to-slate-400 light:from-slate-900 light:to-slate-700 truncate">
                                     {{ brandName }}
                                 </span>
                             </template>
@@ -335,12 +342,14 @@ const switchWorkspace = (workspaceId: number) => {
             <!-- Mobile Top Bar -->
             <header class="md:hidden flex items-center justify-between px-4 py-3 bg-slate-900/80 border-b border-slate-800 sticky top-0 z-40">
                 <Link href="/dashboard" class="flex items-center space-x-2 min-w-0">
-                    <template v-if="systemLogo">
+                    <template v-if="activeLogo && !logoFailed">
                         <img
-                            :src="systemLogo"
+                            :key="activeLogo"
+                            :src="activeLogo"
                             :alt="brandName"
                             class="h-7 max-w-[110px] object-contain rounded"
-                            @error="($event.target as HTMLElement).style.display = 'none'"
+                            @error="logoFailed = true"
+                            @load="logoFailed = false"
                         />
                     </template>
                     <template v-else>

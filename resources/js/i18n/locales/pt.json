@@ -864,7 +864,14 @@
         "logo_favicon_mode_url": "Endereço URL do favicon",
         "logo_favicon_drag_or_browse": "Clique para selecionar ou arraste o arquivo do favicon",
         "logo_favicon_supported_formats": "ICO, SVG, PNG, WebP (Recomendado: 32x32 pixels, Máx 1 MB)",
-        "logo_preview_browser_tab": "Pré-visualização da guia do navegador"
+        "logo_preview_browser_tab": "Pré-visualização da guia do navegador",
+        "logo_tab_dark": "Logotipo Tema Escuro",
+        "logo_tab_light": "Logotipo Tema Claro",
+        "logo_dark_desc": "Logotipo claro exibido em fundos escuros",
+        "logo_light_desc": "Logotipo escuro exibido em fundos claros",
+        "logo_dark_drag_or_browse": "Clique ou arraste para selecionar o logotipo escuro",
+        "logo_light_drag_or_browse": "Clique ou arraste para selecionar o logotipo claro",
+        "logo_light_url_hint": "Insira o link HTTPS direto para o logotipo escuro no modo claro."
     },
     "languages": {
         "select": "Selecionar Idioma",
