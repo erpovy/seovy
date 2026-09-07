@@ -7,6 +7,16 @@
 
     <title inertia>{{ config('app.name', 'Seovy') }}</title>
 
+    <!-- Dynamic Favicon -->
+    @php
+        $systemFavicon = \App\Models\SystemSetting::get('system_favicon', null) ?: \App\Models\SystemSetting::get('system_logo', null);
+    @endphp
+    @if ($systemFavicon)
+        <link rel="icon" href="{{ $systemFavicon }}" id="app-favicon">
+    @else
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" id="app-favicon">
+    @endif
+
     <!-- Theme Initialization (prevents FOUC) -->
     <script>
         (function() {

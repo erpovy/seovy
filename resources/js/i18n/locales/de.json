@@ -857,7 +857,14 @@
         "logo_saving": "Wird gespeichert...",
         "logo_live_preview": "Live-Vorschau",
         "logo_preview_sidebar": "Dunkler Hintergrund & Seitenleisten-Vorschau",
-        "logo_preview_light": "Heller Hintergrund Kontrast-Test"
+        "logo_preview_light": "Heller Hintergrund Kontrast-Test",
+        "logo_favicon_title": "Favicon (Browser-Tab-Symbol)",
+        "logo_favicon_hint": "16x16 / 32x32 Pixel Symbol für Browser-Tabs und Lesezeichen (.ico, .png, .svg).",
+        "logo_favicon_mode_file": "Favicon-Datei hochladen",
+        "logo_favicon_mode_url": "Favicon-URL-Adresse",
+        "logo_favicon_drag_or_browse": "Klicken oder Favicon-Datei hierher ziehen",
+        "logo_favicon_supported_formats": "ICO, SVG, PNG, WebP (Empfohlen: 32x32 Pixel, Max 1 MB)",
+        "logo_preview_browser_tab": "Browser-Tab-Vorschau"
     },
     "languages": {
         "select": "Sprache wählen",

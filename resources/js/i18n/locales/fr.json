@@ -857,7 +857,14 @@
         "logo_saving": "Enregistrement...",
         "logo_live_preview": "Aperçu en direct",
         "logo_preview_sidebar": "Fond sombre et aperçu de la barre latérale",
-        "logo_preview_light": "Test de contraste sur fond clair"
+        "logo_preview_light": "Test de contraste sur fond clair",
+        "logo_favicon_title": "Favicon (Icône d'onglet du navigateur)",
+        "logo_favicon_hint": "Icône 16x16 / 32x32 pixels affichée dans les onglets du navigateur et les favoris (.ico, .png, .svg).",
+        "logo_favicon_mode_file": "Téléverser un fichier favicon",
+        "logo_favicon_mode_url": "Adresse URL du favicon",
+        "logo_favicon_drag_or_browse": "Cliquez pour parcourir ou glissez-déposez le favicon",
+        "logo_favicon_supported_formats": "ICO, SVG, PNG, WebP (Recommandé : 32x32 pixels, Max 1 Mo)",
+        "logo_preview_browser_tab": "Aperçu de l'onglet du navigateur"
     },
     "languages": {
         "select": "Sélectionner la Langue",

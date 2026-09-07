@@ -857,7 +857,14 @@
         "logo_saving": "Salvando...",
         "logo_live_preview": "Pré-visualização em tempo real",
         "logo_preview_sidebar": "Fundo escuro e prévia da barra lateral",
-        "logo_preview_light": "Teste de contraste em fundo claro"
+        "logo_preview_light": "Teste de contraste em fundo claro",
+        "logo_favicon_title": "Favicon (Ícone da guia do navegador)",
+        "logo_favicon_hint": "Ícone de 16x16 / 32x32 pixels exibido nas guias do navegador e favoritos (.ico, .png, .svg).",
+        "logo_favicon_mode_file": "Enviar arquivo de favicon",
+        "logo_favicon_mode_url": "Endereço URL do favicon",
+        "logo_favicon_drag_or_browse": "Clique para selecionar ou arraste o arquivo do favicon",
+        "logo_favicon_supported_formats": "ICO, SVG, PNG, WebP (Recomendado: 32x32 pixels, Máx 1 MB)",
+        "logo_preview_browser_tab": "Pré-visualização da guia do navegador"
     },
     "languages": {
         "select": "Selecionar Idioma",

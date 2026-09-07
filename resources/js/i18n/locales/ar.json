@@ -857,7 +857,14 @@
         "logo_saving": "جارٍ الحفظ...",
         "logo_live_preview": "معاينة حية",
         "logo_preview_sidebar": "معاينة الشريط الجانبي والخلفية الداكنة",
-        "logo_preview_light": "فحص التباين على الخلفية الفاتحة"
+        "logo_preview_light": "فحص التباين على الخلفية الفاتحة",
+        "logo_favicon_title": "أيقونة الموقع المفضلة (Favicon)",
+        "logo_favicon_hint": "أيقونة بحجم 16x16 / 32x32 بكسل تظهر في علامات تبويب المتصفح والإشارات المرجعية (.ico, .png, .svg).",
+        "logo_favicon_mode_file": "تحميل ملف Favicon",
+        "logo_favicon_mode_url": "عنوان URL لـ Favicon",
+        "logo_favicon_drag_or_browse": "انقر للتصفح أو اسحب ملف Favicon هنا",
+        "logo_favicon_supported_formats": "ICO, SVG, PNG, WebP (موصى به: 32x32 بكسل، بحد أقصى 1 ميغابايت)",
+        "logo_preview_browser_tab": "معاينة علامة تبويب المتصفح"
     },
     "languages": {
         "select": "اختيار اللغة",

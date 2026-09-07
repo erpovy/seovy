@@ -18,6 +18,7 @@ import {
 const props = defineProps<{
     systemSettings?: {
         logo?: string | null;
+        favicon?: string | null;
         brand_name?: string | null;
     };
 }>();
@@ -29,17 +30,28 @@ const currentLogo = computed(() => {
     return props.systemSettings?.logo || (page.props as any).system_settings?.logo || null;
 });
 
+const currentFavicon = computed(() => {
+    return props.systemSettings?.favicon || (page.props as any).system_settings?.favicon || null;
+});
+
 const currentBrandName = computed(() => {
     return props.systemSettings?.brand_name || (page.props as any).system_settings?.brand_name || 'Seovy';
 });
 
 const fileInputRef = ref<HTMLInputElement | null>(null);
+const faviconInputRef = ref<HTMLInputElement | null>(null);
+
 const previewUrl = ref<string | null>(null);
+const faviconPreviewUrl = ref<string | null>(null);
+
 const uploadMode = ref<'file' | 'url'>('file');
+const faviconUploadMode = ref<'file' | 'url'>('file');
 
 const form = useForm({
     logo_file: null as File | null,
     logo_url: currentLogo.value || '',
+    favicon_file: null as File | null,
+    favicon_url: currentFavicon.value || '',
     brand_name: currentBrandName.value,
 });
 
@@ -54,8 +66,21 @@ const onFileChange = (e: Event) => {
     }
 };
 
+const onFaviconChange = (e: Event) => {
+    const target = e.target as HTMLInputElement;
+    if (target.files && target.files[0]) {
+        const file = target.files[0];
+        form.favicon_file = file;
+        faviconPreviewUrl.value = URL.createObjectURL(file);
+    }
+};
+
 const triggerFileInput = () => {
     fileInputRef.value?.click();
+};
+
+const triggerFaviconInput = () => {
+    faviconInputRef.value?.click();
 };
 
 const clearSelectedFile = () => {
@@ -66,12 +91,21 @@ const clearSelectedFile = () => {
     }
 };
 
+const clearSelectedFavicon = () => {
+    form.favicon_file = null;
+    faviconPreviewUrl.value = null;
+    if (faviconInputRef.value) {
+        faviconInputRef.value.value = '';
+    }
+};
+
 const submitForm = () => {
     form.post('/admin/settings/logo', {
         forceFormData: true,
         preserveScroll: true,
         onSuccess: () => {
             clearSelectedFile();
+            clearSelectedFavicon();
         },
     });
 };
@@ -84,8 +118,10 @@ const resetToDefault = () => {
             onFinish: () => {
                 isResetting.value = false;
                 clearSelectedFile();
+                clearSelectedFavicon();
                 form.brand_name = 'Seovy';
                 form.logo_url = '';
+                form.favicon_url = '';
             },
         });
     }
@@ -95,6 +131,12 @@ const activePreview = computed(() => {
     if (previewUrl.value) return previewUrl.value;
     if (uploadMode.value === 'url' && form.logo_url.trim()) return form.logo_url.trim();
     return currentLogo.value;
+});
+
+const activeFaviconPreview = computed(() => {
+    if (faviconPreviewUrl.value) return faviconPreviewUrl.value;
+    if (faviconUploadMode.value === 'url' && form.favicon_url.trim()) return form.favicon_url.trim();
+    return currentFavicon.value || activePreview.value;
 });
 </script>
 
@@ -228,10 +270,95 @@ const activePreview = computed(() => {
                         </p>
                     </div>
 
+                    <!-- Favicon Settings Section -->
+                    <div class="pt-4 border-t border-slate-800/80 space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1 flex items-center space-x-1.5">
+                                <Sparkles class="w-3.5 h-3.5 text-amber-400" />
+                                <span>{{ t('admin.logo_favicon_title', 'Favicon (Tarayıcı Sekme Simgesi)') }}</span>
+                            </label>
+                            <p class="text-[11px] text-slate-500">
+                                {{ t('admin.logo_favicon_hint', 'Tarayıcı sekmelerinde ve yer imlerinde görüntülenecek simge (.ico, .png, .svg).') }}
+                            </p>
+                        </div>
+
+                        <!-- Favicon Upload Type Switcher -->
+                        <div class="flex items-center space-x-2 bg-slate-950/60 p-1 rounded-xl border border-slate-800 text-xs font-medium w-fit">
+                            <button
+                                type="button"
+                                @click="faviconUploadMode = 'file'"
+                                class="px-3 py-1.5 rounded-lg transition-all flex items-center space-x-1.5"
+                                :class="faviconUploadMode === 'file' ? 'bg-indigo-600 text-white font-semibold shadow-sm' : 'text-slate-400 hover:text-white'"
+                            >
+                                <Upload class="w-3.5 h-3.5" />
+                                <span>{{ t('admin.logo_favicon_mode_file', 'Favicon Yükle (Dosya)') }}</span>
+                            </button>
+                            <button
+                                type="button"
+                                @click="faviconUploadMode = 'url'"
+                                class="px-3 py-1.5 rounded-lg transition-all flex items-center space-x-1.5"
+                                :class="faviconUploadMode === 'url' ? 'bg-indigo-600 text-white font-semibold shadow-sm' : 'text-slate-400 hover:text-white'"
+                            >
+                                <Globe class="w-3.5 h-3.5" />
+                                <span>{{ t('admin.logo_favicon_mode_url', 'Favicon URL Adresi') }}</span>
+                            </button>
+                        </div>
+
+                        <!-- Favicon File Upload Mode -->
+                        <div v-if="faviconUploadMode === 'file'" class="space-y-2">
+                            <input
+                                ref="faviconInputRef"
+                                type="file"
+                                accept=".ico, image/x-icon, image/vnd.microsoft.icon, .svg, image/svg+xml, .png, image/png, .webp, image/webp"
+                                class="hidden"
+                                @change="onFaviconChange"
+                            />
+
+                            <div
+                                @click="triggerFaviconInput"
+                                class="border-2 border-dashed border-slate-700/80 hover:border-amber-500/80 rounded-2xl p-5 flex flex-col items-center justify-center text-center cursor-pointer transition-all bg-slate-950/40 hover:bg-slate-950/70 group"
+                            >
+                                <div class="w-10 h-10 rounded-2xl bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center group-hover:scale-110 transition-transform mb-2">
+                                    <Sparkles class="w-5 h-5" />
+                                </div>
+                                <span class="text-xs font-semibold text-white group-hover:text-amber-300 transition-colors">
+                                    {{ form.favicon_file ? form.favicon_file.name : t('admin.logo_favicon_drag_or_browse', 'Favicon seçmek için tıklayın veya dosyayı sürükleyin') }}
+                                </span>
+                                <span class="text-[11px] text-slate-500 mt-1">
+                                    {{ t('admin.logo_favicon_supported_formats', 'ICO, SVG, PNG, WebP (Önerilen: 32x32 piksel, Maks 1 MB)') }}
+                                </span>
+                            </div>
+
+                            <div v-if="form.favicon_file" class="flex items-center justify-between text-xs text-amber-300 bg-amber-950/30 border border-amber-500/30 p-2.5 rounded-xl">
+                                <span class="truncate">{{ form.favicon_file.name }} ({{ Math.round(form.favicon_file.size / 1024) }} KB)</span>
+                                <button
+                                    type="button"
+                                    @click="clearSelectedFavicon"
+                                    class="text-slate-400 hover:text-rose-400 ml-2 shrink-0"
+                                >
+                                    {{ t('admin.logo_cancel', 'Vazgeç') }}
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Favicon Direct URL Mode -->
+                        <div v-else class="space-y-2">
+                            <input
+                                v-model="form.favicon_url"
+                                type="url"
+                                placeholder="https://example.com/favicon.ico"
+                                class="w-full px-4 py-2.5 rounded-xl bg-slate-950/80 border border-slate-800 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                            />
+                            <p class="text-[11px] text-slate-500">
+                                {{ t('admin.logo_url_hint', 'Doğrudan HTTPS erişilebilir favicon bağlantısı girin.') }}
+                            </p>
+                        </div>
+                    </div>
+
                     <!-- Errors -->
-                    <div v-if="form.errors.logo_file || form.errors.logo_url" class="text-xs text-rose-400 bg-rose-950/30 border border-rose-500/30 p-3 rounded-xl flex items-center space-x-2">
+                    <div v-if="form.errors.logo_file || form.errors.logo_url || form.errors.favicon_file || form.errors.favicon_url" class="text-xs text-rose-400 bg-rose-950/30 border border-rose-500/30 p-3 rounded-xl flex items-center space-x-2">
                         <AlertCircle class="w-4 h-4 shrink-0" />
-                        <span>{{ form.errors.logo_file || form.errors.logo_url }}</span>
+                        <span>{{ form.errors.logo_file || form.errors.logo_url || form.errors.favicon_file || form.errors.favicon_url }}</span>
                     </div>
 
                     <!-- Submit Button -->
@@ -304,6 +431,28 @@ const activePreview = computed(() => {
                                     {{ t('nav.upgrade', 'Yükselt') }} &rarr;
                                 </span>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Browser Tab Simulation (Favicon Preview) -->
+                    <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800/90 space-y-2">
+                        <span class="text-[10px] font-semibold text-slate-500 uppercase tracking-wider block">
+                            {{ t('admin.logo_preview_browser_tab', 'Tarayıcı Sekmesi & Favicon Önizlemesi') }}
+                        </span>
+                        <div class="bg-slate-900 border border-slate-800 rounded-xl p-2.5 flex items-center space-x-2.5 shadow-sm">
+                            <div class="w-5 h-5 rounded flex items-center justify-center overflow-hidden shrink-0 bg-slate-800 border border-slate-700/60">
+                                <img
+                                    v-if="activeFaviconPreview"
+                                    :src="activeFaviconPreview"
+                                    alt="Favicon"
+                                    class="w-4 h-4 object-contain"
+                                    @error="($event.target as HTMLElement).style.display = 'none'"
+                                />
+                                <Activity v-else class="w-3.5 h-3.5 text-indigo-400" />
+                            </div>
+                            <span class="text-xs font-medium text-slate-200 truncate">
+                                {{ form.brand_name || 'Seovy' }} — SEO & Technical Crawler
+                            </span>
                         </div>
                     </div>
 

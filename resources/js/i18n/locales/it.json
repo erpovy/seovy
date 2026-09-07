@@ -857,7 +857,14 @@
         "logo_saving": "Salvataggio...",
         "logo_live_preview": "Anteprima dal vivo",
         "logo_preview_sidebar": "Sfondo scuro e anteprima barra laterale",
-        "logo_preview_light": "Controllo contrasto su sfondo chiaro"
+        "logo_preview_light": "Controllo contrasto su sfondo chiaro",
+        "logo_favicon_title": "Favicon (Icona della scheda del browser)",
+        "logo_favicon_hint": "Icona 16x16 / 32x32 pixel mostrata nelle schede del browser e nei preferiti (.ico, .png, .svg).",
+        "logo_favicon_mode_file": "Carica file favicon",
+        "logo_favicon_mode_url": "Indirizzo URL favicon",
+        "logo_favicon_drag_or_browse": "Fai clic per sfogliare o trascina il file favicon",
+        "logo_favicon_supported_formats": "ICO, SVG, PNG, WebP (Consigliato: 32x32 pixel, Max 1 MB)",
+        "logo_preview_browser_tab": "Anteprima scheda del browser"
     },
     "languages": {
         "select": "Seleziona Lingua",

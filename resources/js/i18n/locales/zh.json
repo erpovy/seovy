@@ -857,7 +857,14 @@
         "logo_saving": "正在保存...",
         "logo_live_preview": "实时预览",
         "logo_preview_sidebar": "暗色背景与侧边栏预览",
-        "logo_preview_light": "浅色背景对比度测试"
+        "logo_preview_light": "浅色背景对比度测试",
+        "logo_favicon_title": "Favicon (浏览器标签图标)",
+        "logo_favicon_hint": "显示在浏览器标签和书签中的 16x16 / 32x32 像素图标 (.ico, .png, .svg)。",
+        "logo_favicon_mode_file": "上传 Favicon 文件",
+        "logo_favicon_mode_url": "Favicon URL 地址",
+        "logo_favicon_drag_or_browse": "点击浏览或拖拽上传 Favicon 文件",
+        "logo_favicon_supported_formats": "ICO, SVG, PNG, WebP (建议: 32x32 像素, 最大 1 MB)",
+        "logo_preview_browser_tab": "浏览器标签预览"
     },
     "languages": {
         "select": "选择语言",

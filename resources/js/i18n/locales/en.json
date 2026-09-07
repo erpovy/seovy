@@ -857,7 +857,14 @@
         "logo_saving": "Saving...",
         "logo_live_preview": "Live Preview",
         "logo_preview_sidebar": "Dark Background & Sidebar Preview",
-        "logo_preview_light": "Light Background Contrast Check"
+        "logo_preview_light": "Light Background Contrast Check",
+        "logo_favicon_title": "Favicon (Browser Tab Icon)",
+        "logo_favicon_hint": "16x16 / 32x32 pixel icon shown in browser tabs and bookmarks (.ico, .png, .svg).",
+        "logo_favicon_mode_file": "Upload Favicon File",
+        "logo_favicon_mode_url": "Favicon URL Address",
+        "logo_favicon_drag_or_browse": "Click to browse or drag and drop favicon file",
+        "logo_favicon_supported_formats": "ICO, SVG, PNG, WebP (Recommended: 32x32 pixels, Max 1 MB)",
+        "logo_preview_browser_tab": "Browser Tab Preview"
     },
     "languages": {
         "select": "Select Language",

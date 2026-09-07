@@ -857,7 +857,14 @@
         "logo_saving": "Kaydediliyor...",
         "logo_live_preview": "Canlı Önizleme",
         "logo_preview_sidebar": "Koyu Zemin & Sol Menü Önizlemesi",
-        "logo_preview_light": "Açık Zemin Kontrast Testi"
+        "logo_preview_light": "Açık Zemin Kontrast Testi",
+        "logo_favicon_title": "Favicon (Tarayıcı Sekme Simgesi)",
+        "logo_favicon_hint": "Tarayıcı sekmelerinde ve yer imlerinde görüntülenecek 16x16 / 32x32 piksel simge (.ico, .png, .svg).",
+        "logo_favicon_mode_file": "Favicon Dosyası Yükle",
+        "logo_favicon_mode_url": "Favicon URL Adresi",
+        "logo_favicon_drag_or_browse": "Favicon seçmek için tıklayın veya dosyayı sürükleyin",
+        "logo_favicon_supported_formats": "ICO, SVG, PNG, WebP (Önerilen: 32x32 piksel, Maks 1 MB)",
+        "logo_preview_browser_tab": "Tarayıcı Sekmesi Önizlemesi"
     },
     "languages": {
         "select": "Dil Seçin",

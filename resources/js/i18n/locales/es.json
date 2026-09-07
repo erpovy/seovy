@@ -857,7 +857,14 @@
         "logo_saving": "Guardando...",
         "logo_live_preview": "Vista previa en vivo",
         "logo_preview_sidebar": "Fondo oscuro y vista previa de barra lateral",
-        "logo_preview_light": "Prueba de contraste en fondo claro"
+        "logo_preview_light": "Prueba de contraste en fondo claro",
+        "logo_favicon_title": "Favicon (Icono de pestaña del navegador)",
+        "logo_favicon_hint": "Icono de 16x16 / 32x32 píxeles que se muestra en las pestañas del navegador y marcadores (.ico, .png, .svg).",
+        "logo_favicon_mode_file": "Subir archivo de favicon",
+        "logo_favicon_mode_url": "Dirección URL de favicon",
+        "logo_favicon_drag_or_browse": "Haga clic para buscar o arrastre el archivo de favicon",
+        "logo_favicon_supported_formats": "ICO, SVG, PNG, WebP (Recomendado: 32x32 píxeles, Máx 1 MB)",
+        "logo_preview_browser_tab": "Vista previa de la pestaña del navegador"
     },
     "languages": {
         "select": "Seleccionar Idioma",

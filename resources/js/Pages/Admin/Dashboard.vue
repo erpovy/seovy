@@ -75,6 +75,7 @@ const props = defineProps<{
     workspacesList?: Array<any>;
     systemSettings?: {
         logo?: string | null;
+        favicon?: string | null;
         brand_name?: string | null;
     };
     filters: {

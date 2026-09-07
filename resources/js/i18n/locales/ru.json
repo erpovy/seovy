@@ -857,7 +857,14 @@
         "logo_saving": "Сохранение...",
         "logo_live_preview": "Живой предпросмотр",
         "logo_preview_sidebar": "Темный фон и предпросмотр боковой панели",
-        "logo_preview_light": "Проверка контраста на светлом фоне"
+        "logo_preview_light": "Проверка контраста на светлом фоне",
+        "logo_favicon_title": "Фавикон (Иконка вкладки браузера)",
+        "logo_favicon_hint": "Иконка 16x16 / 32x32 пикселей для вкладок браузера и закладок (.ico, .png, .svg).",
+        "logo_favicon_mode_file": "Загрузить файл фавикона",
+        "logo_favicon_mode_url": "URL-адрес фавикона",
+        "logo_favicon_drag_or_browse": "Нажмите для выбора или перетащите файл фавикона",
+        "logo_favicon_supported_formats": "ICO, SVG, PNG, WebP (Рекомендуется: 32x32 пикселей, до 1 МБ)",
+        "logo_preview_browser_tab": "Предпросмотр вкладки браузера"
     },
     "languages": {
         "select": "Выбрать язык",

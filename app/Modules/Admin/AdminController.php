@@ -172,6 +172,7 @@ class AdminController extends Controller
             'workspacesList' => $workspacesList,
             'systemSettings' => [
                 'logo' => SystemSetting::get('system_logo', null),
+                'favicon' => SystemSetting::get('system_favicon', null),
                 'brand_name' => SystemSetting::get('brand_name', 'Seovy'),
             ],
             'filters' => [
@@ -409,33 +410,47 @@ class AdminController extends Controller
 
         if ($request->input('action') === 'reset') {
             SystemSetting::set('system_logo', null);
+            SystemSetting::set('system_favicon', null);
             SystemSetting::set('brand_name', 'Seovy');
 
             AuditLog::log('system_settings.logo_reset', 'SystemSetting', 0, [
                 'action' => 'reset_to_default',
             ]);
 
-            return back()->with('success', 'Sistem logosu ve marka adı varsayılana sıfırlandı.');
+            return back()->with('success', 'Sistem logosu, favicon ve marka adı varsayılana sıfırlandı.');
         }
 
         $validated = $request->validate([
             'logo_file' => ['nullable', 'file', 'mimes:png,jpg,jpeg,svg,webp', 'max:2048'],
             'logo_url' => ['nullable', 'string', 'max:500'],
+            'favicon_file' => ['nullable', 'file', 'mimes:ico,png,svg,webp,jpg,jpeg', 'max:1024'],
+            'favicon_url' => ['nullable', 'string', 'max:500'],
             'brand_name' => ['nullable', 'string', 'max:50'],
         ]);
+
+        $destinationPath = public_path('uploads/branding');
+        if (!file_exists($destinationPath)) {
+            mkdir($destinationPath, 0755, true);
+        }
 
         if ($request->hasFile('logo_file')) {
             $file = $request->file('logo_file');
             $filename = 'logo_' . time() . '_' . Str::random(6) . '.' . $file->getClientOriginalExtension();
-            $destinationPath = public_path('uploads/branding');
-            if (!file_exists($destinationPath)) {
-                mkdir($destinationPath, 0755, true);
-            }
             $file->move($destinationPath, $filename);
             $logoPath = '/uploads/branding/' . $filename;
             SystemSetting::set('system_logo', $logoPath);
         } elseif ($request->filled('logo_url')) {
             SystemSetting::set('system_logo', $validated['logo_url']);
+        }
+
+        if ($request->hasFile('favicon_file')) {
+            $file = $request->file('favicon_file');
+            $filename = 'favicon_' . time() . '_' . Str::random(6) . '.' . $file->getClientOriginalExtension();
+            $file->move($destinationPath, $filename);
+            $faviconPath = '/uploads/branding/' . $filename;
+            SystemSetting::set('system_favicon', $faviconPath);
+        } elseif ($request->filled('favicon_url')) {
+            SystemSetting::set('system_favicon', $validated['favicon_url']);
         }
 
         if ($request->filled('brand_name')) {
@@ -444,10 +459,11 @@ class AdminController extends Controller
 
         AuditLog::log('system_settings.logo_updated', 'SystemSetting', 0, [
             'logo' => SystemSetting::get('system_logo'),
+            'favicon' => SystemSetting::get('system_favicon'),
             'brand_name' => SystemSetting::get('brand_name'),
         ]);
 
-        return back()->with('success', 'Sistem logosu ve marka ayarları başarıyla güncellendi.');
+        return back()->with('success', 'Sistem logosu, favicon ve marka ayarları başarıyla güncellendi.');
     }
 
     protected function authorizeAdmin(Request $request): void

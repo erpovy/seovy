@@ -127,6 +127,30 @@ class SystemLogoAndPlanBadgeTest extends TestCase
         }
     }
 
+    public function test_admin_can_upload_favicon_file(): void
+    {
+        $file = UploadedFile::fake()->create('custom_favicon.ico', 15, 'image/x-icon');
+
+        $response = $this->actingAs($this->admin)->post('/admin/settings/logo', [
+            'favicon_file' => $file,
+        ]);
+
+        $response->assertSessionHas('success');
+
+        $faviconPath = SystemSetting::get('system_favicon');
+        $this->assertNotNull($faviconPath);
+        $this->assertStringStartsWith('/uploads/branding/favicon_', $faviconPath);
+        $this->assertStringEndsWith('.ico', $faviconPath);
+
+        // Verify physical file was created
+        $this->assertTrue(File::exists(public_path($faviconPath)));
+
+        // Clean up created test file
+        if (File::exists(public_path($faviconPath))) {
+            File::delete(public_path($faviconPath));
+        }
+    }
+
     public function test_admin_can_reset_logo_to_default(): void
     {
         SystemSetting::set('system_logo', '/uploads/branding/old_logo.png');
