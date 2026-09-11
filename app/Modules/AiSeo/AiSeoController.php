@@ -86,8 +86,15 @@ class AiSeoController extends Controller
         $totalPagesSampled = 0;
         $pagesWithGoodWordCount = 0;
 
+        $orgTypes = [
+            'organization', 'corporation', 'localbusiness', 'store', 'restaurant',
+            'hotel', 'medicalorganization', 'educationalorganization', 'automotivebusiness',
+            'financialservice', 'professionalservice', 'onlinebusiness', 'company', 'brand'
+        ];
+        $faqTypes = ['faq', 'faqpage', 'qapage', 'question'];
+
         if ($latestCrawl) {
-            $pages = $latestCrawl->pages()->limit(50)->get();
+            $pages = $latestCrawl->pages()->orderBy('depth', 'asc')->limit(100)->get();
             $totalPagesSampled = $pages->count();
 
             foreach ($pages as $p) {
@@ -97,11 +104,59 @@ class AiSeoController extends Controller
 
                 if (!empty($p->schema_types) && is_array($p->schema_types)) {
                     foreach ($p->schema_types as $st) {
+                        $stLower = strtolower(trim($st));
                         $schemaTypesFound[$st] = ($schemaTypesFound[$st] ?? 0) + 1;
-                        if (str_contains(strtolower($st), 'faq')) $hasFaqSchema = true;
-                        if (str_contains(strtolower($st), 'organization')) $hasOrgSchema = true;
+
+                        foreach ($faqTypes as $ft) {
+                            if (str_contains($stLower, $ft)) {
+                                $hasFaqSchema = true;
+                                break;
+                            }
+                        }
+
+                        foreach ($orgTypes as $ot) {
+                            if (str_contains($stLower, $ot)) {
+                                $hasOrgSchema = true;
+                                break;
+                            }
+                        }
                     }
                 }
+            }
+        }
+
+        // Live fallback: If crawl didn't find schemas, inspect live homepage HTML directly
+        if (!$hasOrgSchema || !$hasFaqSchema) {
+            try {
+                $homeRes = Http::timeout(4)->withHeaders(['User-Agent' => 'SeovyAiAudit/1.0'])->get($project->start_url);
+                if ($homeRes->successful()) {
+                    $html = $homeRes->body();
+                    $hasSchemaOrg = stripos($html, 'schema.org') !== false || stripos($html, '@type') !== false || stripos($html, 'itemtype') !== false;
+
+                    if ($hasSchemaOrg) {
+                        if (!$hasOrgSchema) {
+                            foreach ($orgTypes as $ot) {
+                                if (stripos($html, '"' . $ot . '"') !== false || stripos($html, '/' . $ot) !== false) {
+                                    $hasOrgSchema = true;
+                                    $schemaTypesFound['Organization (Live)'] = ($schemaTypesFound['Organization (Live)'] ?? 0) + 1;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (!$hasFaqSchema) {
+                            foreach ($faqTypes as $ft) {
+                                if (stripos($html, '"' . $ft . '"') !== false || stripos($html, '/' . $ft) !== false) {
+                                    $hasFaqSchema = true;
+                                    $schemaTypesFound['FAQPage (Live)'] = ($schemaTypesFound['FAQPage (Live)'] ?? 0) + 1;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (\Throwable $e) {
+                // Ignore network timeouts
             }
         }
 

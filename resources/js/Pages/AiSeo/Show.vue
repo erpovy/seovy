@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, router } from '@inertiajs/vue3';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import {
     Sparkles,
@@ -19,7 +19,8 @@ import {
     Download,
     ShieldCheck,
     Layers,
-    Plus
+    Plus,
+    RefreshCw
 } from 'lucide-vue-next';
 import { useI18n } from '@/i18n';
 
@@ -48,6 +49,16 @@ const copied = ref(false);
 const copiedMerged = ref(false);
 const copiedAiBlock = ref(false);
 const activeRobotsTab = ref<'merged' | 'block' | 'original'>('merged');
+const isReinspecting = ref(false);
+
+const reinspect = () => {
+    isReinspecting.value = true;
+    router.reload({
+        onFinish: () => {
+            isReinspecting.value = false;
+        }
+    });
+};
 
 const copyToClipboard = () => {
     navigator.clipboard.writeText(props.sampleLlmsTxt);
@@ -117,13 +128,23 @@ const downloadRobotsTxt = () => {
                     </div>
                 </div>
 
-                <div class="flex items-center space-x-3">
+                <div class="flex items-center space-x-2">
+                    <button
+                        type="button"
+                        @click="reinspect"
+                        :disabled="isReinspecting"
+                        class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold flex items-center space-x-2 transition-all shadow-md shadow-indigo-600/30 disabled:opacity-50"
+                    >
+                        <RefreshCw class="w-3.5 h-3.5" :class="{ 'animate-spin': isReinspecting }" />
+                        <span>{{ t('ai_seo.inspect_robots', 'Robots.txt & LLMS Yeniden Denetle') }}</span>
+                    </button>
                     <a
                         :href="project.start_url + '/robots.txt'"
                         target="_blank"
-                        class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold flex items-center space-x-1.5 transition-all"
+                        class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white text-xs font-medium flex items-center space-x-1.5 transition-all border border-slate-700/60"
+                        title="robots.txt dosyasını yeni sekmede görüntüle"
                     >
-                        <span>{{ t('ai_seo.inspect_robots') }}</span>
+                        <span>robots.txt</span>
                         <ExternalLink class="w-3 h-3" />
                     </a>
                 </div>

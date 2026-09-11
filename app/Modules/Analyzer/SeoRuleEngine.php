@@ -321,11 +321,35 @@ class SeoRuleEngine
             ];
         }
 
-        // 10. Structured Data (JSON-LD)
-        $jsonLdNodes = $dom->filter('script[type="application/ld+json"]');
+        // 10. Structured Data (JSON-LD & Microdata)
         $schemaTypes = [];
 
-        $jsonLdNodes->each(function (Crawler $node) use (&$schemaTypes, &$findings) {
+        // Helper to recursively find all @type declarations
+        $extractTypes = function ($item) use (&$extractTypes, &$schemaTypes) {
+            if (!is_array($item)) {
+                return;
+            }
+            if (isset($item['@type'])) {
+                if (is_array($item['@type'])) {
+                    foreach ($item['@type'] as $t) {
+                        if (is_string($t) && !empty(trim($t))) {
+                            $schemaTypes[] = trim($t);
+                        }
+                    }
+                } elseif (is_string($item['@type']) && !empty(trim($item['@type']))) {
+                    $schemaTypes[] = trim($item['@type']);
+                }
+            }
+            foreach ($item as $k => $v) {
+                if (is_array($v)) {
+                    $extractTypes($v);
+                }
+            }
+        };
+
+        // 10a. JSON-LD scripts
+        $jsonLdNodes = $dom->filter('script[type="application/ld+json"]');
+        $jsonLdNodes->each(function (Crawler $node) use (&$schemaTypes, &$findings, $extractTypes) {
             $jsonString = trim($node->text());
             if (!empty($jsonString)) {
                 $data = json_decode($jsonString, true);
@@ -340,15 +364,19 @@ class SeoRuleEngine
                         'recommendation' => 'JSON-LD şemasındaki tırnak, virgül veya parantez hatalarını düzeltin.',
                     ];
                 } else {
-                    if (isset($data['@type'])) {
-                        $schemaTypes[] = is_array($data['@type']) ? implode(', ', $data['@type']) : $data['@type'];
-                    } elseif (isset($data['@graph']) && is_array($data['@graph'])) {
-                        foreach ($data['@graph'] as $item) {
-                            if (isset($item['@type'])) {
-                                $schemaTypes[] = is_array($item['@type']) ? implode(', ', $item['@type']) : $item['@type'];
-                            }
-                        }
-                    }
+                    $extractTypes($data);
+                }
+            }
+        });
+
+        // 10b. Microdata [itemtype]
+        $dom->filter('[itemtype]')->each(function (Crawler $node) use (&$schemaTypes) {
+            $itemtype = $node->attr('itemtype');
+            if (!empty($itemtype)) {
+                $parts = explode('/', rtrim($itemtype, '/'));
+                $type = end($parts);
+                if (!empty($type) && is_string($type)) {
+                    $schemaTypes[] = trim($type);
                 }
             }
         });
