@@ -68,6 +68,18 @@ const copyToClipboard = () => {
     }, 2000);
 };
 
+const downloadLlmsTxt = () => {
+    const blob = new Blob([props.sampleLlmsTxt], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'llms.txt';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+};
+
 const copyMergedRobots = () => {
     navigator.clipboard.writeText(props.mergedRobotsTxt || '');
     copiedMerged.value = true;
@@ -430,18 +442,41 @@ const downloadRobotsTxt = () => {
                         </p>
                     </div>
 
-                    <button
-                        @click="copyToClipboard"
-                        class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs transition-all flex items-center space-x-1.5"
-                    >
-                        <Check v-if="copied" class="w-3.5 h-3.5 text-emerald-300" />
-                        <Copy v-else class="w-3.5 h-3.5" />
-                        <span>{{ copied ? t('common.copied') : t('ai_seo.copy_template') }}</span>
-                    </button>
+                    <div class="flex items-center space-x-2">
+                        <button
+                            type="button"
+                            @click="downloadLlmsTxt"
+                            class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs transition-all flex items-center space-x-1.5 border border-slate-700/60"
+                        >
+                            <Download class="w-3.5 h-3.5 text-indigo-400" />
+                            <span>{{ t('ai_seo.download_llms', 'İndir (llms.txt)') }}</span>
+                        </button>
+                        <button
+                            type="button"
+                            @click="copyToClipboard"
+                            class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs transition-all flex items-center space-x-1.5"
+                        >
+                            <Check v-if="copied" class="w-3.5 h-3.5 text-emerald-300" />
+                            <Copy v-else class="w-3.5 h-3.5" />
+                            <span>{{ copied ? t('common.copied') : t('ai_seo.copy_template') }}</span>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="relative">
                     <pre class="p-5 rounded-2xl bg-slate-950 border border-slate-800 text-xs font-mono text-slate-300 overflow-x-auto whitespace-pre-wrap leading-relaxed">{{ sampleLlmsTxt }}</pre>
+                </div>
+
+                <!-- UTF-8 Charset Server Notice -->
+                <div class="p-4 rounded-2xl bg-indigo-500/5 border border-indigo-500/20 text-xs flex items-start space-x-3">
+                    <AlertCircle class="w-4 h-4 text-indigo-400 shrink-0 mt-0.5" />
+                    <div class="space-y-1 text-slate-400 text-[11px] leading-relaxed">
+                        <span class="font-bold text-slate-200 block">Türkçe Karakter & UTF-8 Kodlama İpucu:</span>
+                        <p>
+                            Web tarayıcılarının <code class="text-indigo-300 font-mono">llms.txt</code> dosyasını açarken Türkçe karakterleri doğru göstermesi için sunucunuzun metin dosyalarını UTF-8 başlığıyla sunması gerekir. LiteSpeed, cPanel veya Apache sunucunuzdaki <code class="text-indigo-300 font-mono">.htaccess</code> dosyasına şu satırı ekleyebilirsiniz:
+                        </p>
+                        <code class="block p-2 bg-slate-950 rounded-lg text-indigo-300 font-mono text-[10px]">AddCharset UTF-8 .txt</code>
+                    </div>
                 </div>
             </div>
         </div>
