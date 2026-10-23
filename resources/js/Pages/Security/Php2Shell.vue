@@ -49,9 +49,6 @@ const scan = () => {
                 <p id="security-url-help" class="text-sm text-slate-400">{{ t('php2shell.cache_note') }}</p>
             </form>
             <div v-if="form.processing || (assessment && !form.hasErrors)" aria-live="polite" class="space-y-3">
-                <p v-if="assessment && !form.processing" class="text-sm text-slate-400 break-all">
-                    {{ t('php2shell.last_check') }}: {{ new Date(assessment.checked_at).toLocaleString() }} · HTTP {{ assessment.http_status }} · {{ assessment.url }}
-                </p>
                 <Php2ShellPanel :assessment="assessment" :running="form.processing" />
             </div>
         </div>
