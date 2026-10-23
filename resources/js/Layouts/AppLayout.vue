@@ -209,6 +209,13 @@ const switchWorkspace = (workspaceId: number) => {
                         <span>{{ t('nav.websites') }}</span>
                     </Link>
 
+                    <Link href="/security/php2shell"
+                        class="flex min-h-11 items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all"
+                        :class="$page.url.startsWith('/security/php2shell') ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30' : 'text-slate-400 hover:text-white hover:bg-slate-800/40'">
+                        <Shield class="w-4 h-4" aria-hidden="true" />
+                        <span>{{ t('php2shell.nav') }}</span>
+                    </Link>
+
                     <div class="pt-2 pb-1 px-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
                         {{ t('nav.seo_workspace') }}
                     </div>
@@ -427,6 +434,12 @@ const switchWorkspace = (workspaceId: number) => {
                     >
                         <Globe class="w-4 h-4" />
                         <span>{{ t('nav.websites') }}</span>
+                    </Link>
+                    <Link href="/security/php2shell"
+                        class="flex min-h-11 items-center space-x-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:bg-slate-800"
+                        @click="mobileMenuOpen = false">
+                        <Shield class="w-4 h-4" aria-hidden="true" />
+                        <span>{{ t('php2shell.nav') }}</span>
                     </Link>
                     <Link
                         href="/billing"

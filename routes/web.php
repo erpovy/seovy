@@ -16,6 +16,7 @@ use App\Modules\Integrations\IntegrationController;
 use App\Modules\Integrations\KeywordController;
 use App\Modules\Project\ProjectController;
 use App\Modules\Reports\ReportController;
+use App\Modules\Security\Php2ShellController;
 use App\Modules\Workspace\WorkspaceController;
 use App\Modules\Workspace\WorkspaceMemberController;
 use Illuminate\Foundation\Application;
@@ -81,6 +82,11 @@ Route::middleware('auth')->group(function () {
 
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // Independent PHP2Shell checks, separate from SEO crawling and scoring.
+    Route::get('/security/php2shell', [Php2ShellController::class, 'index'])->name('security.php2shell');
+    Route::post('/security/php2shell/{project}', [Php2ShellController::class, 'scan'])
+        ->middleware('throttle:6,1')->name('security.php2shell.scan');
 
     // Profile & Sessions
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
