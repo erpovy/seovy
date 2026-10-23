@@ -3,55 +3,51 @@
 namespace App\Modules\Security;
 
 use App\Http\Controllers\Controller;
-use App\Models\Project;
 use App\Modules\Crawler\SafeHttpClient;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 
 class Php2ShellController extends Controller
 {
     public function index(Request $request)
     {
-        Gate::authorize('viewAny', Project::class);
-        $projects = Project::where('workspace_id', $request->user()->current_workspace_id)
-            ->where('is_archived', false)->orderBy('name')->get(['id', 'name', 'domain', 'start_url', 'workspace_id']);
-        $selected = $projects->firstWhere('id', (int) $request->query('project'));
+        $workspace = $request->user()->currentWorkspace;
+        abort_unless($workspace && $request->user()->hasRole($workspace, ['owner', 'admin', 'specialist', 'viewer']), 403);
+        $assessment = Cache::get($this->cacheKey($request));
 
         return Inertia::render('Security/Php2Shell', [
-            'projects' => $projects->map(fn (Project $project) => [
-                'id' => $project->id,
-                'name' => $project->name,
-                'domain' => $project->domain,
-                'can_scan' => $request->user()->can('crawl', $project),
-            ]),
-            'selectedProjectId' => $selected?->id,
-            'assessment' => $selected ? Cache::get($this->cacheKey($selected)) : null,
+            'url' => $request->old('url', $assessment['requested_url'] ?? ''),
+            'canScan' => $request->user()->hasRole($workspace, ['owner', 'admin', 'specialist']),
+            'assessment' => $assessment,
         ]);
     }
 
-    public function scan(Request $request, Project $project, SafeHttpClient $http, Php2ShellDetector $detector)
+    public function scan(Request $request, SafeHttpClient $http, Php2ShellDetector $detector)
     {
-        Gate::authorize('crawl', $project);
-        abort_unless($project->workspace_id === $request->user()->current_workspace_id && ! $project->is_archived, 404);
+        $workspace = $request->user()->currentWorkspace;
+        abort_unless($workspace && $request->user()->hasRole($workspace, ['owner', 'admin', 'specialist']), 403);
 
-        // A failed recheck must not leave an earlier result looking current.
-        Cache::forget($this->cacheKey($project));
+        // Invalid or failed rechecks must not leave an earlier result looking current.
+        Cache::forget($this->cacheKey($request));
+        $validated = $request->validate([
+            'url' => ['required', 'string', 'max:2048', 'url:http,https'],
+        ]);
+
         try {
-            $response = $http->get($project->start_url);
+            $response = $http->get($validated['url']);
         } catch (\Throwable $exception) {
-            return redirect()->route('security.php2shell', ['project' => $project->id])
-                ->withErrors(['scan' => 'Hedef kontrol edilemedi. Proje adresini ve internetten erişilebilirliğini doğrulayıp tekrar deneyin.']);
+            return redirect()->route('security.php2shell')->withInput($request->only('url'))
+                ->withErrors(['scan' => 'Hedef kontrol edilemedi. Adresi ve internetten erişilebilirliğini doğrulayıp tekrar deneyin.']);
         }
 
-        Cache::put($this->cacheKey($project), $detector->report($response), now()->addDay());
+        Cache::put($this->cacheKey($request), $detector->report($response), now()->addDay());
 
-        return redirect()->route('security.php2shell', ['project' => $project->id]);
+        return redirect()->route('security.php2shell');
     }
 
-    private function cacheKey(Project $project): string
+    private function cacheKey(Request $request): string
     {
-        return "php2shell:v1:{$project->workspace_id}:{$project->id}:".hash('sha256', $project->start_url);
+        return "php2shell:url:v1:{$request->user()->current_workspace_id}:{$request->user()->id}";
     }
 }

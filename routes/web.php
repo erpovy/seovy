@@ -85,7 +85,7 @@ Route::middleware('auth')->group(function () {
 
     // Independent PHP2Shell checks, separate from SEO crawling and scoring.
     Route::get('/security/php2shell', [Php2ShellController::class, 'index'])->name('security.php2shell');
-    Route::post('/security/php2shell/{project}', [Php2ShellController::class, 'scan'])
+    Route::post('/security/php2shell', [Php2ShellController::class, 'scan'])
         ->middleware('throttle:6,1')->name('security.php2shell.scan');
 
     // Profile & Sessions

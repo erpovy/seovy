@@ -1,5 +1,6 @@
 {
     "php2shell": {
+        "url_label": "Website URL",
         "remediation": "Update the PHP runtime serving web requests to the fix for its branch or the vendor-equivalent patched package, then restart PHP workers. For PHP 8.1 and older, upgrade to a supported branch or confirm vendor backports.",
         "title": "PHP2Shell security check",
         "potential_risk": "Potential risk",
@@ -10,8 +11,8 @@
         "potential_risk_description": "A response header reports a PHP version older than the PHP2Shell fixes (CVE-2026-109618 and CVE-2026-109619). Verify the PHP package patch status with your hosting provider promptly.",
         "fixed_version_reported_description": "All sampled pages report versions at or above the published PHP2Shell fix for their branch. This does not independently verify the running package or prove the server is secure.",
         "unknown_description": "At least one sampled page does not expose a recognized PHP version. Hidden headers, a CDN or an unsupported branch prevent a complete assessment. This does not mean the site is safe or that it uses PHP.",
-        "pending_description": "The project start URL is being checked. The result will appear here when the request finishes.",
-        "not_checked_description": "No recent result for this project. Use Check now to run an independent PHP2Shell check.",
+        "pending_description": "The URL is being checked. The result will appear here when the request finishes.",
+        "not_checked_description": "Paste a website URL and use Check now to run an independent PHP2Shell check.",
         "limitations": "Only existing HTTP response headers are inspected; no exploit requests are sent. Headers may be inaccurate, and vendor backports can fix older versions. Results cover sampled pages only.",
         "checked_pages": "Sampled pages",
         "risk_pages": "Potentially affected pages",
@@ -21,16 +22,12 @@
         "session_advisory": "Additional advisory, 23 October 2026: CVE-2026-115560 depends on session configuration and cannot be checked from headers. Review session.upload_progress.enabled=0 with your administrator and restart PHP workers as advised by PHP.",
         "source": "Official PHP advisories · 21–23 October 2026",
         "nav": "PHP2Shell Check",
-        "intro": "An independent security check for the start URL of a registered project. It runs separately from SEO crawls and does not change SEO scores.",
-        "project": "Project",
-        "choose_project": "Choose a project",
+        "intro": "Paste a website URL and check it directly. No project creation or selection is required.",
         "scan": "Check now",
         "scanning": "Checking…",
         "permission": "An owner, admin or specialist can start this check.",
-        "cache_note": "The latest result is kept for up to 24 hours. You can run a fresh check at any time.",
-        "connection_failed": "The target could not be checked. Verify the project URL and public accessibility, then try again.",
-        "no_projects": "Add a project before running a PHP2Shell check.",
-        "manage_projects": "Manage projects",
+        "cache_note": "Enter a full HTTP or HTTPS link. Your latest result is kept for up to 24 hours.",
+        "connection_failed": "The URL could not be checked. Verify the address and public accessibility, then try again.",
         "last_check": "Last check"
     },
   "nav": {

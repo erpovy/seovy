@@ -125,7 +125,7 @@ Servisler:
 
 ### Bağımsız PHP2Shell kontrolü
 
-Menüdeki **PHP2Shell Kontrolü** (`/security/php2shell`) ekranında kayıtlı bir proje seçip **Şimdi kontrol et** düğmesini kullanın. Bu modül SEO taramalarından ve puanlarından bağımsızdır; yalnızca projenin başlangıç adresine normal bir GET isteği gönderir. Mevcut SSRF koruması ve proje rol yetkileri uygulanır. Son sonuç çalışma alanı/proje bazında en fazla 24 saat önbellekte tutulur.
+Menüdeki **PHP2Shell Kontrolü** (`/security/php2shell`) ekranına HTTP veya HTTPS ile başlayan bir site bağlantısı yapıştırıp **Şimdi kontrol et** düğmesini kullanın. Proje oluşturmak veya seçmek gerekmez. Bu modül SEO taramalarından ve puanlarından bağımsızdır; girilen adrese normal bir GET isteği gönderir. Mevcut SSRF koruması ve çalışma alanı rol yetkileri uygulanır. Son sonuç kullanıcı/çalışma alanı bazında en fazla 24 saat önbellekte tutulur.
 
 `Server` ve `X-Powered-By` başlıklarında bildirilen PHP sürümü, CVE-2026-109618 ve CVE-2026-109619 için resmî düzeltmelerle karşılaştırılır. Eski sürüm **potansiyel risk**, sürüm bilgisi yoksa veya dal kapsam dışındaysa **doğrulanamadı**, eşik ve üstündeyse **yamalı sürüm bildiriliyor** gösterilir. Başlıklar sunucunun yama durumunu veya açığın kullanılabilirliğini kanıtlamaz; sağlayıcı yamaları ayrıca doğrulanmalıdır. İstismar denemesi yapılmaz. CVE-2026-115560 yapılandırma gerektirdiğinden otomatik doğrulanmaz, ayrı bilgi olarak gösterilir.
 

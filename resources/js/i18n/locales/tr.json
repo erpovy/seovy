@@ -1,5 +1,6 @@
 {
     "php2shell": {
+        "url_label": "Site bağlantısı",
         "remediation": "Web isteklerini işleyen PHP sürümünü kendi dalındaki düzeltmeye veya sağlayıcının eşdeğer yamalı paketine güncelleyin ve PHP worker süreçlerini yeniden başlatın. PHP 8.1 ve öncesinde desteklenen dala geçin veya sağlayıcı yamasını doğrulayın.",
         "title": "PHP2Shell güvenlik kontrolü",
         "potential_risk": "Potansiyel risk",
@@ -10,8 +11,8 @@
         "potential_risk_description": "Bir yanıt başlığı PHP2Shell düzeltmelerinden (CVE-2026-109618 ve CVE-2026-109619) eski bir PHP sürümü bildiriyor. PHP paketinin yama durumunu hosting sağlayıcınızla gecikmeden doğrulayın.",
         "fixed_version_reported_description": "Örneklenen tüm sayfalar kendi dalları için yayımlanan PHP2Shell düzeltmesi veya üstü sürüm bildiriyor. Bu, çalışan paketin yamasını bağımsız olarak doğrulamaz veya sunucunun güvenli olduğunu kanıtlamaz.",
         "unknown_description": "Örneklenen en az bir sayfa tanınan bir PHP sürümü açıklamıyor. Gizli başlıklar, CDN veya kapsanmayan bir sürüm dalı tam değerlendirmeyi engelliyor. Bu sonuç sitenin güvenli olduğunu veya PHP kullandığını göstermez.",
-        "pending_description": "Projenin başlangıç adresi kontrol ediliyor. İstek tamamlandığında sonuç burada görünecek.",
-        "not_checked_description": "Bu proje için güncel sonuç yok. Bağımsız PHP2Shell kontrolü için Şimdi kontrol et düğmesini kullanın.",
+        "pending_description": "Bağlantı kontrol ediliyor. İstek tamamlandığında sonuç burada görünecek.",
+        "not_checked_description": "Site bağlantısını yapıştırıp Şimdi kontrol et düğmesiyle bağımsız PHP2Shell kontrolü başlatın.",
         "limitations": "Yalnızca mevcut HTTP yanıt başlıkları incelenir; istismar isteği gönderilmez. Başlıklar yanıltıcı olabilir; sağlayıcılar eski sürümlere yama uygulayabilir. Sonuç yalnızca örneklenen sayfaları kapsar.",
         "checked_pages": "Örneklenen sayfa",
         "risk_pages": "Potansiyel riskli sayfa",
@@ -21,16 +22,12 @@
         "session_advisory": "23 Ekim 2026 ek duyurusu: CVE-2026-115560 oturum yapılandırmasına bağlıdır ve başlıklardan denetlenemez. PHP tavsiyesi doğrultusunda session.upload_progress.enabled=0 ayarını yöneticinizle değerlendirin ve PHP worker süreçlerini yeniden başlatın.",
         "source": "Resmî PHP duyuruları · 21–23 Ekim 2026",
         "nav": "PHP2Shell Kontrolü",
-        "intro": "Kayıtlı projenin başlangıç adresi için bağımsız güvenlik kontrolü. SEO taramalarından ayrı çalışır ve SEO puanlarını etkilemez.",
-        "project": "Proje",
-        "choose_project": "Proje seçin",
+        "intro": "Site bağlantısını yapıştırıp doğrudan kontrol edin. Proje oluşturmanız veya seçmeniz gerekmez.",
         "scan": "Şimdi kontrol et",
         "scanning": "Kontrol ediliyor…",
         "permission": "Bu kontrolü sahip, yönetici veya uzman rolü başlatabilir.",
-        "cache_note": "Son sonuç en fazla 24 saat tutulur. İstediğiniz zaman yeni kontrol başlatabilirsiniz.",
-        "connection_failed": "Hedef kontrol edilemedi. Proje adresini ve internetten erişilebilirliğini doğrulayıp tekrar deneyin.",
-        "no_projects": "PHP2Shell kontrolü başlatmak için önce proje ekleyin.",
-        "manage_projects": "Projeleri yönet",
+        "cache_note": "HTTP veya HTTPS ile başlayan tam bağlantıyı girin. Son sonucunuz en fazla 24 saat tutulur.",
+        "connection_failed": "Bağlantı kontrol edilemedi. Adresi ve internetten erişilebilirliğini doğrulayıp tekrar deneyin.",
         "last_check": "Son kontrol"
     },
   "nav": {
